@@ -11,6 +11,10 @@
 		EA54EBC526DD5D5B0049FEA4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBC426DD5D5B0049FEA4 /* ViewController.swift */; };
 		EA54EBC726DD5D5D0049FEA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA54EBC626DD5D5D0049FEA4 /* Assets.xcassets */; };
 		EA54EBCA26DD5D5D0049FEA4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA54EBC826DD5D5D0049FEA4 /* Main.storyboard */; };
+		EA54EBD426DD800A0049FEA4 /* eventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBD326DD800A0049FEA4 /* eventMonitor.swift */; };
+		EA54EBD626DDA6E70049FEA4 /* createJsonFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBD526DDA6E70049FEA4 /* createJsonFile.swift */; };
+		EA54EBD826DDD0350049FEA4 /* takeScreenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBD726DDD0350049FEA4 /* takeScreenshot.swift */; };
+		EA54EBDA26DED0180049FEA4 /* softwareClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBD926DED0180049FEA4 /* softwareClassification.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +25,10 @@
 		EA54EBC926DD5D5D0049FEA4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EA54EBCB26DD5D5D0049FEA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EA54EBCC26DD5D5D0049FEA4 /* ScrapbookMenuBar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScrapbookMenuBar.entitlements; sourceTree = "<group>"; };
+		EA54EBD326DD800A0049FEA4 /* eventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = eventMonitor.swift; sourceTree = "<group>"; };
+		EA54EBD526DDA6E70049FEA4 /* createJsonFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createJsonFile.swift; sourceTree = "<group>"; };
+		EA54EBD726DDD0350049FEA4 /* takeScreenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = takeScreenshot.swift; sourceTree = "<group>"; };
+		EA54EBD926DED0180049FEA4 /* softwareClassification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = softwareClassification.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +67,10 @@
 				EA54EBC826DD5D5D0049FEA4 /* Main.storyboard */,
 				EA54EBCB26DD5D5D0049FEA4 /* Info.plist */,
 				EA54EBCC26DD5D5D0049FEA4 /* ScrapbookMenuBar.entitlements */,
+				EA54EBD326DD800A0049FEA4 /* eventMonitor.swift */,
+				EA54EBD526DDA6E70049FEA4 /* createJsonFile.swift */,
+				EA54EBD726DDD0350049FEA4 /* takeScreenshot.swift */,
+				EA54EBD926DED0180049FEA4 /* softwareClassification.swift */,
 			);
 			path = ScrapbookMenuBar;
 			sourceTree = "<group>";
@@ -133,7 +145,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA54EBD426DD800A0049FEA4 /* eventMonitor.swift in Sources */,
+				EA54EBD626DDA6E70049FEA4 /* createJsonFile.swift in Sources */,
 				EA54EBC526DD5D5B0049FEA4 /* ViewController.swift in Sources */,
+				EA54EBD826DDD0350049FEA4 /* takeScreenshot.swift in Sources */,
+				EA54EBDA26DED0180049FEA4 /* softwareClassification.swift in Sources */,
 				EA54EBC326DD5D5B0049FEA4 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
