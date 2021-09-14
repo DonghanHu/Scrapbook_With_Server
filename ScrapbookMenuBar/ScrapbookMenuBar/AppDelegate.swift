@@ -35,15 +35,15 @@ struct screenshotInformation{
         "WholeScreenshotOrNot"      : false,
         "CaptureRegion"             : [String : Int](),
         "ImagePath"                 : String(),
-        "AppliacationInformation"   : [[String : Any]]()
+        "ApplicationInformation"    : [[String : Any]]()
     ]
-    init(TimeStamp : String, WholeScreenshotOrNot : Bool, CaptureRegin : [String : Int], ImagePath : String, ApplicationInformation : [[String : Any]]){
-        self.metaDataSingleRecordingTemplate["TimeStamp"] = TimeStamp
-        self.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = WholeScreenshotOrNot
-        self.metaDataSingleRecordingTemplate["CaptureRegion"] = CaptureRegin
-        self.metaDataSingleRecordingTemplate["ImagePath"] = ImagePath
-        self.metaDataSingleRecordingTemplate["ApplicationInformation"] = ApplicationInformation
-    }
+//    init(TimeStamp : String, WholeScreenshotOrNot : Bool, CaptureRegin : [String : Int], ImagePath : String, ApplicationInformation : [[String : Any]]){
+//        self.metaDataSingleRecordingTemplate["TimeStamp"] = TimeStamp
+//        self.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = WholeScreenshotOrNot
+//        self.metaDataSingleRecordingTemplate["CaptureRegion"] = CaptureRegin
+//        self.metaDataSingleRecordingTemplate["ImagePath"] = ImagePath
+//        self.metaDataSingleRecordingTemplate["ApplicationInformation"] = ApplicationInformation
+//    }
     
 }
 
@@ -56,11 +56,14 @@ struct screenshotCaptureRegion {
         "Right"                     : Int(),
         "Bottom"                    : Int()
     ]
-    init(left : Int, top : Int, width : Int, height : Int){
+    
+    init(left : Int, top : Int, right : Int, bottom : Int, width : Int, height : Int){
         self.screenshotRegion["Width"]  = width
         self.screenshotRegion["Height"] = height
         self.screenshotRegion["Left"]   = left
         self.screenshotRegion["Top"]    = top
+        self.screenshotRegion["Right"]  = right
+        self.screenshotRegion["Bottom"] = bottom
     }
 }
 
@@ -102,7 +105,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // create json file
         jsonFileHandler.createJson(filepath: basicInformation.defaultFolderPathURL!)
         
-        
+        // take a testing screenshot while launching the application for asking request
+        takeTestingImage()
+        deleteTestingImage()
         
         // Insert code here to initialize your application
     }
@@ -155,7 +160,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     }
     
+    
+    func takeTestingImage(){
+        let task = Process()
+        task.launchPath = "/usr/sbin/screencapture"
+        var arguments = [String]();
+        arguments.append("-x")
+
+        arguments.append(basicInformation.defaultFolderPathString + "Testing")
+        task.arguments = arguments
+
+        let outpipe = Pipe()
+        task.standardOutput = outpipe
+        task.standardError = outpipe
+         do {
+           try task.run()
+         } catch {}
+        
+    }
+    
+    func deleteTestingImage(){
+        let path = basicInformation.defaultFolderPathString  + "Testing"
+        do {
+          try FileManager.default.removeItem(atPath: path)
+        } catch{}
+        
+    }
+    
     // end of the class AppDelegate
 
 }
+
+
 

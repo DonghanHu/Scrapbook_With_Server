@@ -37,67 +37,116 @@ class softwareClassify : NSObject {
         }
     }
     
-    // get opened running application name list
-    func getOpenedRunningApplicaionNameList() -> Array<String>{
-        
-        let rawData = CGWindowListCopyWindowInfo(.optionOnScreenAboveWindow, CGWindowID(0))
-        
-        // array save application names
+    func test(imageInfor : screenshotCaptureRegion) {
+        let temp = CGWindowListCopyWindowInfo(.optionOnScreenAboveWindow, CGWindowID(0))
         var applicationNameStack = [String]()
-        //let widowsListenInfor = CGWindowListCopyWindowInfo(option: optionOnScreenAboveWindow, CGWindowID(0))
-        
-        // format rawData into an array
-        let inforList = rawData as! [[String:Any]]
-        
-        // extrct name list from the inforList array
-        var softwareNameList = inforList.filter{ ($0["kCGWindowLayer"] as! Int == 0) && ($0["kCGWindowOwnerName"] as? String != nil) }
-        // the name list is from the front most to behind ones
+        let infoList = temp as! [[String:Any]]
+        let softwareNameList = infoList.filter{ ($0["kCGWindowLayer"] as! Int == 0) && ($0["kCGWindowOwnerName"] as? String != nil) }
         print("softwarenamelist", softwareNameList)
-
-        // the sum of the applications' area
-        var totoalRectArea = 0
-        
-        // var overlappedAreaWithLastLayer = 0
-        
-        var tempFirstx      = 0
-        var tempFirstY      = 0
-        var tempSecondX     = 0
-        var tempSecondY     = 0
-        
+        // print(type(of: softwareNameList))
         print("kcgWindowName is not nil and the number of the opening software is: ", softwareNameList.count)
         
-        
-        var allApplicationNameList = [String]()
+        var allApplicationNmaeList = [String]()
         var allApplicationPIDList = [String]()
-        
-        
         for singleApplication in softwareNameList {
             let singleApplicationName = singleApplication["kCGWindowOwnerName"] as! String
-            // print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
+            print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
             let singleApplicationPIDName = String(describing: singleApplication["kCGWindowOwnerPID"])
             
             if (!allApplicationPIDList.contains(singleApplicationPIDName)){
                 if singleApplicationName != "universalAccessAuthWarn" {
-                    // add application name and corresponding PID name into two arrays
+                    allApplicationNmaeList.append(singleApplicationName)
+                    allApplicationPIDList.append(singleApplicationPIDName)
+                }
+            }
+        }
+        print("opened software name list in order: ", allApplicationNmaeList)
+    }
+    
+    func getOpenningSoftwareInformation() -> Array<Dictionary<String, Any>>{
+        let temp = CGWindowListCopyWindowInfo(.optionOnScreenAboveWindow, CGWindowID(0))
+        var applicationNameStack = [String]()
+        let infoList = temp as! [[String:Any]]
+        let softwareNameList = infoList.filter{ ($0["kCGWindowLayer"] as! Int == 0) && ($0["kCGWindowOwnerName"] as? String != nil) }
+        print("softwarenamelist", softwareNameList)
+        return softwareNameList
+    }
+    
+    // get opened running application name list
+    func getOpenedRunningApplicaionNameList(imageInfor: screenshotCaptureRegion, wholeInfor : inout screenshotInformation) -> Array<String>{
+        
+        let screenshotWidth = imageInfor.screenshotRegion["Width"]
+        let screenshotHeight = imageInfor.screenshotRegion["Height"]
+        let screenshotleft = imageInfor.screenshotRegion["Left"]
+        let screenshotRight = imageInfor.screenshotRegion["Right"]
+        let screenshotTop = imageInfor.screenshotRegion["Top"]
+        let screenshotBottom = imageInfor.screenshotRegion["Bottom"]
+        
+        print(type(of: wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"]))
+        
+        let areaOfScreenshot = calculateAreaOfScreenshot(width: screenshotWidth!, height: screenshotHeight!)
+        print("area of screenshot is: ", areaOfScreenshot)
+        
+        var wholeScreenSet = initialWholeScreenMatrix()
+        var visibleApplicationNameStack = [String]()
+        
+        
+        // copy values from wholeInfor
+        var temtwholeInfor = wholeInfor
+        
+//        let temp = CGWindowListCopyWindowInfo(.optionOnScreenAboveWindow, CGWindowID(0))
+//        let windowsInformationList = temp as! [[String:Any]]
+//        let softwareInformationList = windowsInformationList.filter{ ($0["kCGWindowLayer"] as! Int == 0) && ($0["kCGWindowOwnerName"] as? String != nil) }
+//        print("softwarenamelist", softwareInformationList)
+//        print("kcgWindowName is not nil and the number of the opening software is: ", softwareInformationList.count)
+        
+        var allApplicationNameList = [String]()
+        var allApplicationPIDList = [String]()
+        let softwareInformationList = getOpenningSoftwareInformation()
+        
+        for singleApplication in softwareInformationList {
+            let singleApplicationName = singleApplication["kCGWindowOwnerName"] as! String
+            print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
+            let singleApplicationPIDName = String(describing: singleApplication["kCGWindowOwnerPID"])
+            if (!allApplicationPIDList.contains(singleApplicationPIDName)){
+                if singleApplicationName != "universalAccessAuthWarn" {
                     allApplicationNameList.append(singleApplicationName)
                     allApplicationPIDList.append(singleApplicationPIDName)
                 }
             }
-            
         }
+        print("opened software name list in order: ", allApplicationNameList)
         
-        print("opened running software name in order: ", allApplicationNameList)
         
+        
+
         var allApplicationsCoordinates = [String: [String]]()
-        
+
         // save this name list as a global variable
         capturedScreenshotInformation.capturedApplicationNameArray = allApplicationNameList
 
+        // reverse the softwareNameList from the behind most to front most
+        let softwareNameListTemp = softwareInformationList
+        let softwareNameListReverse = softwareNameListTemp.reversed()
+        
+        print(softwareNameListReverse.count)
+        
+        // dictionary to map appIndex and application name
+        var applicationNamesWithIndex = [Int : String]()
+        
         // check every software in this list
-        for simpleSoftware in softwareNameList {
+        for (appIndex, simpleSoftware) in softwareNameListReverse.enumerated() {
             
+
             let applicationName = simpleSoftware["kCGWindowOwnerName"] as! String
             let applicationBounds = simpleSoftware["kCGWindowBounds"]
+            
+            print("application index and name: ", appIndex, applicationName)
+            applicationNamesWithIndex.updateValue(applicationName, forKey: appIndex)
+            
+            if (applicationName == "universalAccessAuthWarn"){
+                continue
+            }
 
             /*
             {
@@ -107,55 +156,46 @@ class softwareClassify : NSObject {
              Y = 0;
              }
             */
-            
+
             let boundDictionaryFormat = applicationBounds as! NSDictionary
             // print("software name is: ", applicationName)
-            
+
             if (applicationName == "universalAccessAuthWarn"){
                 // if the captured application is system preference, do nothing
             }
             else {
-                // print("bounds in dictionary format", boundDictionaryFormat)
+
+                print(applicationName)
+                print("bounds in dictionary format", boundDictionaryFormat)
                 // dictionary.count == 4
-                
-                var upperLeftXCoordination    = Int()
-                var upperLeftYCoordination    = Int()
-                var initialHeight           = Int()
-                var initialWidth            = Int()
-                
-                var bottomRightXCoordination           = Int()
-                var bottomRightYCoordination           = Int()
-                
-                var firstX  : Int!
-                var firstY  : Int!
-                var height  : Int!
-                var width   : Int!
-                var secondX : Int!
-                var secondY : Int!
-                
-                var newFirstX   : Int!
-                var newFirstY   : Int!
-                var newSecondX  : Int!
-                var newSecondY  : Int!
-                
+
+                var upperLeftXCoordination          = Int()
+                var upperLeftYCoordination          = Int()
+                var initialHeight                   = Int()
+                var initialWidth                    = Int()
+
+                var bottomRightXCoordination        = Int()
+                var bottomRightYCoordination        = Int()
+
+
                 // extract coordination values for each captured application
                 for (key, vaule) in boundDictionaryFormat {
-                    
+
                     if (key as! String) == "X" {
                         upperLeftXCoordination = (boundDictionaryFormat.value(forKey: "X") as! Int)
                         // print("the value of firstX is: ", firstX!)
                     }
-                    
+
                     else if (key as! String) == "Y" {
                         upperLeftYCoordination = ( boundDictionaryFormat.value(forKey: "Y") as! Int )
                         // print("the value of firstY is: ", firstY!)
                     }
-                    
+
                     else if (key as! String == "Width"){
                         initialWidth = (boundDictionaryFormat.value(forKey: "Width") as! Int)
                         // print("the value of secondX is: ", secondX!)
                     }
-                    
+
                     else if (key as! String == "Height"){
                         initialHeight =  (boundDictionaryFormat.value(forKey: "Height") as! Int)
                         // print("the value of secondY is: ", secondY!)
@@ -168,137 +208,442 @@ class softwareClassify : NSObject {
                      Width 1920
                      */
                 }
-                
+
                 // set the coordination for bottom right point
                 bottomRightXCoordination = upperLeftXCoordination + initialWidth
                 bottomRightYCoordination = upperLeftYCoordination + initialHeight
-                
-//                var tempStringArray = [String]()
-//                tempStringArray.append(applicationName)
-//                tempStringArray.append(String(firstX))
-//                tempStringArray.append(String(firstY))
-//                tempStringArray.append(String(width))
-//                tempStringArray.append(String(height))
-//                var tempDic = [applicationName: tempStringArray] as NSDictionary
-                
-                // capturedApplicationsCoordinates.caputredCoordinates.merge(dict: tempDic as! [String : [String]])
-                
-                // get the first and second coordination of the openning application
-                
-//                print("software first x position: ", firstX!)
-//                print("software first y position: ", firstY!)
-//                print("software second x position: ", secondX!)
-//                print("software second y position: ", secondY!)
 
-                
-                
-                // calculate the area of screenshot
-                // pass struct here later
-                let areaOfScreenshot = calculateAreaOfScreenshot(width: 960, height: 1440)
-                print("area of screenshot is: ", areaOfScreenshot)
-                
-                
                 // x, go right, becomes greater
                 // y, go down, becomes greater
                 //
                 // (left, top) (right, bottom)
                 // (upperLeftXCoordination, upperLeftYCoordination) (bottomRightXCoordination, bottomRightYCoordination)
-                
-                let x5 = max(screenShotInformation.firstCoordinationOfX, firstX)
-                let y5 = max(screenShotInformation.firstCoordinationOfY, firstY)
-                let x6 = min(screenShotInformation.secondCoordinationOfX, secondX)
-                let y6 = min(screenShotInformation.secondCoordinationOfY, secondY)
 
                 // coonsider all cases
-                // case 1: if two rectangles have no overlapping area
-                if()
+                // screenshotleft, screenshotRight, screenshotTop, screenshotBottom
+                // (left, top) ------ (right, top)
+                //  |                       |
+                // (left, bottom)-----(right, bottom)
                 
-                // case 2: two rectangles overlap with each other
+                // bottomRightXCoordination,bottomRightYCoordination
+                // upperLeftXCoordination, upperLeftYCoordination
                 
-                // changed here
-                // if (x5 > x6) || (y5 > y6){
-                if (x5 > x6) && (y5 > y6){
-                    print("no overlapping between screenshot and this application")
+                var applicationWindowSet = initialApplicationWindowMatrix(w: initialWidth, h: initialHeight)
+                var currentApplicationInforStuct = applicationInformation()
+                currentApplicationInforStuct.singleApplicationInforTemplate["Left"] = upperLeftXCoordination
+                currentApplicationInforStuct.singleApplicationInforTemplate["Top"] = upperLeftYCoordination
+                currentApplicationInforStuct.singleApplicationInforTemplate["Right"] = bottomRightXCoordination
+                currentApplicationInforStuct.singleApplicationInforTemplate["Bottom"] = bottomRightYCoordination
+                currentApplicationInforStuct.singleApplicationInforTemplate["ApplicationName"] = applicationName
+                var tempDic = wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
+                
+                
+                //
+                
+                
+                print("application left" + String(upperLeftXCoordination))
+                print("application top" + String(upperLeftYCoordination))
+                print("application right" + String(bottomRightXCoordination))
+                print("application bottom" + String(bottomRightYCoordination))
+                print("screenshot left" + String(screenshotleft!))
+                print("screenshot top" + String(screenshotTop!))
+                print("screenshot right" + String(screenshotRight!))
+                print("screenshot bottom" + String(screenshotBottom!))
+                
+                
+                print("application index is :" + String(appIndex))
+                // case 1: screenshot is bigger than applicaiton area
+                if(screenshotleft! < upperLeftXCoordination && screenshotTop! < upperLeftYCoordination && screenshotRight! > bottomRightXCoordination && screenshotBottom! > bottomRightYCoordination){
+                    print("case 1")
+                    // set the matrix
+
+                    let startRow = Int(upperLeftYCoordination) as Int
+                    let endRow = Int(bottomRightYCoordination) as Int
+                    let startCol = Int(upperLeftXCoordination) as Int
+                    let endCol = Int(bottomRightXCoordination) as Int
+                    let indexInterval = Int(1)
+                    for row in stride(from: startRow, through: endRow, by: indexInterval){
+                        for col in stride(from: startCol, through: endCol, by: indexInterval){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    
+                    // append this application information
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                    
+                }
+                // case 2: screenshot is contained in the application area
+                else if (screenshotleft! > upperLeftXCoordination && screenshotTop! > upperLeftYCoordination && screenshotRight! < bottomRightXCoordination && screenshotBottom! < bottomRightYCoordination){
+                    print("case 2")
+                    // set the matrix
+                    let startRow = Int(screenshotTop!) as Int
+                    let endRow = Int(screenshotBottom!) as Int
+                    let startCol = Int(screenshotleft!) as Int
+                    let endCol = Int(screenshotRight!) as Int
+                    let intervalValue = Int(1)
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                }
+                
+                // case 3: application bottom right point is inside the screenshot
+                else if (upperLeftXCoordination < screenshotleft! && upperLeftYCoordination < screenshotTop! && bottomRightXCoordination > screenshotleft! && bottomRightYCoordination > screenshotTop! && bottomRightXCoordination < screenshotRight! && bottomRightYCoordination < screenshotBottom!){
+                    
+                    print("case 3")
+                    let startRow = Int(screenshotTop!) as Int
+                    let endRow = Int(bottomRightYCoordination) as Int
+                    let startCol = Int(screenshotleft!) as Int
+                    let endCol = Int(bottomRightXCoordination) as Int
+                    let intervalValue = Int(1)
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+
+                }
+                // case 4: application upper right point is inside  the screenshot
+                else if (upperLeftXCoordination < screenshotleft! && bottomRightYCoordination > screenshotBottom! && bottomRightXCoordination > screenshotleft! && upperLeftYCoordination < screenshotBottom! && bottomRightXCoordination < screenshotRight! && upperLeftYCoordination > screenshotTop!){
+                    
+                    let startRow = Int(upperLeftYCoordination) as Int
+                    let endRow = Int(screenshotBottom!) as Int
+                    let startCol = Int(screenshotleft!) as Int
+                    let endCol = Int(bottomRightXCoordination) as Int
+                    let intervalValue = Int(1)
+                    print("case 4")
+                    
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                }
+                
+                // case 5: application bottom left point is inside the screenshot
+                else if(upperLeftXCoordination > screenshotleft! && bottomRightYCoordination < screenshotBottom! && bottomRightXCoordination > screenshotRight! && upperLeftYCoordination < screenshotTop! && upperLeftXCoordination < screenshotRight! && bottomRightYCoordination > screenshotTop!){
+                    
+                    
+                    let startRow = Int(screenshotTop!) as Int
+                    let endRow = Int(bottomRightYCoordination) as Int
+                    let startCol = Int(upperLeftXCoordination) as Int
+                    let endCol = Int(screenshotRight!) as Int
+                    let intervalValue = Int(1)
+                    
+                    print("case 5")
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                }
+                // case 6: application upper left point is inside the screenshot
+                
+                else if (upperLeftXCoordination > screenshotleft! && upperLeftYCoordination > screenshotTop! && upperLeftXCoordination < screenshotRight! && upperLeftYCoordination < screenshotBottom! && bottomRightXCoordination > screenshotRight! && bottomRightYCoordination > screenshotBottom!){
+
+                    
+                    let startRow = Int(upperLeftYCoordination) as Int
+                    let endRow = Int(screenshotBottom!) as Int
+                    let startCol = Int(upperLeftXCoordination) as Int
+                    let endCol = Int(screenshotRight!) as Int
+                    let intervalValue = Int(1)
+                    
+                    print("case 6")
+                    
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                }
+                
+                // case 7: application right edge is crossed with screenshot
+                else if(bottomRightXCoordination > screenshotleft! && bottomRightXCoordination < screenshotRight! && screenshotleft! > upperLeftXCoordination){
+                    let minTop = min(upperLeftYCoordination, screenshotTop!)
+                    let minBot = min(bottomRightYCoordination, screenshotBottom!)
+                    let startCol = Int(screenshotleft!) as Int
+                    let endCol = Int(bottomRightXCoordination) as Int
+                    let intervalValue = Int(1)
+                    
+                    for row in stride(from: minTop, through: minBot, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    print("case 7")
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                }
+                // case 8: application left edge is crossed with screenshot
+                else if (screenshotleft! < upperLeftXCoordination && upperLeftXCoordination < screenshotRight! && screenshotRight! < bottomRightXCoordination){
+                    
+                    let minTop = min(upperLeftYCoordination, screenshotTop!)
+                    let minBot = min(bottomRightYCoordination, screenshotBottom!)
+                    let startCol = Int(upperLeftXCoordination) as Int
+                    let endCol = Int(screenshotRight!) as Int
+                    let intervalValue = Int(1)
+                    for row in stride(from: minTop, through: minBot, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    print("case 8")
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                }
+                // case 9: application bottom edge is crossed with screenshot
+                else if(bottomRightYCoordination > screenshotTop! && bottomRightYCoordination < screenshotBottom! && upperLeftYCoordination > screenshotTop!){
+                    
+                    let minLeft = min(screenshotleft!, upperLeftXCoordination)
+                    let minRight = min(screenshotRight!, bottomRightXCoordination)
+                    let startRow = Int(screenshotTop!) as Int
+                    let endRow = Int(upperLeftYCoordination) as Int
+                    let intervalValue = Int(1)
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: minLeft, through: minRight, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    print("case 9")
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                    
+                }
+                // case 10: application top edge is crossed with screenshot
+                else if(upperLeftYCoordination > screenshotTop! && upperLeftYCoordination < screenshotBottom! && bottomRightYCoordination > screenshotBottom!){
+                    
+                    let minLeft = min(screenshotleft!, upperLeftXCoordination)
+                    let minRight = min(screenshotRight!, bottomRightXCoordination)
+                    let startRow = Int(upperLeftYCoordination) as Int
+                    let endRow = Int(screenshotBottom!) as Int
+                    let intervalValue = Int(1)
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: minLeft, through: minRight, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    print("case 10")
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                }
+                // case 11: application right and left edges are crossed with screenshot
+                else if (upperLeftXCoordination > screenshotleft! && bottomRightXCoordination < screenshotRight! && upperLeftYCoordination > screenshotTop! && bottomRightYCoordination > screenshotBottom!){
+                    
+                    let intervalValue = Int(1)
+                    let startRow = Int(screenshotTop!) as Int
+                    let endRow = Int(screenshotBottom!) as Int
+                    let startCol = Int(upperLeftXCoordination) as Int
+                    let endCol = Int(bottomRightXCoordination) as Int
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    print("case 11")
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                }
+                // case 12: application bottom and top edges are crossed with screenshot
+                else if (upperLeftYCoordination > screenshotTop! && bottomRightYCoordination < screenshotBottom! && upperLeftXCoordination < screenshotleft! && bottomRightXCoordination > screenshotRight!){
+                    
+                    let intervalValue = Int(1)
+                    let startRow = Int(upperLeftYCoordination) as Int
+                    let endRow = Int(bottomRightYCoordination) as Int
+                    let startCol = Int(screenshotleft!) as Int
+                    let endCol = Int(screenshotRight!) as Int
+                    
+                    for row in stride(from: startRow, through: endRow, by: intervalValue){
+                        for col in stride(from: startCol, through: endCol, by: intervalValue){
+                            wholeScreenSet[row][col] = appIndex
+                        }
+                    }
+                    print("case 12")
+                    // finish the matrix calculation
+                    
+                    tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                    wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                    
+                    
+                }
+                
+                // two rectangles have no overlapping area
+                else{
+                    // do nothing
+                    print("case 13, no overlapping at all")
                     continue
                 }
-                else if ((x5 > x6) || (y5 > y6)){
-                    print("(x5 > x6) || (y5 > y6)")
-                }
-                else {
-                    newFirstX = x5
-                    newFirstY = y5
-                    newSecondX = x6
-                    newSecondY = y6
-                    print("newFirstX: ", newFirstX!)
-                    print("newFirstY: ", newFirstY!)
-                    print("newSecondX:  ", newSecondX!)
-                    print("newSecondY: ", newSecondY!)
-                }
                 
-                
-                let IntersectedArea = abs(newFirstX - newSecondX) * abs(newFirstY - newSecondY)
-                print("Intersected Area is: ", IntersectedArea)
-                print("tempFirstX: ", tempFirstx)
-                print("tempFirstY: ", tempFirstY)
-                print("tempSecondX: ", tempSecondX)
-                print("tempSecondY: ", tempSecondY)
-                let tempArea = twoRectangleOverlapArea(x1: tempFirstx, x2: tempSecondX, x3: newFirstX, x4: newSecondX, y1: tempFirstY, y2: tempSecondY, y3: newFirstY, y4: newSecondY)
-                print("temp area is: ", tempArea)
-                let validArea = IntersectedArea - tempArea
-                
-                tempFirstx = newFirstX
-                tempFirstY = newFirstY
-                tempSecondX = newSecondX
-                tempSecondY = newSecondY
-                
-                print("valid Area: ", validArea)
-                if (Double(validArea) / Double(areaOfScreenshot)) > 0 {
-                    print("valid / total area is: ", (Double(validArea) / Double(areaOfScreenshot)))
-                    applicationNameStack.append(applicationName)
-                }
-                totoalRectArea = totoalRectArea + validArea
-                print("totalRectArea is: ", totoalRectArea)
-                if (Double(totoalRectArea) / Double(areaOfScreenshot)) >= 1 {
-                    print("app total / total area is: ", (Double(totoalRectArea) / Double(areaOfScreenshot)))
-                    break
-                }
             }
 
         }
         
         
-        
-        
-        print("application name list stack: ", applicationNameStack)
-        print("all applications coordinates in selected part of screenshots", capturedApplicationsCoordinates.caputredCoordinates)
-        variables.recordedApplicationNameStack = applicationNameStack
-        variables.numberofRecordedApplication = applicationNameStack.count
-        alternativeUserInterfaceVariables.capturedApplicationNumber = applicationNameStack.count
-        return applicationNameStack
 
-//        let softwareNameList1 = infoList1.filter{ ($0["kCGWindowLayer"] as! Int == 0) && ($0["kCGWindowOwnerName"] as? String != nil) }
-//
-//        print("kcgWindowName1 is not nil", softwareNameList1.count)
-        //print("visibleWindows", visibleWindows)
-    }
+        var tempVisiableApplicationIndexSet = Set<Int>()
+        let startRow = Int(screenshotTop!) as Int
+        let endRow = Int(screenshotBottom!) as Int
+        let startCol = Int(screenshotleft!) as Int
+        let endCol = Int(screenshotRight!) as Int
+        for row in stride(from: startRow, through: endRow, by: Int(1)){
+            for col in stride(from: startCol, through: endCol, by: Int(1)){
+                if (wholeScreenSet[row][col] != -1){
+                    if(!tempVisiableApplicationIndexSet.contains(wholeScreenSet[row][col])){
+                        tempVisiableApplicationIndexSet.insert(wholeScreenSet[row][col])
+                    }
+                }
+            }
+        }
+        print(tempVisiableApplicationIndexSet.count)
+        for index in tempVisiableApplicationIndexSet{
+            print("application index: ", index)
+        }
+        for number in tempVisiableApplicationIndexSet{
+            let tempAppName = applicationNamesWithIndex[number]
+            visibleApplicationNameStack.append(tempAppName ?? "error happens in extracting index from set!")
+        }
 
-    func twoRectangleOverlapArea(x1 : Int, x2 : Int, x3 : Int, x4 : Int, y1 : Int, y2 : Int, y3 : Int, y4 : Int) -> Int{
-        let x5 = max(x1, x3)
-        let y5 = max(y1, y3)
-        let x6 = min(x2, x4)
-        let y6 = min(y2, y4)
-        if (x5 > x6 || y5 > y6){
-            print("two rectangles are not intersected with others")
-            return 0
-        }
-        else {
-           return (abs(x5 - x6) * abs(y5 - y6))
-        }
+
+        print(visibleApplicationNameStack)
+//        variables.recordedApplicationNameStack = applicationNameStack
+//        variables.numberofRecordedApplication = applicationNameStack.count
+//        alternativeUserInterfaceVariables.capturedApplicationNumber = applicationNameStack.count
+        
+        return visibleApplicationNameStack
+
         
     }
     
+    func getOpenedRunningApplicaionNameListWithBitMasking(imageInfor: screenshotCaptureRegion, wholeInfor : inout screenshotInformation) -> Array<String>{
+        
+        var visibleApplicationNameStack = [String]()
+        var downSampleRatio = Int()
+        
+        let screenshotWidth = imageInfor.screenshotRegion["Width"]
+        let screenshotHeight = imageInfor.screenshotRegion["Height"]
+        let screenshotleft = imageInfor.screenshotRegion["Left"]
+        let screenshotRight = imageInfor.screenshotRegion["Right"]
+        let screenshotTop = imageInfor.screenshotRegion["Top"]
+        let screenshotBottom = imageInfor.screenshotRegion["Bottom"]
+        
+        
+        var allApplicationNameList = [String]()
+        var allApplicationPIDList = [String]()
+        let softwareInformationList = getOpenningSoftwareInformation()
+        
+        for singleApplication in softwareInformationList {
+            let singleApplicationName = singleApplication["kCGWindowOwnerName"] as! String
+            print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
+            let singleApplicationPIDName = String(describing: singleApplication["kCGWindowOwnerPID"])
+            if (!allApplicationPIDList.contains(singleApplicationPIDName)){
+                if singleApplicationName != "universalAccessAuthWarn" {
+                    allApplicationNameList.append(singleApplicationName)
+                    allApplicationPIDList.append(singleApplicationPIDName)
+                }
+            }
+        }
+        print("opened software name list in order: ", allApplicationNameList)
+        
+        let softwareNameListTemp = softwareInformationList
+        
+        for (appIndex, simpleSoftware) in softwareNameListTemp.enumerated() {
+            let applicationName = simpleSoftware["kCGWindowOwnerName"] as! String
+            let applicationBounds = simpleSoftware["kCGWindowBounds"]
+            
+            print("application index and name: ", appIndex, applicationName)
+            
+            if (applicationName == "universalAccessAuthWarn"){
+                continue
+            }
+
+            /*
+            {
+             Height = 900;
+             Width = 1440;
+             X = 0;
+             Y = 0;
+             }
+            */
+
+            let boundDictionaryFormat = applicationBounds as! NSDictionary
+            // print("software name is: ", applicationName)
+
+
+            else {
+                // code here
+                
+            }
+            // end of for loop
+        }
+        
+        
+        
+        return visibleApplicationNameStack
+    }
+
+    
     func calculateAreaOfScreenshot(width: Int, height: Int) -> Int{
         return width * height
+    }
+    
+    func initialWholeScreenMatrix() -> [[Int]] {
+        let currentMainScreen = NSScreen.main
+        let rectArea = currentMainScreen!.frame
+        let mainScreenHeight = Int(rectArea.size.height)
+        let mainScreenWidth = Int(rectArea.size.width)
+        let wholeScreenMatrix = [[Int]](repeating: [Int](repeating: -1, count: mainScreenWidth), count: mainScreenHeight)
+//        print(wholeScreenMatrix.count)
+//        print(wholeScreenMatrix[0].count)
+        print(wholeScreenMatrix[200][300])
+        return wholeScreenMatrix
+    }
+    
+    func initialApplicationWindowMatrix(w : Int, h : Int) ->[[Int]]{
+        // h(height) is row, w(width) is column
+        let applicationWindowMatrix = [[Int]](repeating: [Int](repeating: -1, count: w), count: h)
+        return applicationWindowMatrix
     }
     
 }

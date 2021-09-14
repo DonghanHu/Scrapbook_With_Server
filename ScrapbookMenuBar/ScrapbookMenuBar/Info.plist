@@ -4,6 +4,8 @@
 <dict>
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string></string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string></string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSUIElement</key>

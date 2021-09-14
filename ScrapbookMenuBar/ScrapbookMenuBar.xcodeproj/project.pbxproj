@@ -15,6 +15,8 @@
 		EA54EBD626DDA6E70049FEA4 /* createJsonFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBD526DDA6E70049FEA4 /* createJsonFile.swift */; };
 		EA54EBD826DDD0350049FEA4 /* takeScreenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBD726DDD0350049FEA4 /* takeScreenshot.swift */; };
 		EA54EBDA26DED0180049FEA4 /* softwareClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBD926DED0180049FEA4 /* softwareClassification.swift */; };
+		EA5FB77C26E7DF60001005EB /* csvFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5FB77B26E7DF60001005EB /* csvFiles.swift */; };
+		EA5FB77F26E96988001005EB /* AppleScripts.csv in Resources */ = {isa = PBXBuildFile; fileRef = EA5FB77E26E96988001005EB /* AppleScripts.csv */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,8 @@
 		EA54EBD526DDA6E70049FEA4 /* createJsonFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createJsonFile.swift; sourceTree = "<group>"; };
 		EA54EBD726DDD0350049FEA4 /* takeScreenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = takeScreenshot.swift; sourceTree = "<group>"; };
 		EA54EBD926DED0180049FEA4 /* softwareClassification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = softwareClassification.swift; sourceTree = "<group>"; };
+		EA5FB77B26E7DF60001005EB /* csvFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = csvFiles.swift; sourceTree = "<group>"; };
+		EA5FB77E26E96988001005EB /* AppleScripts.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AppleScripts.csv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +65,7 @@
 		EA54EBC126DD5D5B0049FEA4 /* ScrapbookMenuBar */ = {
 			isa = PBXGroup;
 			children = (
+				EA5FB77E26E96988001005EB /* AppleScripts.csv */,
 				EA54EBC226DD5D5B0049FEA4 /* AppDelegate.swift */,
 				EA54EBC426DD5D5B0049FEA4 /* ViewController.swift */,
 				EA54EBC626DD5D5D0049FEA4 /* Assets.xcassets */,
@@ -71,6 +76,7 @@
 				EA54EBD526DDA6E70049FEA4 /* createJsonFile.swift */,
 				EA54EBD726DDD0350049FEA4 /* takeScreenshot.swift */,
 				EA54EBD926DED0180049FEA4 /* softwareClassification.swift */,
+				EA5FB77B26E7DF60001005EB /* csvFiles.swift */,
 			);
 			path = ScrapbookMenuBar;
 			sourceTree = "<group>";
@@ -133,6 +139,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA5FB77F26E96988001005EB /* AppleScripts.csv in Resources */,
 				EA54EBC726DD5D5D0049FEA4 /* Assets.xcassets in Resources */,
 				EA54EBCA26DD5D5D0049FEA4 /* Main.storyboard in Resources */,
 			);
@@ -150,6 +157,7 @@
 				EA54EBC526DD5D5B0049FEA4 /* ViewController.swift in Sources */,
 				EA54EBD826DDD0350049FEA4 /* takeScreenshot.swift in Sources */,
 				EA54EBDA26DED0180049FEA4 /* softwareClassification.swift in Sources */,
+				EA5FB77C26E7DF60001005EB /* csvFiles.swift in Sources */,
 				EA54EBC326DD5D5B0049FEA4 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

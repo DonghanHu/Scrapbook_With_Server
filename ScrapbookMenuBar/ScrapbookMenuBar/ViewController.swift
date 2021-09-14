@@ -37,6 +37,9 @@ class ViewController: NSViewController {
             print("the menu bar window is not closed successfully.")
         }
         
+//        let csvFilesOperationsHandler = csvFilesOperations()
+//        csvFilesOperationsHandler.readCSVFile(filePath: "AppleScripts")
+        
         let takeScreenshotHandler = Screencapture()
         takeScreenshotHandler.selectScreenCapture()
         print("click button: take screenshot for a selected area.")
@@ -48,6 +51,9 @@ class ViewController: NSViewController {
             try self.view.window?.close()
         } catch  {
             print("the menu bar window is not closed successfully.")
+        }
+        do{
+            sleep(1)
         }
         
         let takeScreenshotHandler = Screencapture()

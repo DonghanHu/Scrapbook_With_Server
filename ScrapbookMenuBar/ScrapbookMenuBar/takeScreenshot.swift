@@ -41,12 +41,28 @@ class Screencapture : NSObject {
     
     
     
+    var top     = Int()
+    var bottom  = Int()
+    var left    = Int()
+    var right   = Int()
+    var width   = Int()
+    var height  = Int()
+    
+    var screenshotCaseIndex = 0
     
     
     // Method of taking screenshot by using terminate command line code
     // /usr/sbin/screencapture
     // -m         only capture the main monitor, undefined if -i is set
     func selectScreenCapture(){
+        
+        
+        var screenshotStruct = screenshotInformation()
+        // if degub
+        print(screenshotStruct.metaDataSingleRecordingTemplate)
+        print(type(of: screenshotStruct))
+        
+        
         
         let date = Date()
         let dateFormatter = DateFormatter()
@@ -55,7 +71,12 @@ class Screencapture : NSObject {
         capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
         
-        
+        screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
+        screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
+        let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
+        screenshotStruct.metaDataSingleRecordingTemplate["ImagePath"] = screenshotPathString
+        screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = [] as! [[String : Any]]
+        print(type(of: screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"]))
         
 //        Wednesday, Sep 12, 2018
 //        dateFormatter.dateFormat = "EEEE, MMM d, yyyy"
@@ -71,7 +92,6 @@ class Screencapture : NSObject {
         let tempScreenshotPath = capturedScreenshotInformation.capturedScreenshotPathString
         arguments.append(tempScreenshotPath)
         
-        
 //
 //        variables.latesScreenShotPathString = variables.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
 //        variables.latestScreenShotTime = dateString
@@ -83,23 +103,21 @@ class Screencapture : NSObject {
         let outpipe = Pipe()
         task.standardOutput = outpipe
         task.standardError = outpipe
+        
 
         
         //task.launch() // asynchronous call.
         do {
-            try
-                //
-                
-                task.run()
-            
+            try task.run()
                 // detect once mouse clicked
                 // mouseClick()
             
             
-        } catch {}
+        } catch {
+            print("something went wrong")
+        }
 
         // wait until the task is finished
-        
         
         let outputData = outpipe.fileHandleForReading.readDataToEndOfFile()
         let resultInformation = String(data: outputData, encoding: .utf8)
@@ -107,11 +125,41 @@ class Screencapture : NSObject {
         // output informaion is String format
         let tempScreenshotData = ( resultInformation! )
         // print("output", output!)
+        
+        print("If debug: before printing mouse location")
+        
+        var touchPoint = [NSEvent(), mouseLocation] as [Any]
+        
+        var mouseHandler = NSEvent()
+        print(touchPoint)
+        
+        let mouseXLocation = Int(NSEvent.mouseLocation.x)
+        let mouseYLocation = Int(NSEvent.mouseLocation.y)
+        print("x & y", mouseXLocation, mouseYLocation)
+        
         print ("ScreenshotData", tempScreenshotData)
+        
+        // get the main screen paramters, width and height
+        let currentMainScreen = NSScreen.main
+        let rectArea = currentMainScreen!.frame
+        let mainScreenHeight = Int(rectArea.size.height)
+        let mainScreenWidth = Int(rectArea.size.width)
+        
+        let mouseEndXLocation = mouseXLocation
+        let mouseEndYLocation = mainScreenHeight - mouseYLocation
+        
         
         
         // if it contains "captureRect", successfully captured a screenshot
         // print current mouse location
+        
+//        var mouseLocation: NSPoint { NSEvent.mouseLocation }
+//        NSEvent.addGlobalMonitorForEvents(matching: [.rightMouseDragged, .leftMouseDragged]) { _ in
+//            //print(String(format: "%.0f, %.0f", self.mouseLocation().x, self.mouseLocation.y))
+//            print("x & y: ")
+//            print(mouseLocation.x)
+//            print(mouseLocation.y)
+//        }
         
 
         
@@ -224,10 +272,44 @@ class Screencapture : NSObject {
             print(secondCoordinationXInt) // screenshot width
             print(secondCoordinationYInt)   // screenshot height
             
-            secondCoordinationXInt = secondCoordinationXInt + firstCoordinationXInt
-            secondCoordinationYInt = firstCoordinationYInt + secondCoordinationYInt
-            print(secondCoordinationXInt)
-            print(secondCoordinationYInt)
+            // four cases:
+            // 1: upper left -> bottom right
+            // 2: bottom left -> upper right
+            // 3: upper right -> bottom left
+            // 4: bottom right -> upper left
+            let mouseStartXLocation = firstCoordinationXInt
+            let mouseStartYLocation = firstCoordinationYInt
+            
+            // default case is 0, can be used as indicating a failure of taking screenshot
+            // corner case check
+            if (mouseStartXLocation == mouseEndXLocation || mouseEndYLocation == mouseStartXLocation){
+                screenshotCaseIndex = 0
+            }
+            // 1 -------2
+            // |        |
+            // 3 -------4
+            
+            // case 1:
+            if (mouseEndXLocation > mouseStartXLocation && mouseEndYLocation > mouseStartYLocation){
+                screenshotCaseIndex = 1
+            }
+            // case 2
+            else if (mouseEndXLocation < mouseStartXLocation && mouseEndYLocation > mouseStartXLocation){
+                screenshotCaseIndex = 2
+            }
+            else if(mouseEndXLocation > mouseStartXLocation && mouseEndYLocation < mouseStartYLocation){
+                screenshotCaseIndex = 3
+            }
+            else if(mouseEndXLocation < mouseStartXLocation && mouseEndYLocation < mouseStartYLocation){
+                screenshotCaseIndex = 4
+            }
+                // code here
+            else {
+                
+            }
+            
+            secondCoordinationXInt = mouseEndXLocation
+            secondCoordinationYInt = mouseEndYLocation
             
 //            screenShotInformation.firstCoordinationOfX = firstCoordinationXInt
 //            screenShotInformation.firstCoordinationOfY = firstCoordinationYInt
@@ -240,52 +322,111 @@ class Screencapture : NSObject {
             
             // takeScreenshotSuccess = true
             
-            let width = calculateWidth(valueOne: firstCoordinationXInt, valueTwo: secondCoordinationXInt)
-            let height = calculateHeight(valueOne: firstCoordinationYInt, valueTwo: secondCoordinationYInt)
-            
-            // top, left, bottom, right
-            // need revision here
-            let top = min(firstCoordinationYInt, secondCoordinationYInt)
-            let bottom = max(firstCoordinationYInt, secondCoordinationYInt)
-            let left = min(firstCoordinationXInt, secondCoordinationXInt)
-            let right = max(firstCoordinationXInt, secondCoordinationXInt)
-            
-            
-            print(top)
-            print(bottom)
-            print(left)
-            print(right)
-            
-//            var wholeImageInfor = [String]()
-//            wholeImageInfor.append("whole")
-//            let stringX = String(firstCoordinationXInt)
-//            let stringY = String(firstCoordinationYInt)
-//            let stringWidth = String(width)
-//            let stringHeight = String(height)
-//            wholeImageInfor.append(stringX)
-//            wholeImageInfor.append(stringY)
-//            wholeImageInfor.append(stringWidth)
-//            wholeImageInfor.append(stringHeight)
-//            var tempdic = ["whole": wholeImageInfor] as NSDictionary
-
-            
-            let currentScreenshotReginInfor = screenshotCaptureRegion(left: firstCoordinationXInt, top: firstCoordinationYInt, width: width, height: height)
+            let tempWidthValue = calculateWidth(valueOne: firstCoordinationXInt, valueTwo: secondCoordinationXInt)
+            let tempHeightValue = calculateHeight(valueOne: firstCoordinationYInt, valueTwo: secondCoordinationYInt)
             
             
             
-            // capturedApplicationsCoordinates.caputredCoordinates.merge(dict: tempdic as! [String : [String]])
-            // print("the captured whole image informaiton", capturedApplicationsCoordinates.caputredCoordinates)
+            // 1 -------2
+            // |        |
+            // 3 -------4
+            if (screenshotCaseIndex == 1){
+                top     = mouseStartYLocation
+                bottom  = mouseEndYLocation
+                left    = mouseStartXLocation
+                right = mouseEndXLocation
+            }
+            // bug code here
+            else if (screenshotCaseIndex == 2){
+                top     = mouseStartYLocation
+                bottom  = mouseEndYLocation
+                left    = mouseEndXLocation
+                right   = mouseStartXLocation
+            }
+            else if (screenshotCaseIndex == 3){
+                top     = mouseEndYLocation
+                bottom  = mouseStartYLocation
+                left    = mouseEndXLocation
+                right   = mouseStartXLocation
+            }
+            else if (screenshotCaseIndex == 4){
+                top     = mouseEndYLocation
+                bottom  = mouseStartYLocation
+                left    = mouseEndXLocation
+                right   = mouseStartXLocation
+            }
+            
+            width = tempWidthValue
+            height = tempHeightValue
             
         }
         
+        if (screenshotCaseIndex == 0){
+            takeScreenshotSuccess = false
+            print("the captured screenshot is not valid")
+            // end this function
+            return
+        }
+        else {
+            takeScreenshotSuccess = true
+        }
         
-        takeScreenshotSuccess = true
+        // assgin values into screenshot region struct
+        let currentScreenshotReginInfor = screenshotCaptureRegion(left: left, top : top, right : right, bottom : bottom, width : width, height : height)
+        
+        // 
+        screenshotStruct.metaDataSingleRecordingTemplate["CaptureRegion"] = currentScreenshotReginInfor
+        
+
+        // wait until all tasks finished, including saving pic, etc
         task.waitUntilExit()
         
         if (takeScreenshotSuccess){
             
+            // get captured application names
+            print("screenshot informaiont:")
+            print(currentScreenshotReginInfor)
+            print(type(of: currentScreenshotReginInfor))
+            
+            let applicationNameStackHandler = softwareClassify()
+            
+            
+            // applicationNameStackHandler.test(imageInfor: currentScreenshotReginInfor)
+//            let visiableApplicationNameArray = applicationNameStackHandler.getOpenedRunningApplicaionNameList(imageInfor: currentScreenshotReginInfor, wholeInfor : screenshotStruct)
+            let visiableApplicationNameArray = applicationNameStackHandler.getOpenedRunningApplicaionNameList(imageInfor: currentScreenshotReginInfor, wholeInfor : &screenshotStruct)
+            
+            
+            
+            print(visiableApplicationNameArray)
+            print("screenshot informaiton is: ")
+            print(screenshotStruct)
+            
+            // get metadata for each application saved in this struct
+            let csvFilesOperationsHandler = csvFilesOperations()
+            
+            let csvContent = csvFilesOperationsHandler.readCSVFile(filePath: "AppleScripts")
+            let csvContentRow = csvContent.count
+            let csvContentCol = csvContent[0].count
+            
+            let applicationInformationDic = screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
+            
+            // two for loops to search application name and get metdata
+            for singleAppInfor in applicationInformationDic{
+                let appName = singleAppInfor["ApplicationName"]
+                
+                
+            }
+            
+            
+            
+            
+            // applicationNameStack.test(data: currentScreenshotReginInfor)
+            // let applicationNameStack = softwareClassify.getOpenedRunningApplicaionNameList(data: currentScreenshotReginInfor)
+
+            
             // let applicationNameStack = softeareClassificationHandler.screenAboveWindowListPrint()
             // let applicationNameStackLength = applicationNameStack.count
+            
             // applescriptHandler.applicationMetaData(applicationNameStack: applicationNameStack)
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
@@ -307,25 +448,6 @@ class Screencapture : NSObject {
         else {
             print("the action of taking a screenshot failed. please repeat your action.")
         }
-        
-        
-        
-        
-        // print("output", output1)
-        
-        // mouseLocation()
-        
-        
-        // softeareClassifyHandler.frontmostApplication()
-        
-        // timerDetectMouseClickAction.invalidate()
-//        print("timer detecting mouse action has been stopped.")
-        
-        //pause for 0.5 second
-        //sleep(UInt32(0.5))
-        
-
-
         
     }
 
@@ -368,7 +490,7 @@ class Screencapture : NSObject {
     }
     
     
-    
+    // taks screenshot for the whole screen, still need revise
     func wholeScreenCapture(){
 
         // let secondsToDelay = 5.0
@@ -418,18 +540,13 @@ class Screencapture : NSObject {
         // get the main screen paramters, width and height
         let currentMainScreen = NSScreen.main
         let rectArea = currentMainScreen!.frame
+        
+        // check here again, -1 or not
+        
         let mainScreenHeight = rectArea.size.height
         let mainScreenWidth = rectArea.size.width
         
-//        print("height", height)
-//        print("width", width)
 
-//        screenShotInformation.firstCoordinationOfX = 0
-//        screenShotInformation.firstCoordinationOfY = 0
-//        screenShotInformation.secondCoordinationOfX = Int(width)
-//        screenShotInformation.secondCoordinationOfY = Int(height)
-//        alternativeUserInterfaceVariables.capturedApplicationCount = 0
-//        alternativeUserInterfaceVariables.capturedApplicationNumber = 0
         let firstCoordinationOfX = 0
         let firstCoordinationOfY = 0
         let secondCoordinationOfX = Int(mainScreenWidth)
@@ -447,8 +564,10 @@ class Screencapture : NSObject {
 //            let applicationNameStack = softeareClassificationHandler.screenAboveWindowListPrint()
 //            // let applicationNameStackLength = applicationNameStack.count
 //            applescriptHandler.applicationMetaData(applicationNameStack: applicationNameStack)
+            
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
-
+            // let applicationNameStack = softwareClassify.getOpenedRunningApplicaionNameList()
+            
 //            let temp2 : NSViewController = testViewController()
 //            let subWindow2 = NSWindow(contentViewController: temp2)
 //            let subWindowController2 = NSWindowController(window: subWindow2)
@@ -464,3 +583,4 @@ class Screencapture : NSObject {
     // end of class
     
 }
+
