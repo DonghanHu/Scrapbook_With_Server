@@ -7,48 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "95552B31-A157-482F-A32B-3A71E863586D"
+            uuid = "5BF84917-6ACB-4C75-AB57-F11F6FC11CE1"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScrapbookMenuBar/takeScreenshot.swift"
+            filePath = "ScrapbookMenuBar/softwareClassification.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "312"
-            endingLineNumber = "312"
-            landmarkName = "selectScreenCapture()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "333D9799-A9B4-4B83-8D22-D3DB2FAC9874"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScrapbookMenuBar/takeScreenshot.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "363"
-            endingLineNumber = "363"
-            landmarkName = "selectScreenCapture()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4AFE71F1-948B-4800-BDB9-10B050E7A9B0"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScrapbookMenuBar/takeScreenshot.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
-            landmarkName = "selectScreenCapture()"
+            startingLineNumber = "735"
+            endingLineNumber = "735"
+            landmarkName = "getOpenedRunningApplicaionNameListWithBitMasking(imageInfor:wholeInfor:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

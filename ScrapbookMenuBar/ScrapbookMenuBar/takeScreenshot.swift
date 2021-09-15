@@ -48,7 +48,7 @@ class Screencapture : NSObject {
     var width   = Int()
     var height  = Int()
     
-    var screenshotCaseIndex = 0
+    var screenshotCaseIndex = 1
     
     
     // Method of taking screenshot by using terminate command line code
@@ -147,6 +147,8 @@ class Screencapture : NSObject {
         
         let mouseEndXLocation = mouseXLocation
         let mouseEndYLocation = mainScreenHeight - mouseYLocation
+        
+        
         
         
         
@@ -272,6 +274,11 @@ class Screencapture : NSObject {
             print(secondCoordinationXInt) // screenshot width
             print(secondCoordinationYInt)   // screenshot height
             
+            let screenshotUpperLeftX = firstCoordinationXInt
+            let screenshotUpperLeftY = firstCoordinationYInt
+            let screenshotWidthInRect = secondCoordinationXInt
+            let screenshotHeightInRect = secondCoordinationYInt
+            
             // four cases:
             // 1: upper left -> bottom right
             // 2: bottom left -> upper right
@@ -282,31 +289,36 @@ class Screencapture : NSObject {
             
             // default case is 0, can be used as indicating a failure of taking screenshot
             // corner case check
-            if (mouseStartXLocation == mouseEndXLocation || mouseEndYLocation == mouseStartXLocation){
+            
+//            if (mouseStartXLocation == mouseEndXLocation || mouseEndYLocation == mouseStartXLocation){
+//                screenshotCaseIndex = 0
+//            }
+            
+            if(screenshotHeightInRect == 0 || screenshotWidthInRect == 0){
                 screenshotCaseIndex = 0
             }
             // 1 -------2
             // |        |
             // 3 -------4
             
-            // case 1:
-            if (mouseEndXLocation > mouseStartXLocation && mouseEndYLocation > mouseStartYLocation){
-                screenshotCaseIndex = 1
-            }
-            // case 2
-            else if (mouseEndXLocation < mouseStartXLocation && mouseEndYLocation > mouseStartXLocation){
-                screenshotCaseIndex = 2
-            }
-            else if(mouseEndXLocation > mouseStartXLocation && mouseEndYLocation < mouseStartYLocation){
-                screenshotCaseIndex = 3
-            }
-            else if(mouseEndXLocation < mouseStartXLocation && mouseEndYLocation < mouseStartYLocation){
-                screenshotCaseIndex = 4
-            }
-                // code here
-            else {
-                
-            }
+//            // case 1:
+//            if (mouseEndXLocation > mouseStartXLocation && mouseEndYLocation > mouseStartYLocation){
+//                screenshotCaseIndex = 1
+//            }
+//            // case 2
+//            else if (mouseEndXLocation < mouseStartXLocation && mouseEndYLocation > mouseStartXLocation){
+//                screenshotCaseIndex = 2
+//            }
+//            else if(mouseEndXLocation > mouseStartXLocation && mouseEndYLocation < mouseStartYLocation){
+//                screenshotCaseIndex = 3
+//            }
+//            else if(mouseEndXLocation < mouseStartXLocation && mouseEndYLocation < mouseStartYLocation){
+//                screenshotCaseIndex = 4
+//            }
+//                // code here
+//            else {
+//
+//            }
             
             secondCoordinationXInt = mouseEndXLocation
             secondCoordinationYInt = mouseEndYLocation
@@ -330,34 +342,54 @@ class Screencapture : NSObject {
             // 1 -------2
             // |        |
             // 3 -------4
-            if (screenshotCaseIndex == 1){
-                top     = mouseStartYLocation
-                bottom  = mouseEndYLocation
-                left    = mouseStartXLocation
-                right = mouseEndXLocation
-            }
-            // bug code here
-            else if (screenshotCaseIndex == 2){
-                top     = mouseStartYLocation
-                bottom  = mouseEndYLocation
-                left    = mouseEndXLocation
-                right   = mouseStartXLocation
-            }
-            else if (screenshotCaseIndex == 3){
-                top     = mouseEndYLocation
-                bottom  = mouseStartYLocation
-                left    = mouseEndXLocation
-                right   = mouseStartXLocation
-            }
-            else if (screenshotCaseIndex == 4){
-                top     = mouseEndYLocation
-                bottom  = mouseStartYLocation
-                left    = mouseEndXLocation
-                right   = mouseStartXLocation
-            }
+//            if (screenshotCaseIndex == 1){
+//                top     = mouseStartYLocation
+//                bottom  = mouseEndYLocation
+//                left    = mouseStartXLocation
+//                right = mouseEndXLocation
+//            }
+//            // bug code here
+//            else if (screenshotCaseIndex == 2){
+//                top     = mouseStartYLocation
+//                bottom  = mouseEndYLocation
+//                left    = mouseEndXLocation
+//                right   = mouseStartXLocation
+//            }
+//            else if (screenshotCaseIndex == 3){
+//                top     = mouseEndYLocation
+//                bottom  = mouseStartYLocation
+//                left    = mouseEndXLocation
+//                right   = mouseStartXLocation
+//            }
+//            else if (screenshotCaseIndex == 4){
+//                top     = mouseEndYLocation
+//                bottom  = mouseStartYLocation
+//                left    = mouseEndXLocation
+//                right   = mouseStartXLocation
+//            }
             
             width = tempWidthValue
             height = tempHeightValue
+            
+            
+            /*
+             ignore previous screenshotCaseIndex, expcet 0
+             
+             */
+            
+            top = Int(screenshotUpperLeftY)
+            bottom = Int(screenshotUpperLeftY) + Int(screenshotHeightInRect)
+            left = Int(screenshotUpperLeftX)
+            right = Int(screenshotUpperLeftX) + Int(screenshotWidthInRect)
+            width = Int(screenshotWidthInRect)
+            height = Int(screenshotHeightInRect)
+            
+            
+            print(top) // width, which is x
+            print(bottom) // height, which is y
+            print(left) // screenshot width
+            print(right)   // screenshot height
+            
             
         }
         
@@ -391,29 +423,42 @@ class Screencapture : NSObject {
             let applicationNameStackHandler = softwareClassify()
             
             
-            // applicationNameStackHandler.test(imageInfor: currentScreenshotReginInfor)
-//            let visiableApplicationNameArray = applicationNameStackHandler.getOpenedRunningApplicaionNameList(imageInfor: currentScreenshotReginInfor, wholeInfor : screenshotStruct)
-            let visiableApplicationNameArray = applicationNameStackHandler.getOpenedRunningApplicaionNameList(imageInfor: currentScreenshotReginInfor, wholeInfor : &screenshotStruct)
+            
+            // from old algorithm
+            // let visiableApplicationNameArray = applicationNameStackHandler.getOpenedRunningApplicaionNameList(imageInfor: currentScreenshotReginInfor, wholeInfor : &screenshotStruct)
+            
+            // from bit masking algorithm
+            let visiableApplicationNameArrayFromBitMasking = applicationNameStackHandler.getOpenedRunningApplicaionNameListWithBitMasking(imageInfor: currentScreenshotReginInfor, wholeInfor: &screenshotStruct)
             
             
-            
-            print(visiableApplicationNameArray)
+            print(visiableApplicationNameArrayFromBitMasking)
             print("screenshot informaiton is: ")
             print(screenshotStruct)
+            
+            
             
             // get metadata for each application saved in this struct
             let csvFilesOperationsHandler = csvFilesOperations()
             
             let csvContent = csvFilesOperationsHandler.readCSVFile(filePath: "AppleScripts")
+            // csvContentRow: the number of default application
             let csvContentRow = csvContent.count
+            // csvContentCol:
+            // [0] : application name
+            // [1] : application category
+            // [2] : metadata 1
+            // [3] : metadata 2
             let csvContentCol = csvContent[0].count
             
-            let applicationInformationDic = screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
+            
+            let capturedApplicationInformationDic = screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
             
             // two for loops to search application name and get metdata
-            for singleAppInfor in applicationInformationDic{
-                let appName = singleAppInfor["ApplicationName"]
+            for singleAppInfor in capturedApplicationInformationDic{
                 
+                let appName = singleAppInfor["ApplicationName"]
+                for i in 0..<csvContentRow{
+                }
                 
             }
             
@@ -431,7 +476,7 @@ class Screencapture : NSObject {
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
                  
-            
+            // open the "captured view"
 //            let temp2 : NSViewController = testViewController()
 //            let subWindow2 = NSWindow(contentViewController: temp2)
 //            let subWindowController2 = NSWindowController(window: subWindow2)
@@ -448,6 +493,7 @@ class Screencapture : NSObject {
         else {
             print("the action of taking a screenshot failed. please repeat your action.")
         }
+        
         
     }
 
@@ -489,6 +535,8 @@ class Screencapture : NSObject {
         }
     }
     
+    
+
     
     // taks screenshot for the whole screen, still need revise
     func wholeScreenCapture(){

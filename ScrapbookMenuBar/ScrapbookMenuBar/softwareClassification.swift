@@ -72,8 +72,25 @@ class softwareClassify : NSObject {
         return softwareNameList
     }
     
+    func getOpenningApplicationThroughNSWork(){
+        let ws = NSWorkspace.shared
+        
+        let apps = ws.runningApplications
+        for currentApp in apps
+        {
+            if(currentApp.activationPolicy == .regular){
+                print(currentApp.localizedName!)
+            }
+        }
+        
+    }
+    
     // get opened running application name list
     func getOpenedRunningApplicaionNameList(imageInfor: screenshotCaptureRegion, wholeInfor : inout screenshotInformation) -> Array<String>{
+        
+        
+        getOpenningApplicationThroughNSWork()
+        
         
         let screenshotWidth = imageInfor.screenshotRegion["Width"]
         let screenshotHeight = imageInfor.screenshotRegion["Height"]
@@ -559,14 +576,20 @@ class softwareClassify : NSObject {
     func getOpenedRunningApplicaionNameListWithBitMasking(imageInfor: screenshotCaptureRegion, wholeInfor : inout screenshotInformation) -> Array<String>{
         
         var visibleApplicationNameStack = [String]()
-        var downSampleRatio = Int()
         
-        let screenshotWidth = imageInfor.screenshotRegion["Width"]
-        let screenshotHeight = imageInfor.screenshotRegion["Height"]
-        let screenshotleft = imageInfor.screenshotRegion["Left"]
-        let screenshotRight = imageInfor.screenshotRegion["Right"]
-        let screenshotTop = imageInfor.screenshotRegion["Top"]
-        let screenshotBottom = imageInfor.screenshotRegion["Bottom"]
+        // from 1 to ? min(height, width)
+        var downSampleRatio = Float()
+        
+        // default value is 1.0
+        downSampleRatio = 1.0
+        
+        
+        var screenshotWidth = imageInfor.screenshotRegion["Width"]!
+        var screenshotHeight = imageInfor.screenshotRegion["Height"]!
+        var screenshotleft = imageInfor.screenshotRegion["Left"]!
+        var screenshotRight = imageInfor.screenshotRegion["Right"]!
+        var screenshotTop = imageInfor.screenshotRegion["Top"]!
+        var screenshotBottom = imageInfor.screenshotRegion["Bottom"]!
         
         
         var allApplicationNameList = [String]()
@@ -588,11 +611,48 @@ class softwareClassify : NSObject {
         
         let softwareNameListTemp = softwareInformationList
         
+        // get the main screen paramters, width and height
+        let currentMainScreen = NSScreen.main
+        let rectArea = currentMainScreen!.frame
+        var mainScreenHeight = Int(rectArea.size.height)
+        var mainScreenWidth = Int(rectArea.size.width)
+        
+        // down sample the whole screen size: screen height ans width
+        let mainScreenHeightAfterDownSample = Float(mainScreenHeight) / Float(downSampleRatio)
+        let mainScreenWidthAfterDownSample = Float(mainScreenWidth) / Float(downSampleRatio)
+        
+        mainScreenHeight = Int(mainScreenHeightAfterDownSample)
+        mainScreenWidth = Int(mainScreenWidthAfterDownSample)
+        
+        
+        
+        // initial screenshot matrix
+        // down sample screenshot's width and height
+        let screenshotTopDownSample = Float(screenshotTop) / Float(downSampleRatio)
+        let screenshotBottomDownSample = Float(screenshotBottom) / Float(downSampleRatio)
+        let screenshotLeftDownSample = Float(screenshotleft) / Float(downSampleRatio)
+        let screenshotRightDownSample = Float(screenshotRight) / Float(downSampleRatio)
+        
+        screenshotTop = Int(screenshotTopDownSample)
+        screenshotBottom = Int(screenshotBottomDownSample)
+        screenshotleft = Int(screenshotLeftDownSample)
+        screenshotRight = Int(screenshotRightDownSample)
+        
+        
+        
+        var basicMatrix = initialScreenshotMatrixInWholeScreen(wholeWidth: mainScreenWidth, wholeHeight: mainScreenHeight, startRow: screenshotTop, endRow: screenshotBottom, startCol: screenshotleft, endCol: screenshotRight)
+        
+        
         for (appIndex, simpleSoftware) in softwareNameListTemp.enumerated() {
             let applicationName = simpleSoftware["kCGWindowOwnerName"] as! String
             let applicationBounds = simpleSoftware["kCGWindowBounds"]
             
             print("application index and name: ", appIndex, applicationName)
+            
+            
+            let boundDictionaryFormat = applicationBounds as! NSDictionary
+            // print("software name is: ", applicationName)
+            
             
             if (applicationName == "universalAccessAuthWarn"){
                 continue
@@ -607,17 +667,142 @@ class softwareClassify : NSObject {
              }
             */
 
-            let boundDictionaryFormat = applicationBounds as! NSDictionary
-            // print("software name is: ", applicationName)
-
 
             else {
                 // code here
+                var upperLeftXCoordination          = Int()
+                var upperLeftYCoordination          = Int()
+                var initialHeight                   = Int()
+                var initialWidth                    = Int()
+
+                var bottomRightXCoordination        = Int()
+                var bottomRightYCoordination        = Int()
+
+
+               // extract coordination values for each captured application
+                for (key, vaule) in boundDictionaryFormat {
+
+                    if (key as! String) == "X" {
+                       upperLeftXCoordination = (boundDictionaryFormat.value(forKey: "X") as! Int)
+                       // print("the value of firstX is: ", firstX!)
+                    }
+
+                    else if (key as! String) == "Y" {
+                       upperLeftYCoordination = ( boundDictionaryFormat.value(forKey: "Y") as! Int )
+                       // print("the value of firstY is: ", firstY!)
+                    }
+
+                    else if (key as! String == "Width"){
+                       initialWidth = (boundDictionaryFormat.value(forKey: "Width") as! Int)
+                       // print("the value of secondX is: ", secondX!)
+                    }
+
+                    else if (key as! String == "Height"){
+                       initialHeight =  (boundDictionaryFormat.value(forKey: "Height") as! Int)
+                       // print("the value of secondY is: ", secondY!)
+                    }
+                   // get the bound information separately
+                   /*
+                    X 1440
+                    Height 1080
+                    Y 0
+                    Width 1920
+                    */
+                }
+                
+                bottomRightXCoordination = upperLeftXCoordination + initialWidth
+                bottomRightYCoordination = upperLeftYCoordination + initialHeight
+                
+                var applicationTop = upperLeftYCoordination
+                var applicationBottom = bottomRightYCoordination
+                var applicationLeft = upperLeftXCoordination
+                var applicationRight = bottomRightXCoordination
+                
+                // down sample the current applicaiton boundary
+                let applicationTopDownSample = Float(applicationTop) / Float(downSampleRatio)
+                let applicationBottomDownSample = Float(applicationBottom) / Float(downSampleRatio)
+                let applicationLeftDownSample = Float(applicationLeft) / Float(downSampleRatio)
+                let applicationRightDownSample = Float(applicationRight) / Float(downSampleRatio)
+                
+                applicationTop = Int(applicationTopDownSample)
+                applicationBottom = Int(applicationBottomDownSample)
+                applicationLeft = Int(applicationLeftDownSample)
+                applicationRight = Int(applicationRightDownSample)
+                
+                
+                
+                // applicaiton matrix in the whole screen
+                let applicationMatrixInWholeScreen = initialApplicationMatrixInWholeScreen(wholeWidth: mainScreenWidth, wholeHeight: mainScreenHeight, startRow: applicationTop, endRow: applicationBottom, startCol: applicationLeft, endCol: applicationRight)
+                
+                // after and operation between screenshot matrix and application matrix in the whole screen
+                let overlappingMatrixWithAndOperation = twoMatricesAndCalculating(screenshotMatrix: basicMatrix, applicationMatrix: applicationMatrixInWholeScreen)
+                
+                // overlapping area > 0, means overlapped
+                if(overlappingArea(matrix: overlappingMatrixWithAndOperation) > 0){
+                    visibleApplicationNameStack.append(applicationName)
+                }
+                
+                 // x, go right, becomes greater
+                 // y, go down, becomes greater
+                 //
+                 // (left, top) (right, bottom)
+                 // (upperLeftXCoordination, upperLeftYCoordination) (bottomRightXCoordination, bottomRightYCoordination)
+
+                 // coonsider all cases
+                 // screenshotleft, screenshotRight, screenshotTop, screenshotBottom
+                 // (left, top) ------ (right, top)
+                 //  |                       |
+                 // (left, bottom)-----(right, bottom)
+                
+                 // bottomRightXCoordination,bottomRightYCoordination
+                 // upperLeftXCoordination, upperLeftYCoordination
+                 
+                 // get the current screenshot information of "Application Information"
+                 var tempDic = wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
+                 
+                 var currentApplicationInforStuct = applicationInformation()
+                 currentApplicationInforStuct.singleApplicationInforTemplate["Left"] = upperLeftXCoordination
+                 currentApplicationInforStuct.singleApplicationInforTemplate["Top"] = upperLeftYCoordination
+                 currentApplicationInforStuct.singleApplicationInforTemplate["Right"] = bottomRightXCoordination
+                 currentApplicationInforStuct.singleApplicationInforTemplate["Bottom"] = bottomRightYCoordination
+                 currentApplicationInforStuct.singleApplicationInforTemplate["ApplicationName"] = applicationName
+                 
+                 
+                 // append this visiable applicaiton inforamtion to the struct
+                 tempDic.append(currentApplicationInforStuct.singleApplicationInforTemplate)
+                 // rewrite
+                 wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] = tempDic
+                
+                
+                
+                // subtract overlapping area from the basic matrix
+                let overlappingMatrixWithSubtractOperation = twoMatricesSubtractCalculating(screenshotMatrix: basicMatrix, applicationMatrix: overlappingMatrixWithAndOperation)
+                
+                let remainAreaInWholeScreen = calculatingOnesSum(matrix: overlappingMatrixWithSubtractOperation)
+                
+                if (remainAreaInWholeScreen == 0){
+                    // no area left for the next application to see
+                    // break from the for loop
+                    break
+                }
+                
+                // reset the basicMatrix
+                basicMatrix = overlappingMatrixWithSubtractOperation
+                
+                
+
+
+                
+                // visibleApplicationNameStack.append(applicationName)
+                
                 
             }
             // end of for loop
         }
         
+        
+        print("visiable application names with bit masking algorithm")
+        print(visibleApplicationNameStack)
         
         
         return visibleApplicationNameStack
@@ -644,6 +829,91 @@ class softwareClassify : NSObject {
         // h(height) is row, w(width) is column
         let applicationWindowMatrix = [[Int]](repeating: [Int](repeating: -1, count: w), count: h)
         return applicationWindowMatrix
+    }
+    
+    
+    func initialScreenshotMatrixInWholeScreen(wholeWidth: Int, wholeHeight: Int, startRow: Int, endRow: Int, startCol : Int, endCol: Int) -> [[Int]]{
+        var screenshotMatrix = [[Int]](repeating: [Int](repeating: 0, count: wholeWidth), count: wholeHeight)
+        
+        for i in startRow..<endRow{
+            for j in startCol..<endCol{
+                screenshotMatrix[i][j] = 1
+            }
+        }
+        
+        return screenshotMatrix
+    }
+    
+    func initialApplicationMatrixInWholeScreen(wholeWidth: Int, wholeHeight: Int, startRow: Int, endRow: Int, startCol: Int, endCol: Int) -> [[Int]]{
+        var applicationMatrix = [[Int]](repeating: [Int](repeating: 0, count: wholeWidth), count: wholeHeight)
+        
+        for i in startRow...endRow{
+            for j in startCol...endCol{
+                applicationMatrix[i][j] = 1
+            }
+        }
+        return applicationMatrix
+    }
+    
+    
+    func twoMatricesAndCalculating(screenshotMatrix: [[Int]], applicationMatrix: [[Int]]) ->[[Int]]{
+        var overlappedMatrix = screenshotMatrix
+        
+        let height = screenshotMatrix.count
+        let width = screenshotMatrix[0].count
+        
+        for i in 0..<height{
+            for j in 0..<width{
+                overlappedMatrix[i][j] = screenshotMatrix[i][j] & applicationMatrix[i][j]
+//                if (screenshotMatrix[i][j] == 1 && applicationMatrix[i][j] == 1){
+//                    overlappedMatrix[i][j] = 1
+//                }
+            }
+        }
+        
+        return overlappedMatrix
+    }
+    
+    
+    func twoMatricesSubtractCalculating(screenshotMatrix: [[Int]], applicationMatrix: [[Int]]) ->[[Int]]{
+        var overlappedMatrix = screenshotMatrix
+        let height = screenshotMatrix.count
+        let width = screenshotMatrix[0].count
+        
+        for i in 0..<height{
+            for j in 0..<width{
+                overlappedMatrix[i][j] = screenshotMatrix[i][j] - applicationMatrix[i][j]
+            }
+        }
+        return overlappedMatrix
+    }
+    
+    func overlappingArea(matrix: [[Int]]) -> Int{
+        var result = 0
+        let height = matrix.count
+        let width = matrix[0].count
+        for i in 0..<height{
+            for j in 0..<width{
+                if (matrix[i][j] == 1){
+                    result = result + 1
+                }
+            }
+        }
+        return result
+    }
+    
+    func calculatingOnesSum(matrix: [[Int]]) -> Int{
+        var result = 0
+        let height = matrix.count
+        let width = matrix[0].count
+        for i in 0..<height{
+            for j in 0..<width{
+                if (matrix[i][j] == 1){
+                    result = result + 1
+                }
+            }
+        }
+        return result
     }
     
 }
