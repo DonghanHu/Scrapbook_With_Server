@@ -315,7 +315,7 @@ class Screencapture : NSObject {
 //            else if(mouseEndXLocation < mouseStartXLocation && mouseEndYLocation < mouseStartYLocation){
 //                screenshotCaseIndex = 4
 //            }
-//                // code here
+
 //            else {
 //
 //            }
@@ -348,7 +348,7 @@ class Screencapture : NSObject {
 //                left    = mouseStartXLocation
 //                right = mouseEndXLocation
 //            }
-//            // bug code here
+
 //            else if (screenshotCaseIndex == 2){
 //                top     = mouseStartYLocation
 //                bottom  = mouseEndYLocation
@@ -450,18 +450,90 @@ class Screencapture : NSObject {
             // [3] : metadata 2
             let csvContentCol = csvContent[0].count
             
+            // Array<Array<String>>
+            print(type(of: csvContent))
+            
             
             let capturedApplicationInformationDic = screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
             
+            // dictiornary for repeating application names
+            // e.g., two google chrome
+            var dictionaryForRepeatApplicationNames = [String : Int]()
+            
+            
             // two for loops to search application name and get metdata
-            for singleAppInfor in capturedApplicationInformationDic{
+            for (appIndex, singleAppInfor) in capturedApplicationInformationDic.enumerated(){
+                print(appIndex)
+                let appName = singleAppInfor["ApplicationName"] as! String
                 
-                let appName = singleAppInfor["ApplicationName"]
-                for i in 0..<csvContentRow{
+                // update dictionaryForRepeatApplicationNames
+                // first time meet this application name
+                if (dictionaryForRepeatApplicationNames[appName] == nil){
+                    dictionaryForRepeatApplicationNames[appName] = 1;
+                }
+                // previously, seen this application name
+                else{
+                    var previousValue = dictionaryForRepeatApplicationNames[appName]
+                    // upadate
+                    dictionaryForRepeatApplicationNames[appName] = previousValue! + 1
                 }
                 
+                var foundOrNot = false;
+                
+                for i in 0..<csvContentRow{
+                    let eachRowInArray = csvContent[i] as Array<String>
+                    let tempApplicationName = eachRowInArray[0] as String
+                    if (tempApplicationName == appName){
+                        
+                        foundOrNot = true
+                        
+                        // get the time that this application has appeared
+                        let seenCount = dictionaryForRepeatApplicationNames[appName]
+                        
+                        
+                        let categoryIndex = eachRowInArray[1] as String
+                        var appleScriptForMetaDataOne = eachRowInArray[2] as String
+                        var appleScriptForMetaDataTwo = eachRowInArray[3] as String
+                        
+                        //
+                        appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingName(originalString: appleScriptForMetaDataOne, applicationName: appName)
+                        appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingName(originalString: appleScriptForMetaDataTwo, applicationName: appName)
+                        
+                        
+                        // method one (current): if applescript contains "AlternativeRankNumber"
+                        // method two: check application name to determine repleace or not
+                        if(appleScriptForMetaDataOne.contains("AlternativeRankNumber")){
+                            appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataOne, rank: seenCount ?? 1)
+                        }
+                        if (appleScriptForMetaDataTwo.contains("AlternativeRankNumber")){
+                            appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataTwo, rank: seenCount ?? 1)
+                        }
+                        
+                        let applicationMetadataResultOne = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataOne)
+                        
+                        let applicationMetadataResultTwo = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataTwo)
+                        
+                        // merge metadat into application's struct
+                        // code here
+                        screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"]
+                        singleAppInfor["Category"] = categoryIndex
+                        singleAppInfor["FirstMetaData"] = applicationMetadataResultOne
+                        singleAppInfor["SecondMetaData"] = applicationMetadataResultTwo
+                        
+                        
+                    // end of if statement (tempApplicationName == appName)
+                    }
+                 
+                    // end of for loop for i in 0..<csvContentRow
+                }
+                
+                // this applicaiton is not saved in the csv file, then use default string for metadata
+                if (foundOrNot == false){
+                    // code here
+                }
+                
+            // end of for loop for singleAppInfor in capturedApplicationInformationDic
             }
-            
             
             
             
@@ -535,8 +607,44 @@ class Screencapture : NSObject {
         }
     }
     
+    func runApplescript(applescript : String) -> String{
+        var error: NSDictionary?
+        let scriptObject = NSAppleScript(source: applescript)
+        let output: NSAppleEventDescriptor = scriptObject!.executeAndReturnError(&error)
+        // print("output", output)
+        if (error != nil) {
+            print("error: \(String(describing: error))")
+        }
+        if output.stringValue == nil{
+            let empty = "the result is empty"
+            return empty
+        }
+        else {
+            return (output.stringValue?.description)!
+            
+        }
+    }
     
+    func getExecutableAppleScriptByReplacingName(originalString: String, applicationName : String) -> String{
+        let tempString = originalString
+        let executabltAppleScript = tempString.replacingOccurrences(of: "AlternativeApplicationName", with: applicationName)
+        return executabltAppleScript
+    }
+    
+    func getExecutableAppleScriptByReplacingRank(originalString : String, rank : Int) -> String {
+        let tempString = originalString
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .ordinal
+        let ordinalFormatResult = formatter.string(from: NSNumber(value: rank))! as String
+        let executableAppleScript = tempString.replacingOccurrences(of: "AlternativeRankNumber", with: ordinalFormatResult)
+        return executableAppleScript
+    }
 
+    func returnApplicationMetadata(formattedAppleScript: String) -> String{
+        let applescriptResultFirstRun = runApplescript(applescript: formattedAppleScript)
+        let finalResult = runApplescript(applescript: applescriptResultFirstRun)
+        return finalResult
+    }
     
     // taks screenshot for the whole screen, still need revise
     func wholeScreenCapture(){

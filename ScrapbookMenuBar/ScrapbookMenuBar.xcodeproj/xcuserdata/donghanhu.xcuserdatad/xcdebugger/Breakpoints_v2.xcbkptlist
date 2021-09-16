@@ -7,16 +7,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5BF84917-6ACB-4C75-AB57-F11F6FC11CE1"
+            uuid = "397A76C8-B036-450F-815F-81FC05E22A3C"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScrapbookMenuBar/softwareClassification.swift"
+            filePath = "ScrapbookMenuBar/takeScreenshot.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "735"
-            endingLineNumber = "735"
-            landmarkName = "getOpenedRunningApplicaionNameListWithBitMasking(imageInfor:wholeInfor:)"
+            startingLineNumber = "494"
+            endingLineNumber = "494"
+            landmarkName = "selectScreenCapture()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D0FFEFD3-4787-4022-879E-3F0B6A8F0FED"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScrapbookMenuBar/takeScreenshot.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "512"
+            endingLineNumber = "512"
+            landmarkName = "selectScreenCapture()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

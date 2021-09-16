@@ -647,6 +647,8 @@ class softwareClassify : NSObject {
             let applicationName = simpleSoftware["kCGWindowOwnerName"] as! String
             let applicationBounds = simpleSoftware["kCGWindowBounds"]
             
+            let kCGWindowAlphaValue = simpleSoftware["kCGWindowAlpha"] as! Float
+            
             print("application index and name: ", appIndex, applicationName)
             
             
@@ -655,6 +657,13 @@ class softwareClassify : NSObject {
             
             
             if (applicationName == "universalAccessAuthWarn"){
+                continue
+            }
+                
+            else if (kCGWindowAlphaValue == Float(0.0)){
+                // kCGWindowAlpha should be greater than 0.0 or equals to 1.0
+                // now, I compare it with 0.0
+                // https://developer.apple.com/documentation/coregraphics/kcgwindowalpha?language=objc
                 continue
             }
 
@@ -669,7 +678,7 @@ class softwareClassify : NSObject {
 
 
             else {
-                // code here
+                
                 var upperLeftXCoordination          = Int()
                 var upperLeftYCoordination          = Int()
                 var initialHeight                   = Int()
@@ -847,8 +856,12 @@ class softwareClassify : NSObject {
     func initialApplicationMatrixInWholeScreen(wholeWidth: Int, wholeHeight: Int, startRow: Int, endRow: Int, startCol: Int, endCol: Int) -> [[Int]]{
         var applicationMatrix = [[Int]](repeating: [Int](repeating: 0, count: wholeWidth), count: wholeHeight)
         
-        for i in startRow...endRow{
-            for j in startCol...endCol{
+        // initial solution
+        // corner case: screen size: 1440 * 900
+        // basic matrix has no row 900 and column 1440
+        // application size: 1440 * 900
+        for i in startRow..<endRow{
+            for j in startCol..<endCol{
                 applicationMatrix[i][j] = 1
             }
         }
