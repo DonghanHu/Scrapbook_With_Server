@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDisplayName</key>
+	<string></string>
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string></string>
 	<key>NSDesktopFolderUsageDescription</key>
@@ -42,5 +44,10 @@
 	<string>This is why I need this</string>
 	<key>NSSupportsSuddenTermination</key>
 	<true/>
+	<key>com.apple.security.temporary-exception.apple-events</key>
+	<array>
+		<string>com.apple.systempreferences</string>
+		<string>com.apple.systemevents</string>
+	</array>
 </dict>
 </plist>

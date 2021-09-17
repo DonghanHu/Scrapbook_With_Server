@@ -158,6 +158,7 @@ class softwareClassify : NSObject {
             let applicationName = simpleSoftware["kCGWindowOwnerName"] as! String
             let applicationBounds = simpleSoftware["kCGWindowBounds"]
             
+            
             print("application index and name: ", appIndex, applicationName)
             applicationNamesWithIndex.updateValue(applicationName, forKey: appIndex)
             
@@ -165,6 +166,10 @@ class softwareClassify : NSObject {
                 continue
             }
 
+            // code here
+            // check negative values in applicationBounds
+            // 
+            
             /*
             {
              Height = 900;
@@ -225,6 +230,7 @@ class softwareClassify : NSObject {
                      Width 1920
                      */
                 }
+                
 
                 // set the coordination for bottom right point
                 bottomRightXCoordination = upperLeftXCoordination + initialWidth
@@ -581,7 +587,8 @@ class softwareClassify : NSObject {
         var downSampleRatio = Float()
         
         // default value is 1.0
-        downSampleRatio = 1.0
+        // 50
+        downSampleRatio = 50.0
         
         
         var screenshotWidth = imageInfor.screenshotRegion["Width"]!

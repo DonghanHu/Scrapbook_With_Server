@@ -60,7 +60,7 @@ class Screencapture : NSObject {
         var screenshotStruct = screenshotInformation()
         // if degub
         print(screenshotStruct.metaDataSingleRecordingTemplate)
-        print(type(of: screenshotStruct))
+        // print(type(of: screenshotStruct))
         
         
         
@@ -454,7 +454,7 @@ class Screencapture : NSObject {
             print(type(of: csvContent))
             
             
-            let capturedApplicationInformationDic = screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
+            var capturedApplicationInformationDic = screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
             
             // dictiornary for repeating application names
             // e.g., two google chrome
@@ -492,8 +492,13 @@ class Screencapture : NSObject {
                         
                         
                         let categoryIndex = eachRowInArray[1] as String
+                        
                         var appleScriptForMetaDataOne = eachRowInArray[2] as String
                         var appleScriptForMetaDataTwo = eachRowInArray[3] as String
+                        print("original apple scripts: ")
+                        print(appleScriptForMetaDataOne)
+                        print(appleScriptForMetaDataTwo)
+                        
                         
                         //
                         appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingName(originalString: appleScriptForMetaDataOne, applicationName: appName)
@@ -509,16 +514,37 @@ class Screencapture : NSObject {
                             appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataTwo, rank: seenCount ?? 1)
                         }
                         
+//                        let testString = "tell application \"Google Chrome\" to return URL of active tab of first window"
+//                        let testResult = returnApplicationMetadata(formattedAppleScript: testString)
+//                        print(testString)
+//                        print(testResult)
+                        
+                        let source = """
+                            tell application \"Google Chrome\" to return URL of active tab of first window
+                        """
+                        let script = NSAppleScript(source: source)!
+                        var error : NSDictionary?
+                        script.executeAndReturnError(&error)
+                        print(error)
+                        print(runApplescript(applescript: source))
+                        
+                        print("two apple scripts below: ")
+                        print(appleScriptForMetaDataOne)
+                        print(appleScriptForMetaDataTwo)
+                        
                         let applicationMetadataResultOne = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataOne)
                         
                         let applicationMetadataResultTwo = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataTwo)
                         
                         // merge metadat into application's struct
                         // code here
-                        screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"]
-                        singleAppInfor["Category"] = categoryIndex
-                        singleAppInfor["FirstMetaData"] = applicationMetadataResultOne
-                        singleAppInfor["SecondMetaData"] = applicationMetadataResultTwo
+                        // print(type(of: screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"]))
+                        print(screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"])
+                        var appDictTemp = capturedApplicationInformationDic[appIndex]
+                        appDictTemp["Category"] = categoryIndex
+                        appDictTemp["FirstMetaData"] = applicationMetadataResultOne
+                        appDictTemp["SecondMetaData"] = applicationMetadataResultTwo
+                        capturedApplicationInformationDic[appIndex] = appDictTemp
                         
                         
                     // end of if statement (tempApplicationName == appName)
@@ -535,7 +561,10 @@ class Screencapture : NSObject {
             // end of for loop for singleAppInfor in capturedApplicationInformationDic
             }
             
-            
+            // write new data struct into screenshotStruct
+            screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = capturedApplicationInformationDic
+            print("after adding metadata, the final screenshotStruct")
+            print(screenshotStruct)
             
             // applicationNameStack.test(data: currentScreenshotReginInfor)
             // let applicationNameStack = softwareClassify.getOpenedRunningApplicaionNameList(data: currentScreenshotReginInfor)
@@ -630,6 +659,7 @@ class Screencapture : NSObject {
         let executabltAppleScript = tempString.replacingOccurrences(of: "AlternativeApplicationName", with: applicationName)
         return executabltAppleScript
     }
+    
     
     func getExecutableAppleScriptByReplacingRank(originalString : String, rank : Int) -> String {
         let tempString = originalString
