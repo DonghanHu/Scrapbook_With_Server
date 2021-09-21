@@ -39,7 +39,18 @@ class Screencapture : NSObject {
     
     var eventMonitor : EventMonitor?
     
-    
+    var numberToOrdinalDictionary = [
+        1 : "first",
+        2 : "second",
+        3 : "third",
+        4 : "fourth",
+        5 : "fifth",
+        6 : "sixth",
+        7 : "seventh",
+        8 : "eighth",
+        9 : "ninth",
+        10 : "tenth"
+    ]
     
     var top     = Int()
     var bottom  = Int()
@@ -463,7 +474,9 @@ class Screencapture : NSObject {
             
             // two for loops to search application name and get metdata
             for (appIndex, singleAppInfor) in capturedApplicationInformationDic.enumerated(){
-                print(appIndex)
+                
+                // print(appIndex)
+                
                 let appName = singleAppInfor["ApplicationName"] as! String
                 
                 // update dictionaryForRepeatApplicationNames
@@ -495,7 +508,7 @@ class Screencapture : NSObject {
                         
                         var appleScriptForMetaDataOne = eachRowInArray[2] as String
                         var appleScriptForMetaDataTwo = eachRowInArray[3] as String
-                        print("original apple scripts: ")
+                        print("original apple scripts from csv file: ")
                         print(appleScriptForMetaDataOne)
                         print(appleScriptForMetaDataTwo)
                         
@@ -504,14 +517,16 @@ class Screencapture : NSObject {
                         appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingName(originalString: appleScriptForMetaDataOne, applicationName: appName)
                         appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingName(originalString: appleScriptForMetaDataTwo, applicationName: appName)
                         
+                        // default value is 1
+                        let rankValue = numberToOrdinalDictionary[seenCount ?? 1]
                         
                         // method one (current): if applescript contains "AlternativeRankNumber"
                         // method two: check application name to determine repleace or not
                         if(appleScriptForMetaDataOne.contains("AlternativeRankNumber")){
-                            appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataOne, rank: seenCount ?? 1)
+                            appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataOne, rank: rankValue ?? "first")
                         }
                         if (appleScriptForMetaDataTwo.contains("AlternativeRankNumber")){
-                            appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataTwo, rank: seenCount ?? 1)
+                            appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataTwo, rank: rankValue ?? "first")
                         }
                         
 //                        let testString = "tell application \"Google Chrome\" to return URL of active tab of first window"
@@ -522,19 +537,27 @@ class Screencapture : NSObject {
                         let source = """
                             tell application \"Google Chrome\" to return URL of active tab of first window
                         """
+                        
                         let script = NSAppleScript(source: source)!
                         var error : NSDictionary?
                         script.executeAndReturnError(&error)
                         print(error)
                         print(runApplescript(applescript: source))
                         
-                        print("two apple scripts below: ")
+                        print("default source code: ")
+                        print(source)
+                        
+                        print("two apple scripts after replacing name and rank values are below: ")
                         print(appleScriptForMetaDataOne)
                         print(appleScriptForMetaDataTwo)
                         
-                        let applicationMetadataResultOne = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataOne)
+                        let applicationMetadataResultOne = runApplescript(applescript: appleScriptForMetaDataOne)
+                        let applicationMetadataResultTwo = runApplescript(applescript: appleScriptForMetaDataTwo)
                         
-                        let applicationMetadataResultTwo = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataTwo)
+                        
+//                        let applicationMetadataResultOne = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataOne)
+//
+//                        let applicationMetadataResultTwo = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataTwo)
                         
                         // merge metadat into application's struct
                         // code here
@@ -550,12 +573,18 @@ class Screencapture : NSObject {
                     // end of if statement (tempApplicationName == appName)
                     }
                  
+                    
                     // end of for loop for i in 0..<csvContentRow
                 }
                 
                 // this applicaiton is not saved in the csv file, then use default string for metadata
                 if (foundOrNot == false){
                     // code here
+                    var appDictTemp = capturedApplicationInformationDic[appIndex]
+                    appDictTemp["Category"] = "None"
+                    appDictTemp["FirstMetaData"] = "Currently, this information is empty!"
+                    appDictTemp["SecondMetaData"] = "Currently, this information is empty!"
+                    capturedApplicationInformationDic[appIndex] = appDictTemp
                 }
                 
             // end of for loop for singleAppInfor in capturedApplicationInformationDic
@@ -577,11 +606,11 @@ class Screencapture : NSObject {
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
                  
-            // open the "captured view"
-//            let temp2 : NSViewController = testViewController()
-//            let subWindow2 = NSWindow(contentViewController: temp2)
-//            let subWindowController2 = NSWindowController(window: subWindow2)
-//            subWindowController2.showWindow(nil)
+            // open the "captured view" Window
+            let viewController : NSViewController = CapturedViewWiondow()
+            let subWindow = NSWindow(contentViewController: viewController)
+            let subWindowController = NSWindowController(window: subWindow)
+            subWindowController.showWindow(nil)
             
 //            let temp3: NSViewController = testViewController()
 //            temp3.view.display()
@@ -661,12 +690,12 @@ class Screencapture : NSObject {
     }
     
     
-    func getExecutableAppleScriptByReplacingRank(originalString : String, rank : Int) -> String {
-        let tempString = originalString
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .ordinal
-        let ordinalFormatResult = formatter.string(from: NSNumber(value: rank))! as String
-        let executableAppleScript = tempString.replacingOccurrences(of: "AlternativeRankNumber", with: ordinalFormatResult)
+    func getExecutableAppleScriptByReplacingRank(originalString : String, rank : String) -> String {
+//        let tempString = originalString
+//        let formatter = NumberFormatter()
+//        formatter.numberStyle = .ordinal
+//        let ordinalFormatResult = formatter.string(from: NSNumber(value: rank))! as String
+        let executableAppleScript = originalString.replacingOccurrences(of: "AlternativeRankNumber", with: rank)
         return executableAppleScript
     }
 
@@ -675,6 +704,8 @@ class Screencapture : NSObject {
         let finalResult = runApplescript(applescript: applescriptResultFirstRun)
         return finalResult
     }
+    
+    
     
     // taks screenshot for the whole screen, still need revise
     func wholeScreenCapture(){

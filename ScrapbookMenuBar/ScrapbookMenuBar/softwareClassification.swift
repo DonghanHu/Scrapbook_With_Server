@@ -588,7 +588,7 @@ class softwareClassify : NSObject {
         
         // default value is 1.0
         // 50
-        downSampleRatio = 50.0
+        downSampleRatio = 7.0
         
         
         var screenshotWidth = imageInfor.screenshotRegion["Width"]!
@@ -624,12 +624,21 @@ class softwareClassify : NSObject {
         var mainScreenHeight = Int(rectArea.size.height)
         var mainScreenWidth = Int(rectArea.size.width)
         
+//        print(mainScreenWidth)
+//        print(downSampleRatio)
+        
         // down sample the whole screen size: screen height ans width
         let mainScreenHeightAfterDownSample = Float(mainScreenHeight) / Float(downSampleRatio)
         let mainScreenWidthAfterDownSample = Float(mainScreenWidth) / Float(downSampleRatio)
         
-        mainScreenHeight = Int(mainScreenHeightAfterDownSample)
-        mainScreenWidth = Int(mainScreenWidthAfterDownSample)
+        
+        // using ceiling funciton to round up for the whole screen width and height
+        print(type(of: mainScreenWidthAfterDownSample))
+        mainScreenWidth = Int(ceilf(mainScreenWidthAfterDownSample))
+        print(mainScreenWidth)
+        mainScreenHeight = Int(ceilf(mainScreenHeightAfterDownSample))
+//        mainScreenHeight = Int(mainScreenHeightAfterDownSample)
+//        mainScreenWidth = Int(mainScreenWidthAfterDownSample)
         
         
         
@@ -640,10 +649,17 @@ class softwareClassify : NSObject {
         let screenshotLeftDownSample = Float(screenshotleft) / Float(downSampleRatio)
         let screenshotRightDownSample = Float(screenshotRight) / Float(downSampleRatio)
         
-        screenshotTop = Int(screenshotTopDownSample)
-        screenshotBottom = Int(screenshotBottomDownSample)
-        screenshotleft = Int(screenshotLeftDownSample)
-        screenshotRight = Int(screenshotRightDownSample)
+        // round down the upper left coordinate
+        // round up the bottom right coordinate(ceil)
+        screenshotTop = Int(floorf(screenshotTopDownSample))
+        screenshotleft = Int(floorf(screenshotLeftDownSample))
+        screenshotBottom = Int(ceilf(screenshotBottomDownSample))
+        screenshotRight = Int(ceilf(screenshotRightDownSample))
+        
+//        screenshotTop = Int(screenshotTopDownSample)
+//        screenshotBottom = Int(screenshotBottomDownSample)
+//        screenshotleft = Int(screenshotLeftDownSample)
+//        screenshotRight = Int(screenshotRightDownSample)
         
         
         
@@ -740,10 +756,18 @@ class softwareClassify : NSObject {
                 let applicationLeftDownSample = Float(applicationLeft) / Float(downSampleRatio)
                 let applicationRightDownSample = Float(applicationRight) / Float(downSampleRatio)
                 
-                applicationTop = Int(applicationTopDownSample)
-                applicationBottom = Int(applicationBottomDownSample)
-                applicationLeft = Int(applicationLeftDownSample)
-                applicationRight = Int(applicationRightDownSample)
+                
+                // round down the upper left coordinate
+                // round up the bottom right coordinate(ceil)
+                applicationTop = Int(floorf(applicationTopDownSample))
+                applicationLeft = Int(floorf(applicationLeftDownSample))
+                applicationRight = Int(floorf(applicationRightDownSample))
+                applicationBottom = Int(floorf(applicationBottomDownSample))
+
+//                applicationTop = Int(applicationTopDownSample)
+//                applicationBottom = Int(applicationBottomDownSample)
+//                applicationLeft = Int(applicationLeftDownSample)
+//                applicationRight = Int(applicationRightDownSample)
                 
                 
                 
