@@ -25,7 +25,10 @@ struct capturedScreenshotInformation {
     static var capturedScreenshotHeight             =   Int()
 }
 
-
+struct tempScreenshotInformationStruct {
+    static var dataDictionary = [String : Any]()
+    static var capturedApplicationNameArray = [String]()
+}
 
 struct screenshotInformation{
     var metaDataSingleRecordingTemplate : [String : Any] = [

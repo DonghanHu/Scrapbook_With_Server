@@ -441,6 +441,8 @@ class Screencapture : NSObject {
             // from bit masking algorithm
             let visiableApplicationNameArrayFromBitMasking = applicationNameStackHandler.getOpenedRunningApplicaionNameListWithBitMasking(imageInfor: currentScreenshotReginInfor, wholeInfor: &screenshotStruct)
             
+            // put captured application names into an array and saved as a global variable for future use
+            tempScreenshotInformationStruct.capturedApplicationNameArray = visiableApplicationNameArrayFromBitMasking
             
             print(visiableApplicationNameArrayFromBitMasking)
             print("screenshot informaiton is: ")
@@ -595,25 +597,20 @@ class Screencapture : NSObject {
             print("after adding metadata, the final screenshotStruct")
             print(screenshotStruct)
             
-            // applicationNameStack.test(data: currentScreenshotReginInfor)
-            // let applicationNameStack = softwareClassify.getOpenedRunningApplicaionNameList(data: currentScreenshotReginInfor)
-
-            
-            // let applicationNameStack = softeareClassificationHandler.screenAboveWindowListPrint()
-            // let applicationNameStackLength = applicationNameStack.count
             
             // applescriptHandler.applicationMetaData(applicationNameStack: applicationNameStack)
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
-                 
+            tempScreenshotInformationStruct.dataDictionary = screenshotStruct.metaDataSingleRecordingTemplate
+            
             // open the "captured view" Window
             let viewController : NSViewController = CapturedViewWiondow()
+            //viewController.receivedScreenshotInfor = screenshotStruct
             let subWindow = NSWindow(contentViewController: viewController)
             let subWindowController = NSWindowController(window: subWindow)
             subWindowController.showWindow(nil)
             
-//            let temp3: NSViewController = testViewController()
-//            temp3.view.display()
+            
             
             
             
