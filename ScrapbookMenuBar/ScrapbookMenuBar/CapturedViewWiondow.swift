@@ -25,6 +25,7 @@ class CapturedViewWiondow: NSViewController {
     @IBOutlet weak var saveScreenshotButton: NSButton!
     // tableView item
     @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet weak var tableViewStatusLabel: NSTextField!
     
     
     var receivedScreenshotInfor = [String : Any]()
@@ -36,7 +37,11 @@ class CapturedViewWiondow: NSViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.action = #selector(tableViewSingleClick(_:))
+        
 
+        self.title = "Captured View"
+        
         // all data here
         receivedScreenshotInfor = tempScreenshotInformationStruct.dataDictionary
         
@@ -44,11 +49,114 @@ class CapturedViewWiondow: NSViewController {
         print(type(of: receivedScreenshotInfor))
         // Dictionary<String, Any>
         
+        // set the screenshot
+        displayLatestScreenshot(data : receivedScreenshotInfor)
+        
+        // set placeholder for title and text
+        let date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE, MMM d, yyyy"
+        let dateString = dateFormatter.string(from: date)
+        memoTitle.placeholderString = dateString
+        memoText.placeholderString = "This is your memo..."
+        
+        // save & delete button
+        saveScreenshotButton.title = "Save"
+        deleteScreenshotButton.title = "Delete"
         
     }
     
+    // code here
+    
     @objc func checkBoxInteractionMethod(_ sender: NSButton){
         print("checkbox interaction function")
+        print (tempScreenshotInformationStruct.capturedApplicationNameArray[tableView.selectedRow])
+        
+    }
+    
+    
+    
+    func displayLatestScreenshot(data : [String : Any]) {
+        displayScreenshot.imageScaling = .scaleProportionallyUpOrDown
+        let fileManager = FileManager.default
+        let screenshotPathString = data["ImagePath"] as! String
+        if fileManager.fileExists(atPath: screenshotPathString){
+            print("imgae existed")
+        }
+        else {
+            print("image not existed")
+        }
+        let currentScreenshot = NSImage(contentsOfFile: screenshotPathString)
+        displayScreenshot.image = currentScreenshot
+        
+    }
+    @IBAction func deleteButtonAction(_ sender: Any) {
+        // delete the screenshot from forder
+        let filePathString = receivedScreenshotInfor["ImagePath"] as! String
+        let fileURL = URL(fileURLWithPath: filePathString)
+        do {
+            try FileManager.default.removeItem(at: fileURL)
+            print("delete successfully!")
+        } catch {
+            print("delete screenshot error:", error)
+        }
+        dialogOK(question: "This recording has been deleted successfully.", text: "Click OK to continue.")
+       
+        // reset values, struct, variables
+        // here
+        tempScreenshotInformationStruct.capturedApplicationNameArray = [String]()
+        tempScreenshotInformationStruct.dataDictionary = [String : Any]()
+        
+        self.view.window?.close()
+    }
+    
+    // func for pupping up a alert window for saving and deleting
+    func dialogOK(question: String, text: String) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        return alert.runModal() == .alertFirstButtonReturn
+    }
+    
+    // function for update tableView status
+    func updateStatus() {
+        let tempDic = tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] as! [[String : Any]]
+        let rowCount = tempDic.count ?? 0
+        let text: String
+        // 1
+        let itemsSelected = tableView.selectedRowIndexes.count
+        // 2
+        if(itemsSelected == 0) {
+            text = "\(rowCount) items"
+        }
+        else {
+            text = "\(itemsSelected) of \(rowCount) selected"
+        }
+        // 3
+        tableViewStatusLabel.stringValue = text
+    }
+
+    // single click in tableView
+    @objc func tableViewSingleClick(_ sender:AnyObject){
+        if (tableView.selectedRowIndexes.count == 1){
+            
+            let applicationName = tempScreenshotInformationStruct.capturedApplicationNameArray[tableView.selectedRow]
+            
+            applicationNameLabel.stringValue = applicationName
+            
+            let allApplicationsDataDic = tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] as! [[String : Any]]
+            
+            for appInfor in allApplicationsDataDic{
+                let tempName = appInfor["ApplicationName"] as! String
+                if (applicationName == tempName){
+                    applicationCategoryLabel.stringValue = appInfor["Category"] as! String
+                    metadataOneLabel.stringValue = appInfor["FirstMetaData"] as! String
+                    metadataTwoLabel.stringValue = appInfor["SecondMetaData"] as! String
+                }
+            }
+        }
     }
     
     // end of the class: ViewController
@@ -123,5 +231,10 @@ extension CapturedViewWiondow: NSTableViewDelegate {
     // 3
     return nil
   }
+    
+    func tableViewSelectionDidChange(_ notification: Notification) {
+        updateStatus()
+    }
+
 
 }

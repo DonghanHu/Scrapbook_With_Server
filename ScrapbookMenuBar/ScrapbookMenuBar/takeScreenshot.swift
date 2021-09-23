@@ -443,6 +443,9 @@ class Screencapture : NSObject {
             
             // put captured application names into an array and saved as a global variable for future use
             tempScreenshotInformationStruct.capturedApplicationNameArray = visiableApplicationNameArrayFromBitMasking
+            print(type(of: visiableApplicationNameArrayFromBitMasking))
+            print(tempScreenshotInformationStruct.capturedApplicationNameArray)
+            print(type(of: tempScreenshotInformationStruct.capturedApplicationNameArray))
             
             print(visiableApplicationNameArrayFromBitMasking)
             print("screenshot informaiton is: ")
