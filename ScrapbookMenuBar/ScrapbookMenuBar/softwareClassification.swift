@@ -761,8 +761,8 @@ class softwareClassify : NSObject {
                 // round up the bottom right coordinate(ceil)
                 applicationTop = Int(floorf(applicationTopDownSample))
                 applicationLeft = Int(floorf(applicationLeftDownSample))
-                applicationRight = Int(floorf(applicationRightDownSample))
-                applicationBottom = Int(floorf(applicationBottomDownSample))
+                applicationRight = Int(ceilf(applicationRightDownSample))
+                applicationBottom = Int(ceilf(applicationBottomDownSample))
 
 //                applicationTop = Int(applicationTopDownSample)
 //                applicationBottom = Int(applicationBottomDownSample)
@@ -829,10 +829,6 @@ class softwareClassify : NSObject {
                 // reset the basicMatrix
                 basicMatrix = overlappingMatrixWithSubtractOperation
                 
-                
-
-
-                
                 // visibleApplicationNameStack.append(applicationName)
                 
                 
@@ -875,8 +871,26 @@ class softwareClassify : NSObject {
     func initialScreenshotMatrixInWholeScreen(wholeWidth: Int, wholeHeight: Int, startRow: Int, endRow: Int, startCol : Int, endCol: Int) -> [[Int]]{
         var screenshotMatrix = [[Int]](repeating: [Int](repeating: 0, count: wholeWidth), count: wholeHeight)
         
-        for i in startRow..<endRow{
-            for j in startCol..<endCol{
+        var newStartRow = startRow
+        var newEndRow = endRow
+        var newStartCol = startCol
+        var newEndCol = endCol
+        
+        if(newStartRow < 0){
+            newStartRow = 0
+        }
+        if(newStartCol < 0){
+            newStartCol = 0
+        }
+        if(newEndRow > wholeHeight){
+            newEndRow = wholeHeight
+        }
+        if(newEndCol > wholeWidth){
+            newEndCol = wholeWidth
+        }
+        
+        for i in newStartRow..<newEndRow{
+            for j in newStartCol..<newEndCol{
                 screenshotMatrix[i][j] = 1
             }
         }
@@ -886,13 +900,30 @@ class softwareClassify : NSObject {
     
     func initialApplicationMatrixInWholeScreen(wholeWidth: Int, wholeHeight: Int, startRow: Int, endRow: Int, startCol: Int, endCol: Int) -> [[Int]]{
         var applicationMatrix = [[Int]](repeating: [Int](repeating: 0, count: wholeWidth), count: wholeHeight)
+        var newStartRow = startRow
+        var newEndRow = endRow
+        var newStartCol = startCol
+        var newEndCol = endCol
+        
+        if(newStartRow < 0){
+            newStartRow = 0
+        }
+        if(newStartCol < 0){
+            newStartCol = 0
+        }
+        if(newEndRow > wholeHeight){
+            newEndRow = wholeHeight
+        }
+        if(newEndCol > wholeWidth){
+            newEndCol = wholeWidth
+        }
         
         // initial solution
         // corner case: screen size: 1440 * 900
         // basic matrix has no row 900 and column 1440
         // application size: 1440 * 900
-        for i in startRow..<endRow{
-            for j in startCol..<endCol{
+        for i in newStartRow..<newEndRow{
+            for j in newStartCol..<newEndCol{
                 applicationMatrix[i][j] = 1
             }
         }

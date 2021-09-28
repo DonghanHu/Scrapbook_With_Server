@@ -38,15 +38,10 @@ struct screenshotInformation{
         "WholeScreenshotOrNot"      : false,
         "CaptureRegion"             : [String : Int](),
         "ImagePath"                 : String(),
-        "ApplicationInformation"    : [[String : Any]]()
+        "ApplicationInformation"    : [[String : Any]](),
+        "ScreenshotTitle"           : String(),
+        "ScreenshotText"            : String()
     ]
-//    init(TimeStamp : String, WholeScreenshotOrNot : Bool, CaptureRegin : [String : Int], ImagePath : String, ApplicationInformation : [[String : Any]]){
-//        self.metaDataSingleRecordingTemplate["TimeStamp"] = TimeStamp
-//        self.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = WholeScreenshotOrNot
-//        self.metaDataSingleRecordingTemplate["CaptureRegion"] = CaptureRegin
-//        self.metaDataSingleRecordingTemplate["ImagePath"] = ImagePath
-//        self.metaDataSingleRecordingTemplate["ApplicationInformation"] = ApplicationInformation
-//    }
     
 }
 
@@ -78,6 +73,7 @@ struct applicationInformation{
         "Top"                       : Int(),
         "Right"                     : Int(),
         "Bottom"                    : Int(),
+        "Rank"                      : String(),
         "FirstMetaData"             : String(),
         "SecondMetaData"            : String()
     ]

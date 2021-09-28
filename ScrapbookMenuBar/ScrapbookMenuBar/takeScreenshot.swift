@@ -443,8 +443,8 @@ class Screencapture : NSObject {
             
             // put captured application names into an array and saved as a global variable for future use
             tempScreenshotInformationStruct.capturedApplicationNameArray = visiableApplicationNameArrayFromBitMasking
-            print(type(of: visiableApplicationNameArrayFromBitMasking))
-            print(tempScreenshotInformationStruct.capturedApplicationNameArray)
+            print("type of visiableApplicationNameArrayFromBitMasking:" , type(of: visiableApplicationNameArrayFromBitMasking))
+            print("tempScreenshotInformationStruct.capturedApplicationNameArray",tempScreenshotInformationStruct.capturedApplicationNameArray)
             print(type(of: tempScreenshotInformationStruct.capturedApplicationNameArray))
             
             print(visiableApplicationNameArrayFromBitMasking)
@@ -491,7 +491,7 @@ class Screencapture : NSObject {
                 }
                 // previously, seen this application name
                 else{
-                    var previousValue = dictionaryForRepeatApplicationNames[appName]
+                    let previousValue = dictionaryForRepeatApplicationNames[appName]
                     // upadate
                     dictionaryForRepeatApplicationNames[appName] = previousValue! + 1
                 }
@@ -533,45 +533,23 @@ class Screencapture : NSObject {
                         if (appleScriptForMetaDataTwo.contains("AlternativeRankNumber")){
                             appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataTwo, rank: rankValue ?? "first")
                         }
-                        
-//                        let testString = "tell application \"Google Chrome\" to return URL of active tab of first window"
-//                        let testResult = returnApplicationMetadata(formattedAppleScript: testString)
-//                        print(testString)
-//                        print(testResult)
-                        
-                        let source = """
-                            tell application \"Google Chrome\" to return URL of active tab of first window
-                        """
-                        
-                        let script = NSAppleScript(source: source)!
-                        var error : NSDictionary?
-                        script.executeAndReturnError(&error)
-                        print(error)
-                        print(runApplescript(applescript: source))
-                        
-                        print("default source code: ")
-                        print(source)
-                        
-                        print("two apple scripts after replacing name and rank values are below: ")
-                        print(appleScriptForMetaDataOne)
-                        print(appleScriptForMetaDataTwo)
+            
+//                        print("two apple scripts after replacing name and rank values are below: ")
+//                        print(appleScriptForMetaDataOne)
+//                        print(appleScriptForMetaDataTwo)
                         
                         let applicationMetadataResultOne = runApplescript(applescript: appleScriptForMetaDataOne)
                         let applicationMetadataResultTwo = runApplescript(applescript: appleScriptForMetaDataTwo)
                         
-                        
-//                        let applicationMetadataResultOne = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataOne)
-//
-//                        let applicationMetadataResultTwo = returnApplicationMetadata(formattedAppleScript: appleScriptForMetaDataTwo)
-                        
                         // merge metadat into application's struct
                         // code here
                         // print(type(of: screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"]))
-                        print(screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"])
+                        // print(screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"])
                         var appDictTemp = capturedApplicationInformationDic[appIndex]
                         appDictTemp["Category"] = categoryIndex
                         appDictTemp["FirstMetaData"] = applicationMetadataResultOne
                         appDictTemp["SecondMetaData"] = applicationMetadataResultTwo
+                        appDictTemp["Rank"] = rankValue
                         capturedApplicationInformationDic[appIndex] = appDictTemp
                         
                         
@@ -585,10 +563,13 @@ class Screencapture : NSObject {
                 // this applicaiton is not saved in the csv file, then use default string for metadata
                 if (foundOrNot == false){
                     // code here
+                    let seenCount = dictionaryForRepeatApplicationNames[appName]
+                    let rankValue = numberToOrdinalDictionary[seenCount ?? 1]
                     var appDictTemp = capturedApplicationInformationDic[appIndex]
                     appDictTemp["Category"] = "None"
                     appDictTemp["FirstMetaData"] = "Currently, this information is empty!"
                     appDictTemp["SecondMetaData"] = "Currently, this information is empty!"
+                    appDictTemp["Rank"] = rankValue
                     capturedApplicationInformationDic[appIndex] = appDictTemp
                 }
                 
@@ -605,6 +586,8 @@ class Screencapture : NSObject {
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
             tempScreenshotInformationStruct.dataDictionary = screenshotStruct.metaDataSingleRecordingTemplate
+            
+            
             
             // open the "captured view" Window
             let viewController : NSViewController = CapturedViewWiondow()
