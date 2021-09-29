@@ -147,6 +147,8 @@ class CapturedViewWiondow: NSViewController {
         // writeAndReadMetaDataInformaionIntoJsonFileTest(metaData: tempScreenshotInformationStruct.dataDictionary)
         writeDataIntoJson(metaData: tempScreenshotInformationStruct.dataDictionary)
         
+        let dialogReuslt = dialogOK(question: "This recording has been saved successfully.", text: "Click OK to continue")
+        
         self.view.window?.close()
         
     }
@@ -161,7 +163,7 @@ class CapturedViewWiondow: NSViewController {
         } catch {
             print("delete screenshot error:", error)
         }
-        dialogOK(question: "This recording has been deleted successfully.", text: "Click OK to continue.")
+        let dialogReuslt = dialogOK(question: "This recording has been deleted successfully.", text: "Click OK to continue.")
        
         // reset values, struct, variables
         // here
@@ -222,21 +224,41 @@ class CapturedViewWiondow: NSViewController {
     
     func writeDataIntoJson(metaData : Dictionary<String , Any>){
         let path = basicInformation.jsonFilePathString
+        
             do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                let originalData = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                
+                do{
+                    var rawJsonData = try JSONSerialization.jsonObject(with : originalData as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? Array<Dictionary<String, Any>>
+                    print(type(of: rawJsonData))
+                    rawJsonData?.append(metaData)
+                    let jsonData = try JSONSerialization.data(withJSONObject: rawJsonData, options: [])
+                    if let file = FileHandle(forWritingAtPath : basicInformation.jsonFilePathString) {
+                        file.write(jsonData)
+                        file.closeFile()
+                    }
+                    
+                    
+                }
+                catch{
+                     print("Unexpected error: \(error).")
+                }
+
+//                print(rawJsonData?.count)
+//                print(type(of: rawJsonData))
+//                rawJsonData?.append(metaData)
                 
                 // bug here
-                let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
-                var jsonArray = jsonResult as? Array<Dictionary<String, Any>>
-                jsonArray?.append(metaData)
+                // let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
+                // var jsonArray = jsonResult as? Array<Dictionary<String, Any>>
+                // jsonArray?.append(metaData)
                 //
-                print(jsonArray)
-                print(type(of: jsonArray))
-                let jsonData = try JSONSerialization.data(withJSONObject: jsonArray, options: [])
-                if let file = FileHandle(forWritingAtPath : basicInformation.jsonFilePathString) {
-                    file.write(jsonData)
-                    file.closeFile()
-                }
+                
+//                let jsonData = try JSONSerialization.data(withJSONObject: rawJsonData, options: [])
+//                if let file = FileHandle(forWritingAtPath : basicInformation.jsonFilePathString) {
+//                    file.write(jsonData)
+//                    file.closeFile()
+//                }
                 
               } catch {
                    // handle error
@@ -356,7 +378,8 @@ extension CapturedViewWiondow: NSTableViewDelegate {
         appName = "whatever"
         cellIdentifier = CellIdentifiers.CheckBoxCell
         // set the frame of each checkbox
-        let checkBoxFrame = NSRect(x: 10, y: 8, width: 25, height: 25)
+        let xCoordinate = tableView.tableColumns[0].width / 3.0
+        let checkBoxFrame = NSRect(x: xCoordinate, y: 8, width: 25, height: 25)
         let newCheckButton = NSButton.init(checkboxWithTitle: item, target: nil, action: #selector(CapturedViewWiondow.checkBoxInteractionMethod(_:)))
         // assign the frame to checkbox
         newCheckButton.frame = checkBoxFrame

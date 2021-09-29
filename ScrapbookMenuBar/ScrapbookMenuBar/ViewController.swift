@@ -32,33 +32,44 @@ class ViewController: NSViewController {
 
     @IBAction func selectedAreaCapture(_ sender: Any) {
         do {
-            try self.view.window?.close()
+            try self.view.window!.close()
         } catch  {
             print("the menu bar window is not closed successfully.")
         }
         
-//        let csvFilesOperationsHandler = csvFilesOperations()
-//        csvFilesOperationsHandler.readCSVFile(filePath: "AppleScripts")
-        
-        let takeScreenshotHandler = Screencapture()
-        takeScreenshotHandler.selectScreenCapture()
+        let secondsToDelay = 0.5
+        perform(#selector(takeSelectedScreenshotFunction), with: nil, afterDelay: secondsToDelay)
+
         print("click button: take screenshot for a selected area.")
         
     }
     
     @IBAction func wholeScreenCapture(_ sender: Any) {
+        
+        
         do {
-            try self.view.window?.close()
+           try self.view.window!.close()
         } catch  {
             print("the menu bar window is not closed successfully.")
+            print("Unexpected error: \(error).")
         }
-        do{
-            sleep(1)
-        }
-        
+//        do{
+//            sleep(1)
+//        }
+        let secondsToDelay = 1.0
+        perform(#selector(takeWholeScreenshotFunction), with: nil, afterDelay: secondsToDelay)
+
+        print("click button: take screenshot for the whole screen.")
+    }
+    
+    @objc func takeSelectedScreenshotFunction(){
+        let takeScreenshotHandler = Screencapture()
+        takeScreenshotHandler.selectScreenCapture()
+    }
+    
+    @objc func takeWholeScreenshotFunction(){
         let takeScreenshotHandler = Screencapture()
         takeScreenshotHandler.wholeScreenCapture()
-        print("click button: take screenshot for the whole screen.")
     }
     
     

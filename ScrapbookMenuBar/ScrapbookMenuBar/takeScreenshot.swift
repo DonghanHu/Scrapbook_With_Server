@@ -74,7 +74,6 @@ class Screencapture : NSObject {
         // print(type(of: screenshotStruct))
         
         
-        
         let date = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM.dd,HH:mm:ss"
@@ -158,11 +157,7 @@ class Screencapture : NSObject {
         
         let mouseEndXLocation = mouseXLocation
         let mouseEndYLocation = mainScreenHeight - mouseYLocation
-        
-        
-        
-        
-        
+    
         // if it contains "captureRect", successfully captured a screenshot
         // print current mouse location
         
@@ -174,11 +169,8 @@ class Screencapture : NSObject {
 //            print(mouseLocation.y)
 //        }
         
-
-        
         if tempScreenshotData.contains("captureRect"){
             
-        
             // get the index of ( and )
             // print("first index of (", temp.indexDistance(of: "(")!)
             // print("first index of )", temp.indexDistance(of: ")")!)
@@ -432,9 +424,7 @@ class Screencapture : NSObject {
             print(type(of: currentScreenshotReginInfor))
             
             let applicationNameStackHandler = softwareClassify()
-            
-            
-            
+
             // from old algorithm
             // let visiableApplicationNameArray = applicationNameStackHandler.getOpenedRunningApplicaionNameList(imageInfor: currentScreenshotReginInfor, wholeInfor : &screenshotStruct)
             
@@ -692,93 +682,216 @@ class Screencapture : NSObject {
     
     // taks screenshot for the whole screen, still need revise
     func wholeScreenCapture(){
-
-        // let secondsToDelay = 5.0
-
-        do {
-            sleep(UInt32(0.8))
-        }
-
-
+        
+        var screenshotStruct = screenshotInformation()
+    
         let date = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM.dd,HH:mm:ss"
         let dateString = dateFormatter.string(from: date)
         capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
-
-        //dateFormatter.dateFormat = "yyyy, MMMM, dd, E, hh:mm:ss"
-    //        dateFormatter.dateFormat = "EEEE, MMM dd, yyyy"
-    //        let currentTime = dateFormatter.string(from: date)
-    //        variables.currentTimeInformation = currentTime
+        
+        screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
+        screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
+        let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
+        screenshotStruct.metaDataSingleRecordingTemplate["ImagePath"] = screenshotPathString
+        screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = [] as! [[String : Any]]
         
         let task = Process()
         task.launchPath = "/usr/sbin/screencapture"
         var arguments = [String]();
-        // do not play sound
         arguments.append("-x")
         
         let tempScreenshotPath = capturedScreenshotInformation.capturedScreenshotPathString
         arguments.append(tempScreenshotPath)
-        
 
         task.arguments = arguments
+        
         let outpipe = Pipe()
         task.standardOutput = outpipe
         task.standardError = outpipe
-        // wait a second to wait the menu window disappear
-        do {
-          try task.run()
-        } catch {}
+
         //task.launch() // asynchronous call.
-        
-        let outdata = outpipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: outdata, encoding: .utf8)
-        let tempScreenshotData = ( output! )
-        // print("output", output!)
+        do {
+            try task.run()
+            
+        } catch {
+            print("something went wrong")
+        }
+
+        // wait until the task is finished
+    
+        let outputData = outpipe.fileHandleForReading.readDataToEndOfFile()
+        let resultInformation = String(data: outputData, encoding: .utf8)
         
         // get the main screen paramters, width and height
         let currentMainScreen = NSScreen.main
         let rectArea = currentMainScreen!.frame
+        let mainScreenHeight = Int(rectArea.size.height)
+        let mainScreenWidth = Int(rectArea.size.width)
         
-        // check here again, -1 or not
+        let left = Int(0)
+        let top = Int(0)
+        let right = Int(mainScreenWidth)
+        let bottom = Int(mainScreenHeight)
         
-        let mainScreenHeight = rectArea.size.height
-        let mainScreenWidth = rectArea.size.width
-        
-
-        let firstCoordinationOfX = 0
-        let firstCoordinationOfY = 0
-        let secondCoordinationOfX = Int(mainScreenWidth)
-        let secondCoordinationOfY = Int(mainScreenHeight)
-        
-        
-
-        task.waitUntilExit()
-        // screenshot capturing is successed
         takeScreenshotSuccess = true
-
         
+        // assgin values into screenshot region struct
+        let currentScreenshotReginInfor = screenshotCaptureRegion(left: left, top : top, right : right, bottom : bottom, width : width, height : height)
+        
+        //
+        screenshotStruct.metaDataSingleRecordingTemplate["CaptureRegion"] = currentScreenshotReginInfor.screenshotRegion as! [String : Int]
+        
+        
+        
+
+        // wait until all tasks finished, including saving pic, etc
+        task.waitUntilExit()
+
         if (takeScreenshotSuccess){
             
-//            let applicationNameStack = softeareClassificationHandler.screenAboveWindowListPrint()
-//            // let applicationNameStackLength = applicationNameStack.count
-//            applescriptHandler.applicationMetaData(applicationNameStack: applicationNameStack)
+            // get captured application names
+            print("screenshot informaiont:")
+            print(currentScreenshotReginInfor)
             
-            print("the process of takeing screenshot is finished, and the images has been saved locally.")
-            // let applicationNameStack = softwareClassify.getOpenedRunningApplicaionNameList()
-            
-//            let temp2 : NSViewController = testViewController()
-//            let subWindow2 = NSWindow(contentViewController: temp2)
-//            let subWindowController2 = NSWindowController(window: subWindow2)
-//            subWindowController2.showWindow(nil)
-        }
+            let applicationNameStackHandler = softwareClassify()
 
+            // from bit masking algorithm
+            let visiableApplicationNameArrayFromBitMasking = applicationNameStackHandler.getOpenedRunningApplicaionNameListWithBitMasking(imageInfor: currentScreenshotReginInfor, wholeInfor: &screenshotStruct)
+            
+            // put captured application names into an array and saved as a global variable for future use
+            tempScreenshotInformationStruct.capturedApplicationNameArray = visiableApplicationNameArrayFromBitMasking
+    
+            // get metadata for each application saved in this struct
+            let csvFilesOperationsHandler = csvFilesOperations()
+            
+            let csvContent = csvFilesOperationsHandler.readCSVFile(filePath: "AppleScripts")
+            // csvContentRow: the number of default application
+            let csvContentRow = csvContent.count
+            // csvContentCol:
+            // [0] : application name
+            // [1] : application category
+            // [2] : metadata 1
+            // [3] : metadata 2
+            let csvContentCol = csvContent[0].count
+
+            var capturedApplicationInformationDic = screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
+            
+            // dictiornary for repeating application names
+            // e.g., two google chrome
+            var dictionaryForRepeatApplicationNames = [String : Int]()
+            
+            // two for loops to search application name and get metdata
+            for (appIndex, singleAppInfor) in capturedApplicationInformationDic.enumerated(){
+                
+                let appName = singleAppInfor["ApplicationName"] as! String
+                
+                // update dictionaryForRepeatApplicationNames
+                // first time meet this application name
+                if (dictionaryForRepeatApplicationNames[appName] == nil){
+                    dictionaryForRepeatApplicationNames[appName] = 1;
+                }
+                // previously, seen this application name
+                else{
+                    let previousValue = dictionaryForRepeatApplicationNames[appName]
+                    // upadate
+                    dictionaryForRepeatApplicationNames[appName] = previousValue! + 1
+                }
+                
+                var foundOrNot = false;
+                
+                for i in 0..<csvContentRow{
+                    let eachRowInArray = csvContent[i] as Array<String>
+                    let tempApplicationName = eachRowInArray[0] as String
+                    if (tempApplicationName == appName){
+                        
+                        foundOrNot = true
+                        
+                        // get the time that this application has appeared
+                        let seenCount = dictionaryForRepeatApplicationNames[appName]
+                        
+                        let categoryIndex = eachRowInArray[1] as String
+                        
+                        var appleScriptForMetaDataOne = eachRowInArray[2] as String
+                        var appleScriptForMetaDataTwo = eachRowInArray[3] as String
+                        //
+                        appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingName(originalString: appleScriptForMetaDataOne, applicationName: appName)
+                        appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingName(originalString: appleScriptForMetaDataTwo, applicationName: appName)
+                        
+                        // default value is 1
+                        let rankValue = numberToOrdinalDictionary[seenCount ?? 1]
+                        
+                        // method one (current): if applescript contains "AlternativeRankNumber"
+                        // method two: check application name to determine repleace or not
+                        if(appleScriptForMetaDataOne.contains("AlternativeRankNumber")){
+                            appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataOne, rank: rankValue ?? "first")
+                        }
+                        if (appleScriptForMetaDataTwo.contains("AlternativeRankNumber")){
+                            appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataTwo, rank: rankValue ?? "first")
+                        }
+            
+                        print("two apple scripts after replacing name and rank values are below: ")
+                        print(appleScriptForMetaDataOne)
+                        print(appleScriptForMetaDataTwo)
+                        
+                        let applicationMetadataResultOne = runApplescript(applescript: appleScriptForMetaDataOne)
+                        let applicationMetadataResultTwo = runApplescript(applescript: appleScriptForMetaDataTwo)
+                        
+                        var appDictTemp = capturedApplicationInformationDic[appIndex]
+                        appDictTemp["Category"] = categoryIndex
+                        appDictTemp["FirstMetaData"] = applicationMetadataResultOne
+                        appDictTemp["SecondMetaData"] = applicationMetadataResultTwo
+                        appDictTemp["Rank"] = rankValue
+                        capturedApplicationInformationDic[appIndex] = appDictTemp
+                        
+                    // end of if statement (tempApplicationName == appName)
+                    }
+                 
+                    // end of for loop for i in 0..<csvContentRow
+                }
+                
+                // this applicaiton is not saved in the csv file, then use default string for metadata
+                if (foundOrNot == false){
+                    // code here
+                    let seenCount = dictionaryForRepeatApplicationNames[appName]
+                    let rankValue = numberToOrdinalDictionary[seenCount ?? 1]
+                    var appDictTemp = capturedApplicationInformationDic[appIndex]
+                    appDictTemp["Category"] = "None"
+                    appDictTemp["FirstMetaData"] = "Currently, this information is empty!"
+                    appDictTemp["SecondMetaData"] = "Currently, this information is empty!"
+                    appDictTemp["Rank"] = rankValue
+                    capturedApplicationInformationDic[appIndex] = appDictTemp
+                }
+                
+            // end of for loop for singleAppInfor in capturedApplicationInformationDic
+            }
+            
+            // write new data struct into screenshotStruct
+            screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = capturedApplicationInformationDic
+            
+            // applescriptHandler.applicationMetaData(applicationNameStack: applicationNameStack)
+            print("the process of takeing screenshot is finished, and the images has been saved locally.")
+           
+            tempScreenshotInformationStruct.dataDictionary = screenshotStruct.metaDataSingleRecordingTemplate
+
+            // open the "captured view" Window
+            let viewController : NSViewController = CapturedViewWiondow()
+            //viewController.receivedScreenshotInfor = screenshotStruct
+            let subWindow = NSWindow(contentViewController: viewController)
+            let subWindowController = NSWindowController(window: subWindow)
+            subWindowController.showWindow(nil)
+            
+        }
+            
         else {
             print("the action of taking a screenshot failed. please repeat your action.")
-            }
-
         }
+        // end of the wholeScreeCapture function
+    }
+    
+    
     
     // end of class
     
