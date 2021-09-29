@@ -141,10 +141,11 @@ class CapturedViewWiondow: NSViewController {
         }
         tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] = allApplicationsDataDic
         print(tempScreenshotInformationStruct.dataDictionary)
+        print(type(of: tempScreenshotInformationStruct.dataDictionary))
         
         // save data into json file
-        writeAndReadMetaDataInformaionIntoJsonFileTest(metaData: tempScreenshotInformationStruct.dataDictionary)
-        
+        // writeAndReadMetaDataInformaionIntoJsonFileTest(metaData: tempScreenshotInformationStruct.dataDictionary)
+        writeDataIntoJson(metaData: tempScreenshotInformationStruct.dataDictionary)
         
         self.view.window?.close()
         
@@ -219,40 +220,66 @@ class CapturedViewWiondow: NSViewController {
         }
     }
     
-    func writeAndReadMetaDataInformaionIntoJsonFileTest (metaData : Dictionary<String, Any>){
-        do {
-            let jsonData = try! JSONSerialization.data(withJSONObject: metaData, options: JSONSerialization.WritingOptions.prettyPrinted)
-
-            let jsonFilePathURL = basicInformation.jsonFilePathURL
-            var fileSize : UInt64
+    func writeDataIntoJson(metaData : Dictionary<String , Any>){
+        let path = basicInformation.jsonFilePathString
             do {
-                let attr = try FileManager.default.attributesOfItem(atPath: basicInformation.jsonFilePathString)
-                fileSize = attr[FileAttributeKey.size] as! UInt64
-                if fileSize == 0{
-                    print("json file is empty")
-                    try jsonData.write(to: jsonFilePathURL!, options : .atomic)
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                
+                // bug here
+                let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
+                var jsonArray = jsonResult as? Array<Dictionary<String, Any>>
+                jsonArray?.append(metaData)
+                //
+                print(jsonArray)
+                print(type(of: jsonArray))
+                let jsonData = try JSONSerialization.data(withJSONObject: jsonArray, options: [])
+                if let file = FileHandle(forWritingAtPath : basicInformation.jsonFilePathString) {
+                    file.write(jsonData)
+                    file.closeFile()
                 }
-                else{
-                    let rawData : NSData = try! NSData(contentsOf: jsonFilePathURL!)
-                    do{
-                        var rawJsonData = try JSONSerialization.jsonObject(with : rawData as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? Array<Dictionary<String, Any>>
-                        
-                        rawJsonData?.append(metaData)
-                        
-                        let jsonData = try! JSONSerialization.data(withJSONObject : rawJsonData!, options: JSONSerialization.WritingOptions.prettyPrinted)
-                        if let file = FileHandle(forWritingAtPath : basicInformation.jsonFilePathString) {
-                            file.write(jsonData)
-                            file.closeFile()
-                        }
-                    }catch {print(error)}
-                }
-            } catch {
-                print("preview Error: \(error)")
-                }
+                
+              } catch {
+                   // handle error
+              }
+    }
+    
+    func stringArrayToData(stringArray: [String]) -> Data? {
+      return try? JSONSerialization.data(withJSONObject: stringArray, options: [])
+    }
+    
+    func writeAndReadMetaDataInformaionIntoJsonFileTest (metaData : Dictionary<String, Any>){
+        
+        let jsonFilePathURL = basicInformation.jsonFilePathURL as! URL
+        print(jsonFilePathURL)
+        // /Users/donghanhu/Documents/ScrapbookServer/Scrapbook.json
+        var fileSize : UInt64
+        do {
+            let attr = try FileManager.default.attributesOfItem(atPath: basicInformation.jsonFilePathString)
+            fileSize = attr[FileAttributeKey.size] as! UInt64
+            if fileSize == 0{
+                print("json file is empty")
+                let jsonData = try! JSONSerialization.data(withJSONObject: metaData, options: JSONSerialization.WritingOptions.prettyPrinted)
+                try jsonData.write(to: jsonFilePathURL, options : .atomic)
             }
-            catch{
-                print(Error.self)
-        }
+            else{
+                
+                let rawData : NSData = try! NSData(contentsOf: basicInformation.jsonFilePathURL!)
+                do{
+
+                    var rawJsonData = try JSONSerialization.jsonObject(with : rawData as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? Array<Dictionary<String, Any>>
+                    
+                    rawJsonData?.append(metaData)
+                    
+                    let jsonData = try! JSONSerialization.data(withJSONObject : rawJsonData!, options: JSONSerialization.WritingOptions.prettyPrinted)
+                    if let file = FileHandle(forWritingAtPath : basicInformation.jsonFilePathString) {
+                        file.write(jsonData)
+                        file.closeFile()
+                    }
+                }catch {print(error)}
+            }
+        } catch {
+            print("preview Error: \(error)")
+            }
     }
     
     // end of the class: ViewController

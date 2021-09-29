@@ -418,7 +418,7 @@ class Screencapture : NSObject {
         let currentScreenshotReginInfor = screenshotCaptureRegion(left: left, top : top, right : right, bottom : bottom, width : width, height : height)
         
         // 
-        screenshotStruct.metaDataSingleRecordingTemplate["CaptureRegion"] = currentScreenshotReginInfor
+        screenshotStruct.metaDataSingleRecordingTemplate["CaptureRegion"] = currentScreenshotReginInfor.screenshotRegion as! [String : Int]
         
 
         // wait until all tasks finished, including saving pic, etc
@@ -534,9 +534,9 @@ class Screencapture : NSObject {
                             appleScriptForMetaDataTwo = getExecutableAppleScriptByReplacingRank(originalString: appleScriptForMetaDataTwo, rank: rankValue ?? "first")
                         }
             
-//                        print("two apple scripts after replacing name and rank values are below: ")
-//                        print(appleScriptForMetaDataOne)
-//                        print(appleScriptForMetaDataTwo)
+                        print("two apple scripts after replacing name and rank values are below: ")
+                        print(appleScriptForMetaDataOne)
+                        print(appleScriptForMetaDataTwo)
                         
                         let applicationMetadataResultOne = runApplescript(applescript: appleScriptForMetaDataOne)
                         let applicationMetadataResultTwo = runApplescript(applescript: appleScriptForMetaDataTwo)
@@ -586,7 +586,7 @@ class Screencapture : NSObject {
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
             tempScreenshotInformationStruct.dataDictionary = screenshotStruct.metaDataSingleRecordingTemplate
-            
+            print(tempScreenshotInformationStruct.dataDictionary)
             
             
             // open the "captured view" Window

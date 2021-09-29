@@ -20,6 +20,8 @@ class jsonFile: NSObject {
         
         // assign global values
         basicInformation.jsonFilePathURL = jsonFilePath
+        print(basicInformation.jsonFilePathURL)
+        print(type(of: basicInformation.jsonFilePathURL))
         print("jsonfilepath in URL is: ", jsonFilePath.absoluteString)
         basicInformation.jsonFilePathString = jsonFilePath.absoluteString
         
