@@ -35,7 +35,7 @@ class Screencapture : NSObject {
 //
 //    var applescriptHandler = appleScript()
 //
-    var takeScreenshotSuccess = false
+    var takeScreenshotSuccess = true
     
     var eventMonitor : EventMonitor?
     
@@ -169,6 +169,7 @@ class Screencapture : NSObject {
 //            print(mouseLocation.y)
 //        }
         
+        print("caputreRect", tempScreenshotData)
         if tempScreenshotData.contains("captureRect"){
             
             // get the index of ( and )
@@ -276,6 +277,16 @@ class Screencapture : NSObject {
             print(firstCoordinationYInt) // height, which is y
             print(secondCoordinationXInt) // screenshot width
             print(secondCoordinationYInt)   // screenshot height
+            
+            let screenshotTotalArea = screenshotArea(width: secondCoordinationXInt, height: secondCoordinationYInt)
+            //set the threshold for the screenshot area
+            if( screenshotTotalArea <= Int(25)){
+                screenshotCaseIndex = 0
+                takeScreenshotSuccess = false
+            }
+            
+            
+            
             
             let screenshotUpperLeftX = firstCoordinationXInt
             let screenshotUpperLeftY = firstCoordinationYInt
@@ -387,18 +398,27 @@ class Screencapture : NSObject {
             width = Int(screenshotWidthInRect)
             height = Int(screenshotHeightInRect)
             
-            
-            print(top) // width, which is x
-            print(bottom) // height, which is y
-            print(left) // screenshot width
-            print(right)   // screenshot height
-            
+            // print four bounds for the screenshot
+//            print(top) // width, which is x
+//            print(bottom) // height, which is y
+//            print(left) // screenshot width
+//            print(right)   // screenshot height
+//
             
         }
+        // !tempScreenshotData.contains("captureRect")
+        else{
+            takeScreenshotSuccess = false
+            screenshotCaseIndex = 0
+        }
         
-        if (screenshotCaseIndex == 0){
+        // the screenshot is invalid or the process of taking a screenshot is not finihsed
+        print("screenshotCaseIndex", screenshotCaseIndex)
+        if (screenshotCaseIndex == 0 && takeScreenshotSuccess == false){
             takeScreenshotSuccess = false
             print("the captured screenshot is not valid")
+            
+            dialogOK(question: "This screenshot is too small or the process of taking a screenshot is not finished.", text: "Click OK to continue.")
             // end this function
             return
         }
@@ -406,22 +426,24 @@ class Screencapture : NSObject {
             takeScreenshotSuccess = true
         }
         
-        // assgin values into screenshot region struct
-        let currentScreenshotReginInfor = screenshotCaptureRegion(left: left, top : top, right : right, bottom : bottom, width : width, height : height)
-        
-        // 
-        screenshotStruct.metaDataSingleRecordingTemplate["CaptureRegion"] = currentScreenshotReginInfor.screenshotRegion as! [String : Int]
         
 
         // wait until all tasks finished, including saving pic, etc
         task.waitUntilExit()
-        
+        // print("takeScreenshotSuccess", takeScreenshotSuccess)
         if (takeScreenshotSuccess){
             
+            
+            // assgin values into screenshot region struct
+            let currentScreenshotReginInfor = screenshotCaptureRegion(left: left, top : top, right : right, bottom : bottom, width : width, height : height)
+            
+            //
+            screenshotStruct.metaDataSingleRecordingTemplate["CaptureRegion"] = currentScreenshotReginInfor.screenshotRegion as! [String : Int]
+            
             // get captured application names
-            print("screenshot informaiont:")
-            print(currentScreenshotReginInfor)
-            print(type(of: currentScreenshotReginInfor))
+//            print("screenshot informaiont:")
+//            print(currentScreenshotReginInfor)
+//            print(type(of: currentScreenshotReginInfor))
             
             let applicationNameStackHandler = softwareClassify()
 
@@ -433,13 +455,13 @@ class Screencapture : NSObject {
             
             // put captured application names into an array and saved as a global variable for future use
             tempScreenshotInformationStruct.capturedApplicationNameArray = visiableApplicationNameArrayFromBitMasking
-            print("type of visiableApplicationNameArrayFromBitMasking:" , type(of: visiableApplicationNameArrayFromBitMasking))
+            // print("type of visiableApplicationNameArrayFromBitMasking:" , type(of: visiableApplicationNameArrayFromBitMasking))
             print("tempScreenshotInformationStruct.capturedApplicationNameArray",tempScreenshotInformationStruct.capturedApplicationNameArray)
-            print(type(of: tempScreenshotInformationStruct.capturedApplicationNameArray))
+            // print(type(of: tempScreenshotInformationStruct.capturedApplicationNameArray))
             
-            print(visiableApplicationNameArrayFromBitMasking)
-            print("screenshot informaiton is: ")
-            print(screenshotStruct)
+            // print(visiableApplicationNameArrayFromBitMasking)
+            // print("screenshot informaiton is: ")
+            // print(screenshotStruct)
             
             
             
@@ -503,10 +525,10 @@ class Screencapture : NSObject {
                         
                         var appleScriptForMetaDataOne = eachRowInArray[2] as String
                         var appleScriptForMetaDataTwo = eachRowInArray[3] as String
-                        print("original apple scripts from csv file: ")
-                        print(appleScriptForMetaDataOne)
-                        print(appleScriptForMetaDataTwo)
                         
+//                        print("original apple scripts from csv file: ")
+//                        print(appleScriptForMetaDataOne)
+//                        print(appleScriptForMetaDataTwo)
                         
                         //
                         appleScriptForMetaDataOne = getExecutableAppleScriptByReplacingName(originalString: appleScriptForMetaDataOne, applicationName: appName)
@@ -525,21 +547,24 @@ class Screencapture : NSObject {
                         }
             
                         print("two apple scripts after replacing name and rank values are below: ")
-                        print(appleScriptForMetaDataOne)
-                        print(appleScriptForMetaDataTwo)
+                        print("appscript one:", appleScriptForMetaDataOne)
+                        print("appscript two:", appleScriptForMetaDataTwo)
                         
                         let applicationMetadataResultOne = runApplescript(applescript: appleScriptForMetaDataOne)
                         let applicationMetadataResultTwo = runApplescript(applescript: appleScriptForMetaDataTwo)
-                        
+                        print("result one:", applicationMetadataResultOne)
+                        print("result two:", applicationMetadataResultTwo)
                         // merge metadat into application's struct
                         // code here
                         // print(type(of: screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"]))
                         // print(screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"])
                         var appDictTemp = capturedApplicationInformationDic[appIndex]
+                        print("appIndex:", appIndex)
                         appDictTemp["Category"] = categoryIndex
                         appDictTemp["FirstMetaData"] = applicationMetadataResultOne
                         appDictTemp["SecondMetaData"] = applicationMetadataResultTwo
                         appDictTemp["Rank"] = rankValue
+                        print("appDictTemp:", appDictTemp)
                         capturedApplicationInformationDic[appIndex] = appDictTemp
                         
                         
@@ -579,12 +604,18 @@ class Screencapture : NSObject {
             print(tempScreenshotInformationStruct.dataDictionary)
             
             
-            // open the "captured view" Window
-            let viewController : NSViewController = CapturedViewWiondow()
-            //viewController.receivedScreenshotInfor = screenshotStruct
-            let subWindow = NSWindow(contentViewController: viewController)
-            let subWindowController = NSWindowController(window: subWindow)
-            subWindowController.showWindow(nil)
+            if (takeScreenshotSuccess == true){
+                // open the "captured view" Window
+                let viewController : NSViewController = CapturedViewWiondow()
+                //viewController.receivedScreenshotInfor = screenshotStruct
+                let subWindow = NSWindow(contentViewController: viewController)
+                let subWindowController = NSWindowController(window: subWindow)
+                subWindowController.showWindow(nil)
+            }
+            else{
+                // takeScreenshotSuccess is false
+            }
+            
             
             
             
@@ -891,7 +922,20 @@ class Screencapture : NSObject {
         // end of the wholeScreeCapture function
     }
     
+    func screenshotArea(width : Int, height : Int) -> Int{
+        return width * height
+    }
     
+    
+    // func for pupping up a alert window for saving and deleting
+    func dialogOK(question: String, text: String) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        return alert.runModal() == .alertFirstButtonReturn
+    }
     
     // end of class
     

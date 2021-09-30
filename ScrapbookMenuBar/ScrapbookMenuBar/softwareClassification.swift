@@ -42,15 +42,17 @@ class softwareClassify : NSObject {
         var applicationNameStack = [String]()
         let infoList = temp as! [[String:Any]]
         let softwareNameList = infoList.filter{ ($0["kCGWindowLayer"] as! Int == 0) && ($0["kCGWindowOwnerName"] as? String != nil) }
-        print("softwarenamelist", softwareNameList)
+        
+        // print("softwarenamelist", softwareNameList)
         // print(type(of: softwareNameList))
+        
         print("kcgWindowName is not nil and the number of the opening software is: ", softwareNameList.count)
         
         var allApplicationNmaeList = [String]()
         var allApplicationPIDList = [String]()
         for singleApplication in softwareNameList {
             let singleApplicationName = singleApplication["kCGWindowOwnerName"] as! String
-            print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
+            // print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
             let singleApplicationPIDName = String(describing: singleApplication["kCGWindowOwnerPID"])
             
             if (!allApplicationPIDList.contains(singleApplicationPIDName)){
@@ -68,7 +70,7 @@ class softwareClassify : NSObject {
         var applicationNameStack = [String]()
         let infoList = temp as! [[String:Any]]
         let softwareNameList = infoList.filter{ ($0["kCGWindowLayer"] as! Int == 0) && ($0["kCGWindowOwnerName"] as? String != nil) }
-        print("softwarenamelist", softwareNameList)
+        // print("softwarenamelist", softwareNameList)
         return softwareNameList
     }
     
@@ -88,9 +90,7 @@ class softwareClassify : NSObject {
     // get opened running application name list
     func getOpenedRunningApplicaionNameList(imageInfor: screenshotCaptureRegion, wholeInfor : inout screenshotInformation) -> Array<String>{
         
-        
         getOpenningApplicationThroughNSWork()
-        
         
         let screenshotWidth = imageInfor.screenshotRegion["Width"]
         let screenshotHeight = imageInfor.screenshotRegion["Height"]
@@ -123,7 +123,7 @@ class softwareClassify : NSObject {
         
         for singleApplication in softwareInformationList {
             let singleApplicationName = singleApplication["kCGWindowOwnerName"] as! String
-            print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
+            // print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
             let singleApplicationPIDName = String(describing: singleApplication["kCGWindowOwnerPID"])
             if (!allApplicationPIDList.contains(singleApplicationPIDName)){
                 if singleApplicationName != "universalAccessAuthWarn" {
@@ -633,9 +633,8 @@ class softwareClassify : NSObject {
         
         
         // using ceiling funciton to round up for the whole screen width and height
-        print(type(of: mainScreenWidthAfterDownSample))
+        // print(type(of: mainScreenWidthAfterDownSample))
         mainScreenWidth = Int(ceilf(mainScreenWidthAfterDownSample))
-        print(mainScreenWidth)
         mainScreenHeight = Int(ceilf(mainScreenHeightAfterDownSample))
 //        mainScreenHeight = Int(mainScreenHeightAfterDownSample)
 //        mainScreenWidth = Int(mainScreenWidthAfterDownSample)

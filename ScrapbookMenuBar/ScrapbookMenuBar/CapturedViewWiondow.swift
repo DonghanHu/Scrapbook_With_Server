@@ -51,8 +51,8 @@ class CapturedViewWiondow: NSViewController {
         // all data here
         receivedScreenshotInfor = tempScreenshotInformationStruct.dataDictionary
         
-        print(receivedScreenshotInfor)
-        print(type(of: receivedScreenshotInfor))
+//        print(receivedScreenshotInfor)
+//        print(type(of: receivedScreenshotInfor))
         // Dictionary<String, Any>
         
         // set the screenshot
@@ -79,10 +79,11 @@ class CapturedViewWiondow: NSViewController {
     // code here
     
     @objc func checkBoxInteractionMethod(_ sender: NSButton){
-        print("checkbox interaction function")
-        print(type(of: sender.state))
+        // print("checkbox interaction function")
+        // print(type(of: sender.state))
+        
         let IntegerSenderState = sender.state.rawValue
-        print(sender.state)
+        // print(sender.state)
         // 1 is on and 0 is off
         if(IntegerSenderState == 0){
             checkBoxButtonsIdentifierWithStatus[sender.identifier!.rawValue as String] = 0
@@ -118,7 +119,7 @@ class CapturedViewWiondow: NSViewController {
         tempScreenshotInformationStruct.dataDictionary["ScreenshotTitle"] = memoTitle.stringValue
         tempScreenshotInformationStruct.dataDictionary["ScreenshotText"] = memoText.stringValue
         
-        print("save button")
+        print("save button clicked")
         
         var allApplicationsDataDic = tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] as! [[String : Any]]
 
@@ -205,20 +206,31 @@ class CapturedViewWiondow: NSViewController {
     @objc func tableViewSingleClick(_ sender:AnyObject){
         if (tableView.selectedRowIndexes.count == 1){
             
+            let tableRowIndex = tableView.selectedRow
+            print("table row Index for clicking:", tableRowIndex)
+            
+            let allApplicationsDataDic = tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] as! [[String : Any]]
+            
+            let singleApplicationInforDic = allApplicationsDataDic[tableRowIndex]
+            
             let applicationName = tempScreenshotInformationStruct.capturedApplicationNameArray[tableView.selectedRow]
             
             applicationNameLabel.stringValue = applicationName
             
-            let allApplicationsDataDic = tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] as! [[String : Any]]
+        
+            applicationCategoryLabel.stringValue = singleApplicationInforDic["Category"] as! String
+            metadataOneLabel.stringValue = singleApplicationInforDic["FirstMetaData"] as! String
+            metadataTwoLabel.stringValue = singleApplicationInforDic["SecondMetaData"] as! String
             
-            for appInfor in allApplicationsDataDic{
-                let tempName = appInfor["ApplicationName"] as! String
-                if (applicationName == tempName){
-                    applicationCategoryLabel.stringValue = appInfor["Category"] as! String
-                    metadataOneLabel.stringValue = appInfor["FirstMetaData"] as! String
-                    metadataTwoLabel.stringValue = appInfor["SecondMetaData"] as! String
-                }
-            }
+            
+//            for appInfor in allApplicationsDataDic{
+//                let tempName = appInfor["ApplicationName"] as! String
+//                if (applicationName == tempName){
+//                    applicationCategoryLabel.stringValue = appInfor["Category"] as! String
+//                    metadataOneLabel.stringValue = appInfor["FirstMetaData"] as! String
+//                    metadataTwoLabel.stringValue = appInfor["SecondMetaData"] as! String
+//                }
+//            }
         }
     }
     
@@ -230,7 +242,7 @@ class CapturedViewWiondow: NSViewController {
                 
                 do{
                     var rawJsonData = try JSONSerialization.jsonObject(with : originalData as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? Array<Dictionary<String, Any>>
-                    print(type(of: rawJsonData))
+                    // print(type(of: rawJsonData))
                     rawJsonData?.append(metaData)
                     let jsonData = try JSONSerialization.data(withJSONObject: rawJsonData, options: [])
                     if let file = FileHandle(forWritingAtPath : basicInformation.jsonFilePathString) {
@@ -244,21 +256,6 @@ class CapturedViewWiondow: NSViewController {
                      print("Unexpected error: \(error).")
                 }
 
-//                print(rawJsonData?.count)
-//                print(type(of: rawJsonData))
-//                rawJsonData?.append(metaData)
-                
-                // bug here
-                // let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
-                // var jsonArray = jsonResult as? Array<Dictionary<String, Any>>
-                // jsonArray?.append(metaData)
-                //
-                
-//                let jsonData = try JSONSerialization.data(withJSONObject: rawJsonData, options: [])
-//                if let file = FileHandle(forWritingAtPath : basicInformation.jsonFilePathString) {
-//                    file.write(jsonData)
-//                    file.closeFile()
-//                }
                 
               } catch {
                    // handle error
@@ -314,6 +311,7 @@ extension CapturedViewWiondow: NSTableViewDataSource {
     
     let tempDic = tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] as! [[String : Any]]
     let rowCount = tempDic.count ?? 0
+    print("row count", rowCount)
     return rowCount
   }
 
@@ -330,15 +328,12 @@ extension CapturedViewWiondow: NSTableViewDelegate {
 
   func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 
-    var image: NSImage?
     var appName: String = ""
     var cellIdentifier: String = ""
 
     let dateFormatter = DateFormatter()
     dateFormatter.dateStyle = .long
     dateFormatter.timeStyle = .long
-    
-    
     
     // 1
     // sanity check here, gate keeper
@@ -350,20 +345,24 @@ extension CapturedViewWiondow: NSTableViewDelegate {
         return nil
     }
     
+    // print("row index", row)
+    
     let item = tempScreenshotInformationStruct.capturedApplicationNameArray[row]
     
     let allApplicationsDataDic = tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] as! [[String : Any]]
     var rankValue = String()
     
-    print(allApplicationsDataDic)
-    
-    for appInfor in allApplicationsDataDic{
-        let tempName = appInfor["ApplicationName"] as! String
-        if (item == tempName){
-            rankValue = appInfor["Rank"] as! String
-            break
-        }
-    }
+    // print(allApplicationsDataDic)
+    let tempName = allApplicationsDataDic[row]["ApplicationName"] as! String
+    rankValue = allApplicationsDataDic[row]["Rank"] as! String
+    print("rank value:", rankValue)
+//    for appInfor in allApplicationsDataDic{
+//        let tempName = appInfor["ApplicationName"] as! String
+//        if (item == tempName){
+//            rankValue = appInfor["Rank"] as! String
+//            break
+//        }
+//    }
 
     // 2
     if tableColumn == tableView.tableColumns[1] {
