@@ -15,11 +15,17 @@ class ViewController: NSViewController {
     @IBOutlet weak var takeWholeScreenshot: NSButton!
     @IBOutlet weak var collectionView: NSButton!
     @IBOutlet weak var quitScrapbook: NSButton!
+    @IBOutlet weak var collectionViewMethodTwo: NSButton!
+    @IBOutlet weak var collectionViewMethodThree: NSButton!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        takeSelectedScreenshot.title = "Take Selected Area Screenshot"
+        takeWholeScreenshot.title = "Take Whole Screen Screenshot"
+        collectionView.title = ""
+        quitScrapbook.title = "Quit Scrapbook"
         
         // Do any additional setup after loading the view.
     }
@@ -72,10 +78,40 @@ class ViewController: NSViewController {
         takeScreenshotHandler.wholeScreenCapture()
     }
     
+    @IBAction func collectionViewMethodTwoAction(_ sender: Any) {
+        
+//        let viewController : NSViewController = collectionViewMethodTwoVC()
+//        let subWindow = NSWindow(contentViewController: viewController)
+//        let subWindowController = NSWindowController(window: subWindow)
+//        subWindowController.showWindow(nil)
+        
+        presentAsModalWindow(collectionViewMethodTwoVC())
+        
+        self.view.window?.close()
+        
+    }
+    
+    
+    @IBAction func collectionViewMethodThreeAction(_ sender: Any) {
+        
+        let viewController : NSViewController = CollectionViewMethodThree()
+        let subWindow = NSWindow(contentViewController: viewController)
+        let subWindowController = NSWindowController(window: subWindow)
+        subWindowController.showWindow(nil)
+        
+        //
+        // presentAsModalWindow(CollectionViewMethodThree() as NSViewController)
+        
+        self.view.window?.close()
+    }
+    
+    
     
     @IBAction func quitScrapbookFunc(_ sender: Any) {
         exit(0);
     }
+    
+    
     
 }
 
