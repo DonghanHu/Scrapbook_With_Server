@@ -28,6 +28,13 @@ class CapturedViewWiondow: NSViewController {
     @IBOutlet weak var tableViewStatusLabel: NSTextField!
     
     
+    @IBOutlet weak var applicationNameFixedLabel: NSTextField!
+    @IBOutlet weak var applicationCategoryFixedLabel: NSTextField!
+    @IBOutlet weak var firstMetaDataFixedLabel: NSTextField!
+    @IBOutlet weak var secondMetaDataFixedLabel: NSTextField!
+    
+    
+    
     var receivedScreenshotInfor = [String : Any]()
     var checkBoxButtonsIdentifierWithStatus = [String : Int]()
     
@@ -35,17 +42,14 @@ class CapturedViewWiondow: NSViewController {
         super.viewDidLoad()
         // Do view setup here.
         
+        applicationNameFixedLabel.stringValue = "Application Name"
+        applicationCategoryFixedLabel.stringValue = "Application Category"
         
-        let temp1 = tempScreenshotInformationStruct.dataDictionary
-        let temp2 = tempScreenshotInformationStruct.capturedApplicationNameArray
-        
-        
-        
+           
         tableView.delegate = self
         tableView.dataSource = self
         tableView.action = #selector(tableViewSingleClick(_:))
         
-
         self.title = "Captured View"
         
         // all data here
@@ -116,9 +120,17 @@ class CapturedViewWiondow: NSViewController {
     @IBAction func saveButtonAction(_ sender: Any) {
         
         // save title and text into array
-        tempScreenshotInformationStruct.dataDictionary["ScreenshotTitle"] = memoTitle.stringValue
-        tempScreenshotInformationStruct.dataDictionary["ScreenshotText"] = memoText.stringValue
+        if(memoTitle.stringValue == ""){
+            tempScreenshotInformationStruct.dataDictionary["ScreenshotTitle"] = memoTitle.placeholderString
+        }else{
+            tempScreenshotInformationStruct.dataDictionary["ScreenshotTitle"] = memoTitle.stringValue
+        }
         
+        if(memoText.stringValue == ""){
+            tempScreenshotInformationStruct.dataDictionary["ScreenshotText"] = memoText.placeholderString
+        }else{
+            tempScreenshotInformationStruct.dataDictionary["ScreenshotText"] = memoText.stringValue
+        }
         print("save button clicked")
         
         var allApplicationsDataDic = tempScreenshotInformationStruct.dataDictionary["ApplicationInformation"] as! [[String : Any]]
@@ -200,6 +212,8 @@ class CapturedViewWiondow: NSViewController {
         }
         // 3
         tableViewStatusLabel.stringValue = text
+        tableViewStatusLabel.isHidden = true
+        
     }
 
     // single click in tableView
@@ -216,6 +230,29 @@ class CapturedViewWiondow: NSViewController {
             let applicationName = tempScreenshotInformationStruct.capturedApplicationNameArray[tableView.selectedRow]
             
             applicationNameLabel.stringValue = applicationName
+            
+            let categoryIdentify = singleApplicationInforDic["Category"] as! String
+            
+            if (categoryIdentify == "Safari" || categoryIdentify == "Google Chrome"){
+                applicationCategoryLabel.stringValue = "Borwser"
+                firstMetaDataFixedLabel.stringValue = "Webpage Title"
+                secondMetaDataFixedLabel.stringValue = "Wbepage URL"
+            }
+            else if(categoryIdentify == "Undefined"){
+                applicationCategoryLabel.stringValue = "Undefined"
+                firstMetaDataFixedLabel.stringValue = "Unavaliable data"
+                secondMetaDataFixedLabel.stringValue = "Unavaliable data"
+            }
+            else if (categoryIdentify == "Finder"){
+                applicationCategoryLabel.stringValue = "Finder"
+                firstMetaDataFixedLabel.stringValue = "Folder Name"
+                secondMetaDataFixedLabel.stringValue = "Folder Local Path"
+            }
+            else {
+                applicationCategoryLabel.stringValue = "Productivity"
+                firstMetaDataFixedLabel.stringValue = "File/Document Name"
+                secondMetaDataFixedLabel.stringValue = "File/Document Local Path"
+            }
             
         
             applicationCategoryLabel.stringValue = singleApplicationInforDic["Category"] as! String

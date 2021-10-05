@@ -21,7 +21,6 @@ class CollectionViewMethodThree: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
         webViewItem.load(URLRequest(url: url as URL))
         
         // Do view setup here.

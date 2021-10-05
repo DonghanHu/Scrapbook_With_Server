@@ -581,9 +581,9 @@ class Screencapture : NSObject {
                     let seenCount = dictionaryForRepeatApplicationNames[appName]
                     let rankValue = numberToOrdinalDictionary[seenCount ?? 1]
                     var appDictTemp = capturedApplicationInformationDic[appIndex]
-                    appDictTemp["Category"] = "None"
-                    appDictTemp["FirstMetaData"] = "Currently, this information is empty!"
-                    appDictTemp["SecondMetaData"] = "Currently, this information is empty!"
+                    appDictTemp["Category"] = "Undefined"
+                    appDictTemp["FirstMetaData"] = "Sorry, metadata for this software is not available!"
+                    appDictTemp["SecondMetaData"] = "Sorry, metadata for this software is not available!"
                     appDictTemp["Rank"] = rankValue
                     capturedApplicationInformationDic[appIndex] = appDictTemp
                 }
