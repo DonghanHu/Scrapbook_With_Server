@@ -16,10 +16,13 @@ class CollectionViewMethodThree: NSViewController {
     
     @IBOutlet weak var webViewItem: WKWebView!
     
-    let url = NSURL(string: "http://www.google.com/")!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard let url = URL(string: "https://www.apple.com") else{
+            return
+        }
 
         webViewItem.load(URLRequest(url: url as URL))
         

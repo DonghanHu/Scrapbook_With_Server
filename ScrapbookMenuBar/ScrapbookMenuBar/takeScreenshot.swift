@@ -76,7 +76,7 @@ class Screencapture : NSObject {
         
         let date = Date()
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM.dd,HH:mm:ss"
+        dateFormatter.dateFormat = "YYYY.MM.dd,HH:mm:ss"
         let dateString = dateFormatter.string(from: date)
         capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
@@ -718,7 +718,7 @@ class Screencapture : NSObject {
     
         let date = Date()
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM.dd,HH:mm:ss"
+        dateFormatter.dateFormat = "YYYY.MM.dd,HH:mm:ss"
         let dateString = dateFormatter.string(from: date)
         capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)

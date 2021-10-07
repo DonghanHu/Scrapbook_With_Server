@@ -15,18 +15,23 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+            <rect key="frame" x="0.0" y="0.0" width="480" height="230"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <wkWebView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sap-o3-zIB">
-                    <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
-                    <autoresizingMask key="autoresizingMask"/>
+                <wkWebView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sap-o3-zIB">
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="230"/>
                     <wkWebViewConfiguration key="configuration">
                         <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                         <wkPreferences key="preferences"/>
                     </wkWebViewConfiguration>
                 </wkWebView>
             </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="sap-o3-zIB" secondAttribute="trailing" id="PnW-dH-EaL"/>
+                <constraint firstItem="sap-o3-zIB" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Shz-jz-3BZ"/>
+                <constraint firstItem="sap-o3-zIB" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="UaE-BV-PI2"/>
+                <constraint firstAttribute="bottom" secondItem="sap-o3-zIB" secondAttribute="bottom" id="cgN-a6-kIa"/>
+            </constraints>
             <point key="canvasLocation" x="139" y="154"/>
         </customView>
     </objects>

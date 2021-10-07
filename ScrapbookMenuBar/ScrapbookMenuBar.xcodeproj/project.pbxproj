@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EA0BE871270E425E00008277 /* styles.css in Resources */ = {isa = PBXBuildFile; fileRef = EA0BE870270E425E00008277 /* styles.css */; };
 		EA2B3C3526F9240E0026D72F /* CapturedViewWiondow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2B3C3326F9240E0026D72F /* CapturedViewWiondow.swift */; };
 		EA2B3C3626F9240E0026D72F /* CapturedViewWiondow.xib in Resources */ = {isa = PBXBuildFile; fileRef = EA2B3C3426F9240E0026D72F /* CapturedViewWiondow.xib */; };
 		EA46F889270B90B900370521 /* CollectionViewMethodThree.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA46F887270B90B900370521 /* CollectionViewMethodThree.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EA0BE870270E425E00008277 /* styles.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = styles.css; sourceTree = "<group>"; };
 		EA2B3C3326F9240E0026D72F /* CapturedViewWiondow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturedViewWiondow.swift; sourceTree = "<group>"; };
 		EA2B3C3426F9240E0026D72F /* CapturedViewWiondow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CapturedViewWiondow.xib; sourceTree = "<group>"; };
 		EA46F887270B90B900370521 /* CollectionViewMethodThree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewMethodThree.swift; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 				EA46F891270B990B00370521 /* collectionViewMethodTwoVC.xib */,
 				EA6EA2D5270B9E2D00C6B750 /* index.html */,
 				EA6EA2D7270BA56000C6B750 /* javascript.js */,
+				EA0BE870270E425E00008277 /* styles.css */,
 			);
 			path = CollectionViews;
 			sourceTree = "<group>";
@@ -185,6 +188,7 @@
 				EA54EBC726DD5D5D0049FEA4 /* Assets.xcassets in Resources */,
 				EA2B3C3626F9240E0026D72F /* CapturedViewWiondow.xib in Resources */,
 				EA54EBCA26DD5D5D0049FEA4 /* Main.storyboard in Resources */,
+				EA0BE871270E425E00008277 /* styles.css in Resources */,
 				EA46F88A270B90B900370521 /* CollectionViewMethodThree.xib in Resources */,
 				EA6EA2D8270BA56000C6B750 /* javascript.js in Resources */,
 			);

@@ -14,12 +14,12 @@ class collectionViewMethodTwoVC: NSViewController {
     @IBOutlet weak var webViewItem: WKWebView!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
-        guard let url = URL(string: "https://www.apple.com") else{
-            return
-        }
-        // webViewItem.load(URLRequest(url: url))
+        self.view.frame.size.width = CGFloat(700.0)
+        self.view.frame.size.height = CGFloat(550.0)
+        
         
         let urlpath = Bundle.main.url(forResource: "index", withExtension: "html")
         
@@ -31,6 +31,6 @@ class collectionViewMethodTwoVC: NSViewController {
         
         // Do view setup here.
     }
-    
-    
+    // end of the class
 }
+

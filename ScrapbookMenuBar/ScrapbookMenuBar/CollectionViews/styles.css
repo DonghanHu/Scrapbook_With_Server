@@ -1,0 +1,75 @@
+
+body {
+    padding: 0;
+    background: #FFF;
+    font: 13px Helvetica;
+}
+.container {
+    margin: 0 auto;
+    margin-right: auto;
+    margin-left: auto;
+}
+.nav {
+    height: 40px;
+    border-bottom: 1px solid #DDD;
+    }
+    .nav h1 {
+        text-align: center;
+        font-size: 22px;
+        color: blue;
+        }
+
+.pin-board {
+    background: #EEE;
+    padding: 10px;
+    float: left;
+    position: relative;
+    }
+
+.column {
+    float: left;
+    width: 170px;
+    margin-left: 10px;
+    }
+    .column:first-child {
+        margin-left: 0;
+        }
+
+.pin {
+    width: 150px;
+
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #FFF;
+    border: 1px solid #DDD;
+    border-collapse: border-box;
+    display: inline-block;
+    }
+    .pin h3 {
+        color: #555;
+        font-size: 12px;
+        text-transform: uppercase;
+        margin: 0 0 5px 0;
+        }
+    .pin img {
+        margin-bottom: 5px;
+    }
+    .pin small {
+        color: #999;
+        }
+.pin img{
+    width: 100%;
+    display: block;
+}
+
+.topnav{
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.topnav #searchText{
+    
+    margin-left: auto;
+    margin-right: auto;
+}
