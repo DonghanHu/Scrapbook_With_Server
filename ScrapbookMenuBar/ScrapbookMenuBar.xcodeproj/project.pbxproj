@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		EA0BE871270E425E00008277 /* styles.css in Resources */ = {isa = PBXBuildFile; fileRef = EA0BE870270E425E00008277 /* styles.css */; };
+		EA0BE876270E9FC100008277 /* commandLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0BE875270E9FC100008277 /* commandLine.swift */; };
+		EA1CA199272A4E7F000AFD49 /* webFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1CA198272A4E7F000AFD49 /* webFiles.swift */; };
 		EA2B3C3526F9240E0026D72F /* CapturedViewWiondow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2B3C3326F9240E0026D72F /* CapturedViewWiondow.swift */; };
 		EA2B3C3626F9240E0026D72F /* CapturedViewWiondow.xib in Resources */ = {isa = PBXBuildFile; fileRef = EA2B3C3426F9240E0026D72F /* CapturedViewWiondow.xib */; };
 		EA46F889270B90B900370521 /* CollectionViewMethodThree.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA46F887270B90B900370521 /* CollectionViewMethodThree.swift */; };
@@ -30,6 +32,8 @@
 
 /* Begin PBXFileReference section */
 		EA0BE870270E425E00008277 /* styles.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = styles.css; sourceTree = "<group>"; };
+		EA0BE875270E9FC100008277 /* commandLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = commandLine.swift; sourceTree = "<group>"; };
+		EA1CA198272A4E7F000AFD49 /* webFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = webFiles.swift; sourceTree = "<group>"; };
 		EA2B3C3326F9240E0026D72F /* CapturedViewWiondow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturedViewWiondow.swift; sourceTree = "<group>"; };
 		EA2B3C3426F9240E0026D72F /* CapturedViewWiondow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CapturedViewWiondow.xib; sourceTree = "<group>"; };
 		EA46F887270B90B900370521 /* CollectionViewMethodThree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewMethodThree.swift; sourceTree = "<group>"; };
@@ -64,6 +68,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EA0BE874270E9C7E00008277 /* servers */ = {
+			isa = PBXGroup;
+			children = (
+				EA0BE875270E9FC100008277 /* commandLine.swift */,
+			);
+			path = servers;
+			sourceTree = "<group>";
+		};
+		EA1CA19A272A5C53000AFD49 /* FileManagements */ = {
+			isa = PBXGroup;
+			children = (
+				EA5FB77B26E7DF60001005EB /* csvFiles.swift */,
+				EA54EBD526DDA6E70049FEA4 /* createJsonFile.swift */,
+				EA1CA198272A4E7F000AFD49 /* webFiles.swift */,
+			);
+			path = FileManagements;
+			sourceTree = "<group>";
+		};
 		EA46F885270B907500370521 /* CollectionViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -106,7 +128,6 @@
 		EA54EBC126DD5D5B0049FEA4 /* ScrapbookMenuBar */ = {
 			isa = PBXGroup;
 			children = (
-				EA46F886270B908E00370521 /* Capture View Window */,
 				EA5FB77E26E96988001005EB /* AppleScripts.csv */,
 				EA54EBC226DD5D5B0049FEA4 /* AppDelegate.swift */,
 				EA54EBC426DD5D5B0049FEA4 /* ViewController.swift */,
@@ -115,11 +136,12 @@
 				EA54EBCB26DD5D5D0049FEA4 /* Info.plist */,
 				EA54EBCC26DD5D5D0049FEA4 /* ScrapbookMenuBar.entitlements */,
 				EA54EBD326DD800A0049FEA4 /* eventMonitor.swift */,
-				EA54EBD526DDA6E70049FEA4 /* createJsonFile.swift */,
 				EA54EBD726DDD0350049FEA4 /* takeScreenshot.swift */,
 				EA54EBD926DED0180049FEA4 /* softwareClassification.swift */,
-				EA5FB77B26E7DF60001005EB /* csvFiles.swift */,
+				EA1CA19A272A5C53000AFD49 /* FileManagements */,
+				EA46F886270B908E00370521 /* Capture View Window */,
 				EA46F885270B907500370521 /* CollectionViews */,
+				EA0BE874270E9C7E00008277 /* servers */,
 			);
 			path = ScrapbookMenuBar;
 			sourceTree = "<group>";
@@ -203,10 +225,12 @@
 			files = (
 				EA54EBD426DD800A0049FEA4 /* eventMonitor.swift in Sources */,
 				EA54EBD626DDA6E70049FEA4 /* createJsonFile.swift in Sources */,
+				EA1CA199272A4E7F000AFD49 /* webFiles.swift in Sources */,
 				EA54EBC526DD5D5B0049FEA4 /* ViewController.swift in Sources */,
 				EA46F892270B990B00370521 /* collectionViewMethodTwoVC.swift in Sources */,
 				EA54EBD826DDD0350049FEA4 /* takeScreenshot.swift in Sources */,
 				EA46F889270B90B900370521 /* CollectionViewMethodThree.swift in Sources */,
+				EA0BE876270E9FC100008277 /* commandLine.swift in Sources */,
 				EA54EBDA26DED0180049FEA4 /* softwareClassification.swift in Sources */,
 				EA5FB77C26E7DF60001005EB /* csvFiles.swift in Sources */,
 				EA2B3C3526F9240E0026D72F /* CapturedViewWiondow.swift in Sources */,

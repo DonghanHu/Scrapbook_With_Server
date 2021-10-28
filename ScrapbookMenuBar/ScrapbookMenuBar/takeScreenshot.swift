@@ -114,7 +114,8 @@ class Screencapture : NSObject {
         task.standardOutput = outpipe
         task.standardError = outpipe
         
-
+        print(task.launchPath)
+        print(task.arguments)
         
         //task.launch() // asynchronous call.
         do {
@@ -138,10 +139,10 @@ class Screencapture : NSObject {
         
         print("If debug: before printing mouse location")
         
-        var touchPoint = [NSEvent(), mouseLocation] as [Any]
-        
-        var mouseHandler = NSEvent()
-        print(touchPoint)
+//        var touchPoint = [NSEvent(), mouseLocation] as [Any]
+//
+//        var mouseHandler = NSEvent()
+//        print(touchPoint)
         
         let mouseXLocation = Int(NSEvent.mouseLocation.x)
         let mouseYLocation = Int(NSEvent.mouseLocation.y)

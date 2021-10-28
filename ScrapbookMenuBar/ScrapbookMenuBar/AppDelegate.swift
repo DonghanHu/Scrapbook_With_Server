@@ -85,6 +85,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     
     let jsonFileHandler = jsonFile()
+    let webFileHandler = webFiles()
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem.button?.title = "S"
@@ -94,12 +95,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // create default folder and json file in the Document
         
-        let defaultFolderPath = getHomePath() + "/Documents/" + "ScrapbookServer/"
+        let defaultFolderPath = getHomePath() + "/Documents/" + "ScrapbookServer/Public/Data/"
         basicInformation.defaultFolderPathString = defaultFolderPath
         basicInformation.defaultFolderPathURL = URL(string: basicInformation.defaultFolderPathString)
         // print(defaultFolderPath)
+        // create a default folder for saving json file and screenshots
         checkDefaultFolder(folderPath: defaultFolderPath)
-        
         
         // create json file
         jsonFileHandler.createJson(filepath: basicInformation.defaultFolderPathURL!)
@@ -107,6 +108,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // take a testing screenshot while launching the application for asking request
         takeTestingImage()
         deleteTestingImage()
+        
+        
+        // creating web files
+        let webFolderPathString = getHomePath() + "/Documents/ScrapbookServer/Public/"
+        let webFolderPathURL = URL(string: webFolderPathString)!
+        webFileHandler.createHTMLFile(filepath: webFolderPathURL)
+        webFileHandler.createCSSFile(filepath: webFolderPathURL)
+        webFileHandler.createJavaScriptFile(filepath: webFolderPathURL)
+
         
         // Insert code here to initialize your application
     }

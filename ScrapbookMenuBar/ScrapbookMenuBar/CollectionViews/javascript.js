@@ -52,12 +52,24 @@ var pinterestLayout = (function ($) {
   
 
     function init() {
-        console.log("run init funtion");
+        console.log("run init funtion.");
         $container = $('.container');
         $board = $('#board');
+        console.log(jsonFilePath)
+        
+        
+        console.log("read json file here:")
+        var request = new XMLHttpRequest();
+        request.open("GET", "ScrapbookServer/Scrapbook.json", false);
+        request.send(null)
+        var my_JSON_object = JSON.parse(request.responseText);
+        console.log(my_JSON_object)
+        
+        
         $.getJSON(jsonFilePath, function (json) {
-            console.log("the whole json file: ");
-            console.log(json); // this will show the info it in the console
+            
+//            console.log("the whole json file: ");
+//            console.log(json);
             console.log("the count of json file is: ");
             console.log(json.length)
 
@@ -92,7 +104,6 @@ var pinterestLayout = (function ($) {
         for (i = 0; i < numColumns; i++) {
             // draw column layout
             $board.append('<div class="column" id="column' + i + '"></div>');
-
         }
 
         $columns = $('.column');
