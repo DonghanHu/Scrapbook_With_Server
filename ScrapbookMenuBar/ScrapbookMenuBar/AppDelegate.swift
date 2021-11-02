@@ -79,6 +79,11 @@ struct applicationInformation{
     ]
 }
 
+struct nodeServerTasks{
+    static var nodeTask = Process()
+    static var nodePipe = Pipe()
+}
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
@@ -116,11 +121,107 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         webFileHandler.createHTMLFile(filepath: webFolderPathURL)
         webFileHandler.createCSSFile(filepath: webFolderPathURL)
         webFileHandler.createJavaScriptFile(filepath: webFolderPathURL)
+        
+//        // kill process first
+//        let killCommand = "/uss/local/bin/killall"
+//        let args = ["/Users/donghanhu/Documents/ScrapbookServerFolder", "server.js"]
+//        let killTask = Process()
+//        killTask.launchPath = killCommand
+//        killTask.arguments = args
+//        do{
+//            try killTask.run()
+//        }catch{
+//            print("something went wrong in kill process, error: \(error)")
+//        }
+//        killTask.waitUntilExit()
+//
+//        // start the node server
+//        // use a test folder
+//        let command = "/usr/local/bin/node"
+//
+//        nodeServerTasks.nodeTask.launchPath = command
+//        nodeServerTasks.nodeTask.arguments = args
+//        nodeServerTasks.nodeTask.standardOutput = nodeServerTasks.nodePipe
+//        nodeServerTasks.nodeTask.standardError = nodeServerTasks.nodePipe
+//
+//        do {
+//             try nodeServerTasks.nodeTask.run()
+//
+//         } catch {
+//             print("something went wrong, error: \(error)")
+//         }
+//        let output = String(data: nodeServerTasks.nodePipe.fileHandleForReading.readDataToEndOfFile(), encoding: String.Encoding.utf8)!
+//        print("inside function, count is", output.count)
+//        if(output.count > 0){
+//            let lastIdnex = output.index(before: output.endIndex)
+//            print(String(output[output.startIndex ..< lastIdnex]))
+//        }
+//        print(nodeServerTasks.nodeTask.isRunning)
+//        nodeServerTasks.nodeTask.terminate()
+//        print(nodeServerTasks.nodeTask.isRunning)
+        
+        // kill the 8080 port
+        killPort(launchPath: "/usr/local/bin/npx", args: ["kill-port", "8080"])
+        
+        DispatchQueue.global(qos: .utility).async {
+            for i in 0...5{
+                print(i)
+            }
+        }
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            let command = "/usr/local/bin/node"
+            let args = ["/Users/donghanhu/Documents/ScrapbookServerFolder", "server.js"]
+            self.runCommandLine(launchPath: command, arguments: args)
+        }
+        
+        testFunc()
 
         
         // Insert code here to initialize your application
     }
 
+    func killPort(launchPath: String, args : [String]){
+        let task = Process()
+        task.launchPath = launchPath
+        task.arguments = args
+        task.launch()
+        print("kill port process: ", task.isRunning)
+        task.waitUntilExit()
+        print("kill port process: ", task.isRunning)
+    }
+    
+    func runCommandLine(launchPath: String, arguments: [String]){
+        let task = Process()
+        task.launchPath = launchPath
+        task.arguments = arguments
+    
+        print("tash launch path: " + launchPath)
+        print("task arguments:", arguments)
+        
+        
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.launch()
+        
+        print(task.isRunning)
+
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: String.Encoding.utf8)!
+        if(output.count > 0){
+            let lastIdnex = output.index(before: output.endIndex)
+            print(String(output[output.startIndex ..< lastIdnex]))
+        }
+        print("task" + launchPath + "is running? " + String(task.isRunning))
+        
+    }
+    
+    func testFunc(){
+        print("THis is the test function")
+    }
+    
+    
     
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
