@@ -76,15 +76,18 @@ class Screencapture : NSObject {
         
         let date = Date()
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY.MM.dd,HH:mm:ss"
+        dateFormatter.dateFormat = "YYYY.MM.dd,HH-mm-ss"
         let dateString = dateFormatter.string(from: date)
+        let screenshotPicName = "Screenshot-" + dateString + ".jpg"
         capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
+        print(capturedScreenshotInformation.capturedScreenshotPathString)
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
         
         screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
         screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
         let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
         screenshotStruct.metaDataSingleRecordingTemplate["ImagePath"] = screenshotPathString
+        screenshotStruct.metaDataSingleRecordingTemplate["ScreenshotPictureName"] = screenshotPicName
         screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = [] as! [[String : Any]]
         print(type(of: screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"]))
         
@@ -120,10 +123,6 @@ class Screencapture : NSObject {
         //task.launch() // asynchronous call.
         do {
             try task.run()
-                // detect once mouse clicked
-                // mouseClick()
-            
-            
         } catch {
             print("something went wrong")
         }
@@ -719,15 +718,17 @@ class Screencapture : NSObject {
     
         let date = Date()
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY.MM.dd,HH:mm:ss"
+        dateFormatter.dateFormat = "YYYY.MM.dd,HH-mm-ss"
         let dateString = dateFormatter.string(from: date)
         capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
+        let screenshotPicName = "Screenshot-" + dateString + ".jpg"
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
         
         screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
         screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
         let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
         screenshotStruct.metaDataSingleRecordingTemplate["ImagePath"] = screenshotPathString
+        screenshotStruct.metaDataSingleRecordingTemplate["ScreenshotPictureName"] = screenshotPicName
         screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = [] as! [[String : Any]]
         
         let task = Process()

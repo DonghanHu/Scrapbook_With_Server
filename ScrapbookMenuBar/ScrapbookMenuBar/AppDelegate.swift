@@ -38,6 +38,7 @@ struct screenshotInformation{
         "WholeScreenshotOrNot"      : false,
         "CaptureRegion"             : [String : Int](),
         "ImagePath"                 : String(),
+        "ScreenshotPictureName"     : String(),
         "ApplicationInformation"    : [[String : Any]](),
         "ScreenshotTitle"           : String(),
         "ScreenshotText"            : String()
@@ -122,46 +123,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         webFileHandler.createCSSFile(filepath: webFolderPathURL)
         webFileHandler.createJavaScriptFile(filepath: webFolderPathURL)
         
-//        // kill process first
-//        let killCommand = "/uss/local/bin/killall"
-//        let args = ["/Users/donghanhu/Documents/ScrapbookServerFolder", "server.js"]
-//        let killTask = Process()
-//        killTask.launchPath = killCommand
-//        killTask.arguments = args
-//        do{
-//            try killTask.run()
-//        }catch{
-//            print("something went wrong in kill process, error: \(error)")
-//        }
-//        killTask.waitUntilExit()
-//
-//        // start the node server
-//        // use a test folder
-//        let command = "/usr/local/bin/node"
-//
-//        nodeServerTasks.nodeTask.launchPath = command
-//        nodeServerTasks.nodeTask.arguments = args
-//        nodeServerTasks.nodeTask.standardOutput = nodeServerTasks.nodePipe
-//        nodeServerTasks.nodeTask.standardError = nodeServerTasks.nodePipe
-//
-//        do {
-//             try nodeServerTasks.nodeTask.run()
-//
-//         } catch {
-//             print("something went wrong, error: \(error)")
-//         }
-//        let output = String(data: nodeServerTasks.nodePipe.fileHandleForReading.readDataToEndOfFile(), encoding: String.Encoding.utf8)!
-//        print("inside function, count is", output.count)
-//        if(output.count > 0){
-//            let lastIdnex = output.index(before: output.endIndex)
-//            print(String(output[output.startIndex ..< lastIdnex]))
-//        }
-//        print(nodeServerTasks.nodeTask.isRunning)
-//        nodeServerTasks.nodeTask.terminate()
-//        print(nodeServerTasks.nodeTask.isRunning)
+        var checkPIDArgs = [String]()
+        //lsof -i tcp:8080
+        checkPIDArgs.append("-i")
+        checkPIDArgs.append("tcp:8080")
+        let PIDNumber = getPortNumberPID(launchPath: "/usr/sbin/lsof", args: checkPIDArgs)
+        
+        
+        print("PID number is: ", PIDNumber)
         
         // kill the 8080 port
-        killPort(launchPath: "/usr/local/bin/npx", args: ["kill-port", "8080"])
+        // this one does not work
+        // kill -9 port number
+        var killPortArgs = [String]()
+        killPortArgs.append("-9")
+        killPortArgs.append(PIDNumber)
+        KillPortNumber(launchPath: "/bin/kill", args: killPortArgs)
         
         DispatchQueue.global(qos: .utility).async {
             for i in 0...5{
@@ -181,14 +158,72 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to initialize your application
     }
 
-    func killPort(launchPath: String, args : [String]){
+    func getPortNumberPID(launchPath: String, args : [String]) -> String{
+        
+        var output : [String] = []
+        var res = String()
+        
         let task = Process()
         task.launchPath = launchPath
         task.arguments = args
-        task.launch()
-        print("kill port process: ", task.isRunning)
+        
+        let outpipe = Pipe()
+        task.standardOutput = outpipe
+        
+        do {
+            try task.run()
+            let outdata = outpipe.fileHandleForReading.readDataToEndOfFile()
+            if var string = String(data: outdata, encoding: .utf8) {
+                string = string.trimmingCharacters(in: .newlines)
+                output = string.components(separatedBy: "\n")
+            }
+            let len = output.count
+            // print("output len is: ", len)
+            // len is 2
+            if(len > 1){
+                let strs = output[1].split(separator: " ")
+                res = String(strs[1])
+                for i in 0..<strs.count{
+                    // the second element is pid number
+                    print(i, strs[i])
+                }
+            }
+            // print("get port number process: ", task.isRunning)
+        } catch {
+            print("something went wrong \(error)")
+        }
         task.waitUntilExit()
-        print("kill port process: ", task.isRunning)
+        // print("get port number process: ", task.isRunning)
+        
+        return res
+    }
+    
+    func KillPortNumber(launchPath: String, args : [String]){
+        var output : [String] = []
+        let task = Process()
+        task.launchPath = launchPath
+        task.arguments = args
+        let outpipe = Pipe()
+        task.standardOutput = outpipe
+        do {
+            try task.run()
+            let outdata = outpipe.fileHandleForReading.readDataToEndOfFile()
+            if var string = String(data: outdata, encoding: .utf8) {
+                string = string.trimmingCharacters(in: .newlines)
+                output = string.components(separatedBy: "\n")
+            }
+            let len = output.count
+            if(len > 0){
+                for i in 0..<len{
+                    print(i, output[i])
+                }
+            }
+            // print("kill port number process: ", task.isRunning)
+        } catch {
+            print("something went wrong \(error)")
+        }
+        task.waitUntilExit()
+        // print("kill port number process: ", task.isRunning)
     }
     
     func runCommandLine(launchPath: String, arguments: [String]){

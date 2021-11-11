@@ -1,5 +1,5 @@
 
-const jsonFilePath = "/Users/donghanhu/Documents/ScrapbookServer/Scrapbook.json";
+const jsonFilePath = "Data/Scrapbook.json";
 var jsonInformation = [];
 
 // two hard-code josn information
