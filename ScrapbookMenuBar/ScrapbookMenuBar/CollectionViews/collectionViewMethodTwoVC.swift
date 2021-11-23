@@ -21,19 +21,13 @@ class collectionViewMethodTwoVC: NSViewController {
         self.view.frame.size.height = CGFloat(550.0)
         
         print(basicInformation.jsonFilePathURL!)
-        
-        guard let defaultURL = URL(string: "http://localhost:8081/") else{
+        self.title = "Collection View"
+        guard let defaultURL = URL(string: "http://127.0.0.1:8080") else{
             return
         }
-        
-        let urlpath = Bundle.main.url(forResource: "index", withExtension: "html")
-        print(type(of: urlpath))
-        print(urlpath!)
-        
-
-        
-        let requesturl = urlpath
-        let request = URLRequest(url: requesturl!)
+        print(defaultURL)
+        let requesturl = defaultURL
+        let request = URLRequest(url: requesturl)
         webViewItem.load(request)
         
         

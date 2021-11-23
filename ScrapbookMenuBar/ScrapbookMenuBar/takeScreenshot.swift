@@ -603,6 +603,21 @@ class Screencapture : NSObject {
             tempScreenshotInformationStruct.dataDictionary = screenshotStruct.metaDataSingleRecordingTemplate
             print(tempScreenshotInformationStruct.dataDictionary)
             
+            print("the type of tempScreenshotInformationStruct is : ");
+            // Dictionary<String, Any>
+            // print(type(of: tempScreenshotInformationStruct.dataDictionary))
+        
+            // save this temp screenshot's informatino to the temp json file
+            // tempScreenshotInformationStruct.dataDictionary
+            
+            let tempJsonFileHandler = tempJsonFileOperations();
+            // clear the temp json file first
+            // print(basicInformation.tempScreenshotJsonFilePathString)
+            tempJsonFileHandler.clearTempJsonFile(FilePath: basicInformation.tempScreenshotJsonFilePathString)
+            // overwrite new temp json data into the file
+            // print(tempScreenshotInformationStruct.dataDictionary)
+            tempJsonFileHandler.writeTempJsonData(screenshotDic: tempScreenshotInformationStruct.dataDictionary)
+            
             
             if (takeScreenshotSuccess == true){
                 // open the "captured view" Window
@@ -909,12 +924,26 @@ class Screencapture : NSObject {
            
             tempScreenshotInformationStruct.dataDictionary = screenshotStruct.metaDataSingleRecordingTemplate
 
-            // open the "captured view" Window
-            let viewController : NSViewController = CapturedViewWiondow()
-            //viewController.receivedScreenshotInfor = screenshotStruct
-            let subWindow = NSWindow(contentViewController: viewController)
-            let subWindowController = NSWindowController(window: subWindow)
-            subWindowController.showWindow(nil)
+            let tempJsonFileHandler = tempJsonFileOperations();
+            // clear the temp json file first
+            // print(basicInformation.tempScreenshotJsonFilePathString)
+            tempJsonFileHandler.clearTempJsonFile(FilePath: basicInformation.tempScreenshotJsonFilePathString)
+            // overwrite new temp json data into the file
+            // print(tempScreenshotInformationStruct.dataDictionary)
+            tempJsonFileHandler.writeTempJsonData(screenshotDic: tempScreenshotInformationStruct.dataDictionary)
+            
+            if (takeScreenshotSuccess == true){
+                // open the "captured view" Window
+                let viewController : NSViewController = CapturedViewWiondow()
+                //viewController.receivedScreenshotInfor = screenshotStruct
+                let subWindow = NSWindow(contentViewController: viewController)
+                let subWindowController = NSWindowController(window: subWindow)
+                subWindowController.showWindow(nil)
+            }
+            else{
+                // taking screenshot is not work
+            }
+            
             
         }
             

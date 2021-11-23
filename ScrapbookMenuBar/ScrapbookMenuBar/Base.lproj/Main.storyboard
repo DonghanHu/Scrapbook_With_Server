@@ -732,7 +732,7 @@
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BIh-h7-rlh">
                                 <rect key="frame" x="14" y="103" width="262" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OaX-BP-7HP">
+                                <buttonCell key="cell" type="push" title="Test Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OaX-BP-7HP">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -740,22 +740,10 @@
                                     <action selector="collectionViewMethodTwoAction:" target="XfG-lQ-9wD" id="Kru-ig-xGU"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ee1-aW-HbR">
-                                <rect key="frame" x="14" y="58" width="262" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eev-UF-2RH">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="collectionViewMethodThreeAction:" target="XfG-lQ-9wD" id="AQg-qE-Fq4"/>
-                                </connections>
-                            </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="bkI-WS-pgh" id="ejh-TI-jgw"/>
-                        <outlet property="collectionViewMethodThree" destination="ee1-aW-HbR" id="ff2-Te-5oC"/>
                         <outlet property="collectionViewMethodTwo" destination="BIh-h7-rlh" id="Udw-9N-pMG"/>
                         <outlet property="quitScrapbook" destination="Ue5-0C-lIm" id="aqa-m3-rMP"/>
                         <outlet property="takeSelectedScreenshot" destination="2Vf-7T-baE" id="u9D-ke-QSe"/>

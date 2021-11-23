@@ -16,7 +16,6 @@ class ViewController: NSViewController {
     @IBOutlet weak var collectionView: NSButton!
     @IBOutlet weak var quitScrapbook: NSButton!
     @IBOutlet weak var collectionViewMethodTwo: NSButton!
-    @IBOutlet weak var collectionViewMethodThree: NSButton!
     
     
     override func viewDidLoad() {
@@ -24,7 +23,7 @@ class ViewController: NSViewController {
 
         takeSelectedScreenshot.title = "Take Selected Area Screenshot"
         takeWholeScreenshot.title = "Take Whole Screen Screenshot"
-        collectionView.title = ""
+        collectionView.title = "Collection View"
         quitScrapbook.title = "Quit Scrapbook"
         
         // Do any additional setup after loading the view.
@@ -57,7 +56,7 @@ class ViewController: NSViewController {
            try self.view.window!.close()
         } catch  {
             print("the menu bar window is not closed successfully.")
-            print("Unexpected error: \(error).")
+            print("Unexpected error in wholeScreenCapture: \(error).")
         }
 //        do{
 //            sleep(1)
@@ -89,20 +88,6 @@ class ViewController: NSViewController {
         
         self.view.window?.close()
         
-    }
-    
-    
-    @IBAction func collectionViewMethodThreeAction(_ sender: Any) {
-        
-        let viewController : NSViewController = CollectionViewMethodThree()
-        let subWindow = NSWindow(contentViewController: viewController)
-        let subWindowController = NSWindowController(window: subWindow)
-        subWindowController.showWindow(nil)
-        
-        //
-        // presentAsModalWindow(CollectionViewMethodThree() as NSViewController)
-        
-        self.view.window?.close()
     }
     
     

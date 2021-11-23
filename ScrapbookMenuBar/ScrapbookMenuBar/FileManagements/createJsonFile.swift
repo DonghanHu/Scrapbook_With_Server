@@ -8,7 +8,6 @@
 
 import Foundation
 
-import Foundation
 class jsonFile: NSObject {
     
     
@@ -71,7 +70,7 @@ class jsonFile: NSObject {
     }
     
     // function to append single recording data to the existed array in json file
-    func addSingleRecordingMetaData(){
+    func addSingleRecordingMetaData(screenshotDic : Dictionary<String, Any>){
         
     }
     

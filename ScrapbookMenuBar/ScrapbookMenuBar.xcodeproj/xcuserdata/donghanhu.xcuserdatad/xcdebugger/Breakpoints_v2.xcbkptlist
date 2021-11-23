@@ -7,32 +7,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A9745B69-92A8-499C-B760-370C0691A44D"
+            uuid = "8B6C6C52-B1FB-4EB6-A045-A471B349BCE7"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScrapbookMenuBar/AppDelegate.swift"
+            filePath = "ScrapbookMenuBar/takeScreenshot.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "240"
-            endingLineNumber = "240"
-            landmarkName = "runCommandLine(launchPath:arguments:)"
+            startingLineNumber = "613"
+            endingLineNumber = "613"
+            landmarkName = "selectScreenCapture()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FAEA2E28-BD7A-4061-AA2D-EB4D6636262F"
+            uuid = "D1729552-559C-446E-94D6-B4A1DF3BD535"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScrapbookMenuBar/takeScreenshot.swift"
+            filePath = "ScrapbookMenuBar/FileManagements/createTempJson.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "selectScreenCapture()"
+            startingLineNumber = "94"
+            endingLineNumber = "94"
+            landmarkName = "clearTempJsonFile(FilePath:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

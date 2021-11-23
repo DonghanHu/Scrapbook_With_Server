@@ -1,5 +1,4 @@
-
-const jsonFilePath = "Data/Scrapbook.json";
+const jsonFilePath = "/Data/Scrapbook.json";
 var jsonInformation = [];
 
 // two hard-code josn information
@@ -30,24 +29,47 @@ var pinterestLayout = (function ($) {
     var recordings = null;
     var searchedCollections = null;
 
-    function displayImage(pid, psrc) {
-        console.log("Open a page to show further information.");
+    $('#searchButton').click(function(){
+        var searchKeyString = document.getElementById("searchText").value;
+        console.log(searchKeyString);
 
-//       // method 1
-//       var img = document.getElementById(pid);
-//       img.src = psrc;
-//       img.style.display = 'block';
-//
-//       // method 2
-//       var largeImage = document.getElementById(pid);
-//       largeImage.style.display = 'block';
-//       var url=largeImage.getAttribute('src');
-//       window.open(url,'Image');
-//
-//       // method 3:
-//       window.location.href = 'http://' + psrc;
+        $.getJSON(jsonFilePath, function (json) {
+    
+            var count = json.length;
+            console.log(count);
 
+            searchedCollections = new Array();
+    
+            for(var k = 0; k < count; k++){
+                // console.log(recordings[k]);
+                var temp = json[k];
+                var tempStringFormat = JSON.stringify(temp);
+                var indexExist = tempStringFormat.indexOf(searchKeyString);
+                console.log(indexExist);
+                if (indexExist != -1){
+                    searchedCollections.push(json[k]);
+                }
+    
+            }
+
+            // redraw the canvas
+            pins = searchedCollections;
+    
+            // set from newest to oldest
+            pins = pins.reverse();
+            $(window).resize(drawBoard).trigger('resize');
+            // testFunction();
+        });
+    });
+
+    function testFunction(){
+        console.log("this is test funcitn");
     }
+
+    // refresh all recordings
+    $('#resetButton').click(function(){
+        init();
+    });
 
   
 
@@ -59,11 +81,6 @@ var pinterestLayout = (function ($) {
         
         
         console.log("read json file here:")
-        var request = new XMLHttpRequest();
-        request.open("GET", "ScrapbookServer/Scrapbook.json", false);
-        request.send(null)
-        var my_JSON_object = JSON.parse(request.responseText);
-        console.log(my_JSON_object)
         
         
         $.getJSON(jsonFilePath, function (json) {
@@ -82,6 +99,7 @@ var pinterestLayout = (function ($) {
         });
 
     }
+
 
     function drawBoard() {
         // check whether the current collection is empty
@@ -137,7 +155,13 @@ var pinterestLayout = (function ($) {
         });
         // if two columns are the same, return the first one
         return $columns.first();
-      }
+    }
+    function displayImage() {
+        console.log(RecordingInformation)
+    
+        console.log("Open a page to show further information.");
+        // window.open(url,'Image','width=largeImage.stylewidth,height=largeImage.style.height,resizable=1');
+    }
 
 
   /* 渲染模板 */
@@ -156,6 +180,7 @@ var pinterestLayout = (function ($) {
         var screenshotDescription = singleRecording.ScreenshotText
         var screenshotTitle = singleRecording.ScreenshotTitle
         var screenshotTimeStamp = singleRecording.TimeStamp
+        var screenshotPictureName = singleRecording.ScreenshotPictureName
 
         // print each information seperately
         console.log(typeof(allApplicationInformationArray))
@@ -168,7 +193,14 @@ var pinterestLayout = (function ($) {
         // /Users/donghanhu/Documents/ScrapbookServer/Screenshot-09.30,13:20:52.jpg
         console.log(screenshotDescription)
         console.log(screenshotTitle)
+        console.log(screenshotPictureName)
         console.log(screenshotTimeStamp)
+
+
+
+        // code here
+        var screenshotImageSource = "/Data/" + screenshotPictureName
+
 
 
         // set id for each screenshot in html page
@@ -176,12 +208,16 @@ var pinterestLayout = (function ($) {
 
         var pinSrc = screenshotPath;
 
+
         // code here to create href for each screenshot to click
 
-        var temphref = "tempString"
+        var temphref = "detailedView.html"
+
         html += `
-        <a href="${temphref}" class="pin" id="${pinId}" style="width:${colWidth-20}px">
-            <h3>${screenshotTitle ? screenshotTitle : "Empty title here."}</h3><img src="${screenshotPath}" onclick="displayImage(pinId, pinSrc);"></img>
+        <a href=${temphref} class="pin" id="${pinId}" style="width:${colWidth-20}px" onclick="displayImage()">
+            <h3>${screenshotTitle ? screenshotTitle : "Empty title here."}</h3>
+        
+            <img src="${screenshotImageSource}"></img>
             
             <small>${screenshotDescription? screenshotDescription : "Empty description here."}<small>
             </br>
@@ -193,6 +229,7 @@ var pinterestLayout = (function ($) {
         
 
     }
+    
 
     init();
 

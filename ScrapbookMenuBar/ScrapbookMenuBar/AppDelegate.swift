@@ -15,6 +15,9 @@ struct basicInformation {
     static var defaultFolderPathURL                 =   URL(string: "default_folder_path")
     static var jsonFilePathURL                      =   URL(string: "default_jsonFile_path")
     static var jsonFilePathString                   =   ""
+    
+    static var tempScreenshotJsonFilePathString     =   ""
+    static var tempScreenshotJsonFilePathURL        = URL(string: "temp_jsonFile_Path")
 }
 
 struct capturedScreenshotInformation {
@@ -92,6 +95,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     let jsonFileHandler = jsonFile()
     let webFileHandler = webFiles()
+    let tempJsonFileHandler = tempJsonFileOperations()
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem.button?.title = "S"
@@ -104,12 +108,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaultFolderPath = getHomePath() + "/Documents/" + "ScrapbookServer/Public/Data/"
         basicInformation.defaultFolderPathString = defaultFolderPath
         basicInformation.defaultFolderPathURL = URL(string: basicInformation.defaultFolderPathString)
-        // print(defaultFolderPath)
+
         // create a default folder for saving json file and screenshots
         checkDefaultFolder(folderPath: defaultFolderPath)
         
         // create json file
         jsonFileHandler.createJson(filepath: basicInformation.defaultFolderPathURL!)
+        
+        // create temp json file to save temp screenshot's informatin
+        tempJsonFileHandler.tempJson(filepath : basicInformation.defaultFolderPathURL!)
         
         // take a testing screenshot while launching the application for asking request
         takeTestingImage()
@@ -130,7 +137,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let PIDNumber = getPortNumberPID(launchPath: "/usr/sbin/lsof", args: checkPIDArgs)
         
         
-        print("PID number is: ", PIDNumber)
+        // print("PID number is: ", PIDNumber)
         
         // kill the 8080 port
         // this one does not work
@@ -140,19 +147,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         killPortArgs.append(PIDNumber)
         KillPortNumber(launchPath: "/bin/kill", args: killPortArgs)
         
-        DispatchQueue.global(qos: .utility).async {
-            for i in 0...5{
-                print(i)
-            }
-        }
+        // dispatch queue for test
+//        DispatchQueue.global(qos: .utility).async {
+//            for i in 0...5{
+//                print(i)
+//            }
+//        }
         
         DispatchQueue.global(qos: .userInitiated).async {
             let command = "/usr/local/bin/node"
             let args = ["/Users/donghanhu/Documents/ScrapbookServerFolder", "server.js"]
             self.runCommandLine(launchPath: command, arguments: args)
         }
-        
-        testFunc()
 
         
         // Insert code here to initialize your application
@@ -231,8 +237,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         task.launchPath = launchPath
         task.arguments = arguments
     
-        print("tash launch path: " + launchPath)
-        print("task arguments:", arguments)
+        // print("tash launch path: " + launchPath)
+        // print("task arguments:", arguments)
         
         
         let pipe = Pipe()
@@ -312,7 +318,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var arguments = [String]();
         arguments.append("-x")
 
-        arguments.append(basicInformation.defaultFolderPathString + "Testing")
+        arguments.append(basicInformation.defaultFolderPathString + "Testing.jpg")
         task.arguments = arguments
 
         let outpipe = Pipe()
@@ -322,13 +328,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
            try task.run()
          } catch {}
         
+        task.waitUntilExit()
+        print("taking a test image is finished")
     }
     
     func deleteTestingImage(){
-        let path = basicInformation.defaultFolderPathString  + "Testing"
+        let path = basicInformation.defaultFolderPathString  + "Testing.jpg"
         do {
           try FileManager.default.removeItem(atPath: path)
-        } catch{}
+        } catch{
+            print("error iin delete the testing image: \(error)")
+        }
         
     }
     

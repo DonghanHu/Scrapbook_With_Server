@@ -80,7 +80,7 @@ class webFiles : NSObject{
             }
         } else {
             // print("json file path:", jsonFilePath)
-            print("CSS file is already existed!")
+            print("Javascript file is already existed!")
         }
     }
     

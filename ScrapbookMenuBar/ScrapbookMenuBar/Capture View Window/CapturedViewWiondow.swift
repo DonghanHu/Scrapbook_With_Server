@@ -290,7 +290,7 @@ class CapturedViewWiondow: NSViewController {
                     
                 }
                 catch{
-                     print("Unexpected error: \(error).")
+                     print("Unexpected error in writeDataIntoJson function: \(error).")
                 }
 
                 
