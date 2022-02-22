@@ -42,6 +42,8 @@ class CapturedViewWiondow: NSViewController {
         super.viewDidLoad()
         // Do view setup here.
         
+        
+        
         applicationNameFixedLabel.stringValue = "Application Name"
         applicationCategoryFixedLabel.stringValue = "Application Category"
         

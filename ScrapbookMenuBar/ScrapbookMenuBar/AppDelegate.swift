@@ -38,6 +38,8 @@ struct screenshotInformation{
         
         "Index"                     : Int(),
         "TimeStamp"                 : String(),
+        "AppInforString"            : String(),
+
         "WholeScreenshotOrNot"      : false,
         "CaptureRegion"             : [String : Int](),
         "ImagePath"                 : String(),
@@ -72,6 +74,7 @@ struct screenshotCaptureRegion {
 struct applicationInformation{
     var singleApplicationInforTemplate       : [String : Any] = [
         "ApplicationName"           : String(),
+        "ApplicationNameWithRank"   : String(),
         "Category"                  : String(),
         "Left"                      : Int(),
         "Top"                       : Int(),
@@ -105,7 +108,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // create default folder and json file in the Document
         
-        let defaultFolderPath = getHomePath() + "/Documents/" + "ScrapbookServer/Public/Data/"
+        let defaultFolderPath = getHomePath() + "/Documents/" + "ScrapbookServer/public/Data/"
         basicInformation.defaultFolderPathString = defaultFolderPath
         basicInformation.defaultFolderPathURL = URL(string: basicInformation.defaultFolderPathString)
 
@@ -124,11 +127,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         
         // creating web files
-        let webFolderPathString = getHomePath() + "/Documents/ScrapbookServer/Public/"
+        let webFolderPathString = getHomePath() + "/Documents/ScrapbookServer/public/"
         let webFolderPathURL = URL(string: webFolderPathString)!
-        webFileHandler.createHTMLFile(filepath: webFolderPathURL)
-        webFileHandler.createCSSFile(filepath: webFolderPathURL)
-        webFileHandler.createJavaScriptFile(filepath: webFolderPathURL)
+        // comment functions that create web files
+//        webFileHandler.createHTMLFile(filepath: webFolderPathURL)
+//        webFileHandler.createCSSFile(filepath: webFolderPathURL)
+//        webFileHandler.createJavaScriptFile(filepath: webFolderPathURL)
         
         var checkPIDArgs = [String]()
         //lsof -i tcp:8080

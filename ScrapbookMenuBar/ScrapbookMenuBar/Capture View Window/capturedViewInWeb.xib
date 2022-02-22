@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097.3"/>
+        <plugIn identifier="com.apple.WebKit2IBPlugin" version="16097.3"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="capturedViewInWeb" customModule="ScrapbookMenuBar" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+                <outlet property="webViewItem" destination="bnJ-IC-YUw" id="f5w-lN-G4h"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <wkWebView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bnJ-IC-YUw">
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                    <wkWebViewConfiguration key="configuration">
+                        <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                        <wkPreferences key="preferences"/>
+                    </wkWebViewConfiguration>
+                </wkWebView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="bnJ-IC-YUw" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="GMi-nW-XYt"/>
+                <constraint firstAttribute="trailing" secondItem="bnJ-IC-YUw" secondAttribute="trailing" id="Y7N-RB-aGS"/>
+                <constraint firstItem="bnJ-IC-YUw" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="ahY-bX-dmz"/>
+                <constraint firstAttribute="bottom" secondItem="bnJ-IC-YUw" secondAttribute="bottom" id="mhb-Wo-axV"/>
+            </constraints>
+            <point key="canvasLocation" x="139" y="154"/>
+        </customView>
+    </objects>
+</document>

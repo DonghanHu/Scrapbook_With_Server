@@ -1,15 +1,16 @@
 //
-//  collectionViewMethodTwoVC.swift
+//  capturedViewInWeb.swift
 //  ScrapbookMenuBar
 //
-//  Created by Donghan Hu on 10/4/21.
-//  Copyright © 2021 Donghan Hu. All rights reserved.
+//  Created by Donghan Hu on 2/16/22.
+//  Copyright © 2022 Donghan Hu. All rights reserved.
 //
 
 import Cocoa
 import WebKit
+import AppKit
 
-class collectionViewMethodTwoVC: NSViewController, WKUIDelegate {
+class capturedViewInWeb: NSViewController, WKUIDelegate {
 
     @IBOutlet weak var webViewItem: WKWebView!
     
@@ -21,28 +22,25 @@ class collectionViewMethodTwoVC: NSViewController, WKUIDelegate {
         
         view.window?.level = .modalPanel
         
-        self.webViewItem.uiDelegate = self
-        
         webViewItem.configuration.preferences.setValue(enableDeveloperTools, forKey: "developerExtrasEnabled")
         webViewItem.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
         
+        self.webViewItem.uiDelegate = self
+        
+        // set frame size
         self.view.frame.size.width = CGFloat(1250.0)
         self.view.frame.size.height = CGFloat(850.0)
         
         
         print(basicInformation.jsonFilePathURL!)
-        self.title = "Collection View"
-        guard let defaultURL = URL(string: "http://127.0.0.1:8080/collectionView.html") else{
+        self.title = "Captured View"
+        guard let defaultURL = URL(string: "http://127.0.0.1:8080/capturedView.html") else{
             return
         }
         print(defaultURL)
         let requesturl = defaultURL
         let request = URLRequest(url: requesturl)
         webViewItem.load(request)
-        
-        
-        
-        
         // Do view setup here.
     }
     
@@ -84,7 +82,7 @@ class collectionViewMethodTwoVC: NSViewController, WKUIDelegate {
         // if the user selected OK (the first button)
         completionHandler(action == .alertFirstButtonReturn)
     }
-
-    // end of the class
+    
 }
+
 

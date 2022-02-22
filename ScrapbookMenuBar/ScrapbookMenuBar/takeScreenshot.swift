@@ -83,6 +83,8 @@ class Screencapture : NSObject {
         print(capturedScreenshotInformation.capturedScreenshotPathString)
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
         
+        var simpleWholeInfor = ""
+        
         screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
         screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
         let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
@@ -564,6 +566,7 @@ class Screencapture : NSObject {
                         appDictTemp["FirstMetaData"] = applicationMetadataResultOne
                         appDictTemp["SecondMetaData"] = applicationMetadataResultTwo
                         appDictTemp["Rank"] = rankValue
+                        appDictTemp["ApplicationNameWithRank"] = appName + "(" + String(describing: seenCount) + ")"
                         print("appDictTemp:", appDictTemp)
                         capturedApplicationInformationDic[appIndex] = appDictTemp
                         
@@ -597,6 +600,24 @@ class Screencapture : NSObject {
             print(screenshotStruct)
             
             
+            // simpleWholeInfor
+            let elementCount = capturedApplicationInformationDic.count
+//            for e in 0..<elementCount{
+//                let infor1 = capturedApplicationInformationDic[e]["ApplicationName"] as! String
+//                let infor2 = capturedApplicationInformationDic[e]["FirstMetaData"] as! String
+//                let tempStr1 = infor1 + infor2
+//                let infor3 = capturedApplicationInformationDic[e]["SecondMetaData"] as! String
+//                let tempStr2 = tempStr1 + infor3
+//                simpleWholeInfor += tempStr2
+//            }
+            print(simpleWholeInfor)
+            let allValuesInString = capturedApplicationInformationDic.description
+            print(allValuesInString);
+            // code here, adding new string value
+            screenshotStruct.metaDataSingleRecordingTemplate["AppInforString"] = simpleWholeInfor
+            
+            
+            
             // applescriptHandler.applicationMetaData(applicationNameStack: applicationNameStack)
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
@@ -621,11 +642,18 @@ class Screencapture : NSObject {
             
             if (takeScreenshotSuccess == true){
                 // open the "captured view" Window
-                let viewController : NSViewController = CapturedViewWiondow()
+                // with macos swift nsviewcontroller, old method
+//                let viewController : NSViewController = CapturedViewWiondow()
+//                let subWindow = NSWindow(contentViewController: viewController)
+//                let subWindowController = NSWindowController(window: subWindow)
+//                subWindowController.showWindow(nil)
+                
+                // current method, in web browser, webkit
+                let viewController1 : NSViewController = capturedViewInWeb()
                 //viewController.receivedScreenshotInfor = screenshotStruct
-                let subWindow = NSWindow(contentViewController: viewController)
-                let subWindowController = NSWindowController(window: subWindow)
-                subWindowController.showWindow(nil)
+                let subWindow1 = NSWindow(contentViewController: viewController1)
+                let subWindowController1 = NSWindowController(window: subWindow1)
+                subWindowController1.showWindow(nil)
             }
             else{
                 // takeScreenshotSuccess is false
@@ -685,8 +713,37 @@ class Screencapture : NSObject {
     }
     
     func runApplescript(applescript : String) -> String{
+        let tempStr = String(applescript)
+
+        let validString = tempStr.replacingOccurrences(of: "\\n", with: "\n")
+        print("validString")
+        print(validString)
+        
+//        let char = "\\n"
+//        print(char)
+//        print(applescript.contains(char))
+//
+//        let applescript2 = "\"" + applescript + "\""
+//        let applescript1 = "tell application \"Xcode\" \n set fileName to name of window 1 \n end tell"
+        
+//        let applescript3 = """
+//            tell application "Xcode"
+//                set fileName to name of window 1
+//            end tell
+//        """
+//        print(applescript1)
+//        print(applescript2)
+//        print(applescript3)
+//        print(applescript == applescript1)
+//        let difference = zip(applescript, applescript1).filter{ $0 != $1 }
+//        print(difference)
+//        print(applescript1 == applescript2)
+//        print(applescript3 == applescript1)
+        
+        // 1 and 3 works
         var error: NSDictionary?
-        let scriptObject = NSAppleScript(source: applescript)
+        
+        let scriptObject = NSAppleScript(source: validString)
         let output: NSAppleEventDescriptor = scriptObject!.executeAndReturnError(&error)
         // print("output", output)
         if (error != nil) {
@@ -738,6 +795,8 @@ class Screencapture : NSObject {
         capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
         let screenshotPicName = "Screenshot-" + dateString + ".jpg"
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
+        
+        var simpleWholeInfor = ""
         
         screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
         screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
@@ -892,6 +951,7 @@ class Screencapture : NSObject {
                         appDictTemp["FirstMetaData"] = applicationMetadataResultOne
                         appDictTemp["SecondMetaData"] = applicationMetadataResultTwo
                         appDictTemp["Rank"] = rankValue
+                        appDictTemp["ApplicationNameWithRank"] = appName + "(" + String(describing: seenCount) + ")"
                         capturedApplicationInformationDic[appIndex] = appDictTemp
                         
                     // end of if statement (tempApplicationName == appName)
@@ -919,6 +979,25 @@ class Screencapture : NSObject {
             // write new data struct into screenshotStruct
             screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = capturedApplicationInformationDic
             
+            
+            // simpleWholeInfor
+            let elementCount = capturedApplicationInformationDic.count
+//            for e in 0..<elementCount{
+//                let infor1 = capturedApplicationInformationDic[e]["ApplicationName"] as! String
+//                let infor2 = capturedApplicationInformationDic[e]["FirstMetaData"] as! String
+//                let tempStr1 = infor1 + infor2
+//                let infor3 = capturedApplicationInformationDic[e]["SecondMetaData"] as! String
+//                let tempStr2 = tempStr1 + infor3
+//                simpleWholeInfor += tempStr2
+//            }
+            print(simpleWholeInfor)
+            let allValuesInString = capturedApplicationInformationDic.description
+            print(allValuesInString);
+            // code here, adding new string value
+            screenshotStruct.metaDataSingleRecordingTemplate["AppInforString"] = simpleWholeInfor
+            
+            
+            
             // applescriptHandler.applicationMetaData(applicationNameStack: applicationNameStack)
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
@@ -934,11 +1013,19 @@ class Screencapture : NSObject {
             
             if (takeScreenshotSuccess == true){
                 // open the "captured view" Window
-                let viewController : NSViewController = CapturedViewWiondow()
+                // old method
+//                let viewController : NSViewController = CapturedViewWiondow()
+//                let subWindow = NSWindow(contentViewController: viewController)
+//                let subWindowController = NSWindowController(window: subWindow)
+//                subWindowController.showWindow(nil)
+                
+                
+                // current method, in web browser, webkit
+                let viewController1 : NSViewController = capturedViewInWeb()
                 //viewController.receivedScreenshotInfor = screenshotStruct
-                let subWindow = NSWindow(contentViewController: viewController)
-                let subWindowController = NSWindowController(window: subWindow)
-                subWindowController.showWindow(nil)
+                let subWindow1 = NSWindow(contentViewController: viewController1)
+                let subWindowController1 = NSWindowController(window: subWindow1)
+                subWindowController1.showWindow(nil)
             }
             else{
                 // taking screenshot is not work

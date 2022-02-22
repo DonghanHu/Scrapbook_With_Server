@@ -27,6 +27,8 @@
 		EA5FB77F26E96988001005EB /* AppleScripts.csv in Resources */ = {isa = PBXBuildFile; fileRef = EA5FB77E26E96988001005EB /* AppleScripts.csv */; };
 		EA6EA2D6270B9E2D00C6B750 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = EA6EA2D5270B9E2D00C6B750 /* index.html */; };
 		EA6EA2D8270BA56000C6B750 /* javascript.js in Resources */ = {isa = PBXBuildFile; fileRef = EA6EA2D7270BA56000C6B750 /* javascript.js */; };
+		EA8BB29327BDAA530034300A /* capturedViewInWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BB29127BDAA530034300A /* capturedViewInWeb.swift */; };
+		EA8BB29427BDAA530034300A /* capturedViewInWeb.xib in Resources */ = {isa = PBXBuildFile; fileRef = EA8BB29227BDAA530034300A /* capturedViewInWeb.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +55,8 @@
 		EA5FB77E26E96988001005EB /* AppleScripts.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AppleScripts.csv; sourceTree = "<group>"; };
 		EA6EA2D5270B9E2D00C6B750 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		EA6EA2D7270BA56000C6B750 /* javascript.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = javascript.js; sourceTree = "<group>"; };
+		EA8BB29127BDAA530034300A /* capturedViewInWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = capturedViewInWeb.swift; sourceTree = "<group>"; };
+		EA8BB29227BDAA530034300A /* capturedViewInWeb.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = capturedViewInWeb.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +106,8 @@
 			children = (
 				EA2B3C3326F9240E0026D72F /* CapturedViewWiondow.swift */,
 				EA2B3C3426F9240E0026D72F /* CapturedViewWiondow.xib */,
+				EA8BB29127BDAA530034300A /* capturedViewInWeb.swift */,
+				EA8BB29227BDAA530034300A /* capturedViewInWeb.xib */,
 			);
 			path = "Capture View Window";
 			sourceTree = "<group>";
@@ -203,6 +209,7 @@
 			files = (
 				EA6EA2D6270B9E2D00C6B750 /* index.html in Resources */,
 				EA5FB77F26E96988001005EB /* AppleScripts.csv in Resources */,
+				EA8BB29427BDAA530034300A /* capturedViewInWeb.xib in Resources */,
 				EA46F893270B990B00370521 /* collectionViewMethodTwoVC.xib in Resources */,
 				EA54EBC726DD5D5D0049FEA4 /* Assets.xcassets in Resources */,
 				EA2B3C3626F9240E0026D72F /* CapturedViewWiondow.xib in Resources */,
@@ -228,6 +235,7 @@
 				EA54EBD826DDD0350049FEA4 /* takeScreenshot.swift in Sources */,
 				EA118A87274C52BD0001B179 /* createTempJson.swift in Sources */,
 				EA0BE876270E9FC100008277 /* commandLine.swift in Sources */,
+				EA8BB29327BDAA530034300A /* capturedViewInWeb.swift in Sources */,
 				EA54EBDA26DED0180049FEA4 /* softwareClassification.swift in Sources */,
 				EA5FB77C26E7DF60001005EB /* csvFiles.swift in Sources */,
 				EA2B3C3526F9240E0026D72F /* CapturedViewWiondow.swift in Sources */,
