@@ -12,6 +12,9 @@
 		EA118A87274C52BD0001B179 /* createTempJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA118A86274C52BD0001B179 /* createTempJson.swift */; };
 		EA1CA199272A4E7F000AFD49 /* webFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1CA198272A4E7F000AFD49 /* webFiles.swift */; };
 		EA1CA19B272A631F000AFD49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54EBC226DD5D5B0049FEA4 /* AppDelegate.swift */; };
+		EA26A90627C56E1A00725A84 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA26A90527C56E1A00725A84 /* NetworkExtension.framework */; };
+		EA26A90A27C5717100725A84 /* testView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA26A90827C5717100725A84 /* testView.swift */; };
+		EA26A90B27C5717100725A84 /* testView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EA26A90927C5717100725A84 /* testView.xib */; };
 		EA2B3C3526F9240E0026D72F /* CapturedViewWiondow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2B3C3326F9240E0026D72F /* CapturedViewWiondow.swift */; };
 		EA2B3C3626F9240E0026D72F /* CapturedViewWiondow.xib in Resources */ = {isa = PBXBuildFile; fileRef = EA2B3C3426F9240E0026D72F /* CapturedViewWiondow.xib */; };
 		EA46F892270B990B00370521 /* collectionViewMethodTwoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA46F890270B990B00370521 /* collectionViewMethodTwoVC.swift */; };
@@ -36,6 +39,10 @@
 		EA0BE875270E9FC100008277 /* commandLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = commandLine.swift; sourceTree = "<group>"; };
 		EA118A86274C52BD0001B179 /* createTempJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createTempJson.swift; sourceTree = "<group>"; };
 		EA1CA198272A4E7F000AFD49 /* webFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = webFiles.swift; sourceTree = "<group>"; };
+		EA26A90327C56DF800725A84 /* ScrapbookMenuBarDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScrapbookMenuBarDebug.entitlements; sourceTree = "<group>"; };
+		EA26A90527C56E1A00725A84 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		EA26A90827C5717100725A84 /* testView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testView.swift; sourceTree = "<group>"; };
+		EA26A90927C5717100725A84 /* testView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = testView.xib; sourceTree = "<group>"; };
 		EA2B3C3326F9240E0026D72F /* CapturedViewWiondow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturedViewWiondow.swift; sourceTree = "<group>"; };
 		EA2B3C3426F9240E0026D72F /* CapturedViewWiondow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CapturedViewWiondow.xib; sourceTree = "<group>"; };
 		EA46F890270B990B00370521 /* collectionViewMethodTwoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = collectionViewMethodTwoVC.swift; sourceTree = "<group>"; };
@@ -64,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA26A90627C56E1A00725A84 /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +95,23 @@
 				EA118A86274C52BD0001B179 /* createTempJson.swift */,
 			);
 			path = FileManagements;
+			sourceTree = "<group>";
+		};
+		EA26A90427C56E1A00725A84 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EA26A90527C56E1A00725A84 /* NetworkExtension.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EA26A90727C5715500725A84 /* test button */ = {
+			isa = PBXGroup;
+			children = (
+				EA26A90827C5717100725A84 /* testView.swift */,
+				EA26A90927C5717100725A84 /* testView.xib */,
+			);
+			path = "test button";
 			sourceTree = "<group>";
 		};
 		EA46F885270B907500370521 /* CollectionViews */ = {
@@ -116,7 +141,9 @@
 			isa = PBXGroup;
 			children = (
 				EA54EBC126DD5D5B0049FEA4 /* ScrapbookMenuBar */,
+				EA26A90727C5715500725A84 /* test button */,
 				EA54EBC026DD5D5B0049FEA4 /* Products */,
+				EA26A90427C56E1A00725A84 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,6 +158,7 @@
 		EA54EBC126DD5D5B0049FEA4 /* ScrapbookMenuBar */ = {
 			isa = PBXGroup;
 			children = (
+				EA26A90327C56DF800725A84 /* ScrapbookMenuBarDebug.entitlements */,
 				EA5FB77E26E96988001005EB /* AppleScripts.csv */,
 				EA54EBC226DD5D5B0049FEA4 /* AppDelegate.swift */,
 				EA54EBC426DD5D5B0049FEA4 /* ViewController.swift */,
@@ -211,6 +239,7 @@
 				EA5FB77F26E96988001005EB /* AppleScripts.csv in Resources */,
 				EA8BB29427BDAA530034300A /* capturedViewInWeb.xib in Resources */,
 				EA46F893270B990B00370521 /* collectionViewMethodTwoVC.xib in Resources */,
+				EA26A90B27C5717100725A84 /* testView.xib in Resources */,
 				EA54EBC726DD5D5D0049FEA4 /* Assets.xcassets in Resources */,
 				EA2B3C3626F9240E0026D72F /* CapturedViewWiondow.xib in Resources */,
 				EA54EBCA26DD5D5D0049FEA4 /* Main.storyboard in Resources */,
@@ -234,6 +263,7 @@
 				EA46F892270B990B00370521 /* collectionViewMethodTwoVC.swift in Sources */,
 				EA54EBD826DDD0350049FEA4 /* takeScreenshot.swift in Sources */,
 				EA118A87274C52BD0001B179 /* createTempJson.swift in Sources */,
+				EA26A90A27C5717100725A84 /* testView.swift in Sources */,
 				EA0BE876270E9FC100008277 /* commandLine.swift in Sources */,
 				EA8BB29327BDAA530034300A /* capturedViewInWeb.swift in Sources */,
 				EA54EBDA26DED0180049FEA4 /* softwareClassification.swift in Sources */,
@@ -374,7 +404,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
-				CODE_SIGN_ENTITLEMENTS = ScrapbookMenuBar/ScrapbookMenuBar.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ScrapbookMenuBar/ScrapbookMenuBarDebug.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ScrapbookMenuBar/Info.plist;
@@ -394,6 +425,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = ScrapbookMenuBar/ScrapbookMenuBar.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ScrapbookMenuBar/Info.plist;

@@ -160,6 +160,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         DispatchQueue.global(qos: .userInitiated).async {
             let command = "/usr/local/bin/node"
+            // file path changed, notice
             let args = ["/Users/donghanhu/Documents/ScrapbookServerFolder", "server.js"]
             self.runCommandLine(launchPath: command, arguments: args)
         }

@@ -43,6 +43,8 @@ class collectionViewMethodTwoVC: NSViewController, WKUIDelegate {
         
         
         
+        
+        
         // Do view setup here.
     }
     

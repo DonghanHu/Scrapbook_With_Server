@@ -2,24 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>com.apple.security.network.client</key>
-	<true/>
-	<key>CFBundleDisplayName</key>
-	<string></string>
-	<key>CFBundleGetInfoString</key>
-	<string></string>
-	<key>NSFileProviderDomainUsageDescription</key>
-	<string></string>
-	<key>NSDesktopFolderUsageDescription</key>
-	<string></string>
-	<key>LSApplicationCategoryType</key>
-	<string></string>
-	<key>LSUIElement</key>
+	<key>Allow Arbitrary Loads</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string></string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -34,8 +26,22 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict/>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>This is why I need this</string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string></string>
+	<key>NSFileProviderDomainUsageDescription</key>
+	<string></string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2021 Donghan Hu. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
@@ -44,9 +50,11 @@
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticTermination</key>
 	<true/>
-	<key>NSAppleEventsUsageDescription</key>
-	<string>This is why I need this</string>
 	<key>NSSupportsSuddenTermination</key>
+	<true/>
+	<key>com.apple.security.get-task-allow</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
 	<true/>
 	<key>com.apple.security.temporary-exception.apple-events</key>
 	<array>
@@ -54,9 +62,5 @@
 		<string>com.apple.systempreferences</string>
 		<string>System Events</string>
 	</array>
-	<key>com.apple.security.get-task-allow</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict/>
 </dict>
 </plist>

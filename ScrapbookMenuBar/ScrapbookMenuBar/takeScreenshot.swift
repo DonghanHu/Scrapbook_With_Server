@@ -61,6 +61,17 @@ class Screencapture : NSObject {
     
     var screenshotCaseIndex = 1
     
+    var openSafariScript =
+    """
+    tell application "Safari"
+        activate
+        tell window 1
+            open location "http://localhost:8080/capturedView.html"
+            set bounds to {100, 30, 1400, 850}
+        end tell
+    end tell
+    """
+    
     
     // Method of taking screenshot by using terminate command line code
     // /usr/sbin/screencapture
@@ -654,6 +665,10 @@ class Screencapture : NSObject {
                 let subWindow1 = NSWindow(contentViewController: viewController1)
                 let subWindowController1 = NSWindowController(window: subWindow1)
                 subWindowController1.showWindow(nil)
+                
+                
+                // open in the browser
+                 runApplescript(applescript: openSafariScript)
             }
             else{
                 // takeScreenshotSuccess is false
@@ -1026,6 +1041,11 @@ class Screencapture : NSObject {
                 let subWindow1 = NSWindow(contentViewController: viewController1)
                 let subWindowController1 = NSWindowController(window: subWindow1)
                 subWindowController1.showWindow(nil)
+                
+                // open in the browser
+                 runApplescript(applescript: openSafariScript)
+                
+                
             }
             else{
                 // taking screenshot is not work

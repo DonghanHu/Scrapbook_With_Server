@@ -17,6 +17,16 @@ class ViewController: NSViewController {
     @IBOutlet weak var quitScrapbook: NSButton!
     @IBOutlet weak var collectionViewMethodTwo: NSButton!
     
+    var openSafariScript =
+    """
+    tell application "Safari"
+        activate
+        tell window 1
+            open location "http://localhost:8080/collectionView.html"
+            set bounds to {100, 30, 1400, 850}
+        end tell
+    end tell
+    """
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,12 +98,8 @@ class ViewController: NSViewController {
         let subWindowController = NSWindowController(window: subWindow)
         subWindowController.showWindow(nil)
         
-//        let viewController : NSViewController = CapturedViewWiondow()
-//        let subWindow = NSWindow(contentViewController: viewController)
-//        let subWindowController = NSWindowController(window: subWindow)
-//        subWindowController.showWindow(nil)
         
-        // presentAsModalWindow(collectionViewMethodTwoVC())
+        runApplescript(applescript: openSafariScript)
         
         self.view.window?.close()
         
@@ -117,6 +123,17 @@ class ViewController: NSViewController {
         KillPortNumber(launchPath: "/bin/kill", args: killPortArgs)
         
         exit(0);
+    }
+    
+    
+    @IBAction func openTestView(_ sender: Any) {
+        
+        // open a safari tab and 
+        
+        let viewController : NSViewController = testView()
+        let subWindow = NSWindow(contentViewController: viewController)
+        let subWindowController = NSWindowController(window: subWindow)
+        subWindowController.showWindow(nil)
     }
     
     func getPortNumberPID(launchPath: String, args : [String]) -> String{
@@ -188,6 +205,29 @@ class ViewController: NSViewController {
     }
     
     
+    func runApplescript(applescript : String) -> String{
+        let tempStr = String(applescript)
+
+        let validString = tempStr.replacingOccurrences(of: "\\n", with: "\n")
+        print("validString")
+        print(validString)
+        var error: NSDictionary?
+        
+        let scriptObject = NSAppleScript(source: validString)
+        let output: NSAppleEventDescriptor = scriptObject!.executeAndReturnError(&error)
+        // print("output", output)
+        if (error != nil) {
+            print("error: \(String(describing: error))")
+        }
+        if output.stringValue == nil{
+            let empty = "the result is empty"
+            return empty
+        }
+        else {
+            return (output.stringValue?.description)!
+            
+        }
+    }
     
 }
 
