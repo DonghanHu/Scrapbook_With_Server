@@ -42,10 +42,6 @@ class softwareClassify : NSObject {
         var applicationNameStack = [String]()
         let infoList = temp as! [[String:Any]]
         let softwareNameList = infoList.filter{ ($0["kCGWindowLayer"] as! Int == 0) && ($0["kCGWindowOwnerName"] as? String != nil) }
-        
-        // print("softwarenamelist", softwareNameList)
-        // print(type(of: softwareNameList))
-        
         print("kcgWindowName is not nil and the number of the opening software is: ", softwareNameList.count)
         
         var allApplicationNmaeList = [String]()
@@ -84,7 +80,6 @@ class softwareClassify : NSObject {
                 print(currentApp.localizedName!)
             }
         }
-        
     }
     
     // get opened running application name list
@@ -106,7 +101,6 @@ class softwareClassify : NSObject {
         
         var wholeScreenSet = initialWholeScreenMatrix()
         var visibleApplicationNameStack = [String]()
-        
         
         // copy values from wholeInfor
         var temtwholeInfor = wholeInfor
@@ -133,9 +127,6 @@ class softwareClassify : NSObject {
             }
         }
         print("opened software name list in order: ", allApplicationNameList)
-        
-        
-        
 
         var allApplicationsCoordinates = [String: [String]]()
 
@@ -154,7 +145,6 @@ class softwareClassify : NSObject {
         // check every software in this list
         for (appIndex, simpleSoftware) in softwareNameListReverse.enumerated() {
             
-
             let applicationName = simpleSoftware["kCGWindowOwnerName"] as! String
             let applicationBounds = simpleSoftware["kCGWindowBounds"]
             
@@ -259,9 +249,6 @@ class softwareClassify : NSObject {
                 currentApplicationInforStuct.singleApplicationInforTemplate["Bottom"] = bottomRightYCoordination
                 currentApplicationInforStuct.singleApplicationInforTemplate["ApplicationName"] = applicationName
                 var tempDic = wholeInfor.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
-                
-                
-                //
                 
                 
                 print("application left" + String(upperLeftXCoordination))

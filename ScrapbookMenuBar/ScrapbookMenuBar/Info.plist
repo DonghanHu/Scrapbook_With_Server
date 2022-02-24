@@ -40,6 +40,8 @@
 	<string>This is why I need this</string>
 	<key>NSDesktopFolderUsageDescription</key>
 	<string></string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>This is a test description</string>
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string></string>
 	<key>NSHumanReadableCopyright</key>

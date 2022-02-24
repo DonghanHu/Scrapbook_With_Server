@@ -25,6 +25,9 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="clickButton:" target="-2" id="Rgw-OF-p2d"/>
+                    </connections>
                 </button>
                 <wkWebView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Icx-uz-hNV">
                     <rect key="frame" x="87" y="20" width="365" height="199"/>

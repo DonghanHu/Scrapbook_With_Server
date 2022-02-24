@@ -16,6 +16,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var collectionView: NSButton!
     @IBOutlet weak var quitScrapbook: NSButton!
     @IBOutlet weak var collectionViewMethodTwo: NSButton!
+    @IBOutlet weak var testButton: NSButton!
     
     var openSafariScript =
     """
@@ -32,6 +33,7 @@ class ViewController: NSViewController {
         super.viewDidLoad()
         
         collectionView.isHidden = true;
+        testButton.isHidden = false
 
         takeSelectedScreenshot.title = "Take Selected Area Screenshot"
         takeWholeScreenshot.title = "Take Whole Screen Screenshot"
@@ -83,6 +85,44 @@ class ViewController: NSViewController {
     @objc func takeSelectedScreenshotFunction(){
         let takeScreenshotHandler = Screencapture()
         takeScreenshotHandler.selectScreenCapture()
+//        let docPath =  NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+//        let imagePath = docPath.appending("/"+"Screenshot-TEST.jpg")
+//
+//        print("imagePath: ", imagePath)
+//        let task = Process()
+//        let pipe = Pipe()
+//
+//        task.launchPath = "/usr/sbin/screencapture"
+//        task.arguments = ["-s", imagePath]
+//        task.standardOutput = pipe
+//        task.standardError = pipe
+//        task.launch()
+//
+//        let fileHandle = pipe.fileHandleForReading
+//        let resultString = String(data: fileHandle.readDataToEndOfFile(), encoding: .ascii)
+//        let rawResult = resultString?.components(separatedBy: "\"")
+//        var tempResult = [AnyHashable](repeating: 0, count: 20)
+//        var i = 0
+//        while i <= rawResult!.count - 2 {
+//            if ((rawResult!.count - 1) < i + 1) {
+//                //
+//            } else {
+//                tempResult.append(rawResult![i+1])
+//            }
+//            i += 2
+//        }
+//
+//        dialogOK(question: resultString!, text: "TEST")
+//        print("Result: ", rawResult)
+    }
+    
+    func dialogOK(question: String, text: String) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        return alert.runModal() == .alertFirstButtonReturn
     }
     
     @objc func takeWholeScreenshotFunction(){
@@ -92,11 +132,11 @@ class ViewController: NSViewController {
     
     @IBAction func collectionViewMethodTwoAction(_ sender: Any) {
         
-        // better method
-        let viewController : NSViewController = collectionViewMethodTwoVC()
-        let subWindow = NSWindow(contentViewController: viewController)
-        let subWindowController = NSWindowController(window: subWindow)
-        subWindowController.showWindow(nil)
+        // webviewWindow: better method for webview in window
+//        let viewController : NSViewController = collectionViewMethodTwoVC()
+//        let subWindow = NSWindow(contentViewController: viewController)
+//        let subWindowController = NSWindowController(window: subWindow)
+//        subWindowController.showWindow(nil)
         
         
         runApplescript(applescript: openSafariScript)

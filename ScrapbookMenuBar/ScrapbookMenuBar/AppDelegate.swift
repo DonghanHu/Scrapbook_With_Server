@@ -18,6 +18,10 @@ struct basicInformation {
     
     static var tempScreenshotJsonFilePathString     =   ""
     static var tempScreenshotJsonFilePathURL        = URL(string: "temp_jsonFile_Path")
+    
+    static var testFilePathString     =   ""
+    static var testFilePathURL        = URL(string: "temp_jsonFile_Path")
+    
 }
 
 struct capturedScreenshotInformation {
@@ -161,7 +165,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         DispatchQueue.global(qos: .userInitiated).async {
             let command = "/usr/local/bin/node"
             // file path changed, notice
-            let args = ["/Users/donghanhu/Documents/ScrapbookServerFolder", "server.js"]
+            // code here
+            let arg1String = self.getHomePath() + "/Documents/ScrapbookServerFolder"
+            print(arg1String)
+            // let args = ["/Users/donghanhu/Documents/ScrapbookServer", "server.js"]
+            let args = [arg1String, "server.js"]
             self.runCommandLine(launchPath: command, arguments: args)
         }
 
@@ -204,8 +212,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("something went wrong \(error)")
         }
         task.waitUntilExit()
-        // print("get port number process: ", task.isRunning)
-        
+         print("get port number process: ", task.isRunning)
+        dialogOK(question: res, text: "Click OK to continue.")
         return res
     }
     
@@ -345,6 +353,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("error iin delete the testing image: \(error)")
         }
         
+    }
+    
+    func dialogOK(question: String, text: String) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        return alert.runModal() == .alertFirstButtonReturn
     }
     
     // end of the class AppDelegate
