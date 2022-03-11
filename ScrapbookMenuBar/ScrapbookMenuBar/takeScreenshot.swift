@@ -116,8 +116,8 @@ class Screencapture : NSObject {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY.MM.dd,HH-mm-ss"
         let dateString = dateFormatter.string(from: date)
-        let screenshotPicName = "Screenshot-" + dateString + ".jpg"
-        capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
+        let screenshotPicName = "Screenshot-" + dateString + ".jpeg"
+        capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpeg"
         print(capturedScreenshotInformation.capturedScreenshotPathString)
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
         
@@ -125,7 +125,7 @@ class Screencapture : NSObject {
         
         screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
         screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
-        let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
+        let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpeg"
         screenshotStruct.metaDataSingleRecordingTemplate["ImagePath"] = screenshotPathString
         screenshotStruct.metaDataSingleRecordingTemplate["ScreenshotPictureName"] = screenshotPicName
         screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = [] as! [[String : Any]]
@@ -137,17 +137,19 @@ class Screencapture : NSObject {
 //        let currentTime = dateFormatter.string(from: date)
 //        variables.currentTimeInformation = currentTime
         
-         var arguments = [String]();
-        arguments.append("-s")
+        var arguments = [String]();
+        // arguments.append("-s")
+        arguments.append("-i")
+        arguments.append("-r")
                 
         let tempScreenshotPath = capturedScreenshotInformation.capturedScreenshotPathString
         arguments.append(tempScreenshotPath)
-        //        task.arguments = arguments
+//        task.arguments = arguments
         
 //        let testOutput = launchSync(launchPath: "/usr/sbin/screencapture", arguments: arguments)
 //        print(testOutput)
         
-//                return;
+//        return;
         
         
         // task parameters
@@ -155,28 +157,29 @@ class Screencapture : NSObject {
         task.currentDirectoryPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         task.launchPath = "/usr/sbin/screencapture"
         
-//        var arguments = [String]();
-//        arguments.append("-s")
-//
-//        let tempScreenshotPath = capturedScreenshotInformation.capturedScreenshotPathString
-//        arguments.append(tempScreenshotPath)
         task.arguments = arguments
         
         print(task.launchPath)
         print(task.arguments)
         
-       
+        setvbuf(stdout, nil, _IONBF, 0)
+        setvbuf(stdin, nil, _IOFBF, 0)
+
+        
         let outpipe = Pipe()
         let outputData = NSMutableData()
 
+        
+        dup2(outpipe.fileHandleForReading.fileDescriptor,
+        STDOUT_FILENO)
+        dup2(outpipe.fileHandleForReading.fileDescriptor, STDIN_FILENO)
+        
         var finalOutputData : String = ""
     
         task.standardOutput = outpipe
         task.standardError = outpipe
         //task.launch() // asynchronous call.
-        
         task.launch()
-
         
 //        setvbuf(stderr, nil, _IONBF, 0)
 //        setvbuf(stdout, nil, _IONBF, 0)
@@ -184,9 +187,12 @@ class Screencapture : NSObject {
 //        dup2(outpipe.fileHandleForReading.fileDescriptor, STDOUT_FILENO)
 //
         let pipeFile = outpipe.fileHandleForReading
-        
 
         let data = pipeFile.readDataToEndOfFile()
+        
+//        let secondsToDelay = 5.0
+//        perform(#selector(timeDelay), with: nil, afterDelay: secondsToDelay)
+        
         let tempResult = String(data: data, encoding: .ascii)!
         let rawResults = tempResult.components(separatedBy:"\"")
             
@@ -734,29 +740,6 @@ class Screencapture : NSObject {
         let validString = tempStr.replacingOccurrences(of: "\\n", with: "\n")
         print("validString")
         print(validString)
-        
-//        let char = "\\n"
-//        print(char)
-//        print(applescript.contains(char))
-//
-//        let applescript2 = "\"" + applescript + "\""
-//        let applescript1 = "tell application \"Xcode\" \n set fileName to name of window 1 \n end tell"
-        
-//        let applescript3 = """
-//            tell application "Xcode"
-//                set fileName to name of window 1
-//            end tell
-//        """
-//        print(applescript1)
-//        print(applescript2)
-//        print(applescript3)
-//        print(applescript == applescript1)
-//        let difference = zip(applescript, applescript1).filter{ $0 != $1 }
-//        print(difference)
-//        print(applescript1 == applescript2)
-//        print(applescript3 == applescript1)
-        
-        // 1 and 3 works
         var error: NSDictionary?
         
         let scriptObject = NSAppleScript(source: validString)
@@ -771,7 +754,6 @@ class Screencapture : NSObject {
         }
         else {
             return (output.stringValue?.description)!
-            
         }
     }
     
@@ -808,15 +790,15 @@ class Screencapture : NSObject {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY.MM.dd,HH-mm-ss"
         let dateString = dateFormatter.string(from: date)
-        capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
-        let screenshotPicName = "Screenshot-" + dateString + ".jpg"
+        capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpeg"
+        let screenshotPicName = "Screenshot-" + dateString + ".jpeg"
         capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
         
         var simpleWholeInfor = ""
         
         screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
         screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
-        let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpg"
+        let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpeg"
         screenshotStruct.metaDataSingleRecordingTemplate["ImagePath"] = screenshotPathString
         screenshotStruct.metaDataSingleRecordingTemplate["ScreenshotPictureName"] = screenshotPicName
         screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = [] as! [[String : Any]]
@@ -848,7 +830,7 @@ class Screencapture : NSObject {
         let outputData = outpipe.fileHandleForReading.readDataToEndOfFile()
         let resultInformation = String(data: outputData, encoding: .utf8)
         
-        dialogOK(question: resultInformation!, text: "Click OK to continue.")
+        // dialogOK(question: resultInformation!, text: "Click OK to continue.")
         
         // get the main screen paramters, width and height
         let currentMainScreen = NSScreen.main
@@ -1076,6 +1058,10 @@ class Screencapture : NSObject {
         alert.alertStyle = .warning
         alert.addButton(withTitle: "OK")
         return alert.runModal() == .alertFirstButtonReturn
+    }
+    
+    @objc func timeDelay(){
+        print("time delay function")
     }
     
     // end of class

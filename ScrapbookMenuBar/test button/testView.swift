@@ -8,9 +8,10 @@
 
 import Cocoa
 import WebKit
+import Foundation
+import AppKit
 
 class testView: NSViewController {
-    @IBOutlet weak var webViewTest: WKWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,87 +29,147 @@ class testView: NSViewController {
         """
         // runApplescript(applescript: openSafari)
         
+//        guard let defaultURL = URL(string: "http://www.apple.com") else{
+//            return
+//        }
+//        print(defaultURL)
+//        let requesturl = defaultURL
+//        let request = URLRequest(url: requesturl)
+//        webViewTest.load(request)
         
-        guard let defaultURL = URL(string: "http://www.apple.com") else{
-            return
-        }
-        print(defaultURL)
-        let requesturl = defaultURL
-        let request = URLRequest(url: requesturl)
-        webViewTest.load(request)
+        // create a test json file
+        let createTestFileHandler = createTestFile();
+        createTestFileHandler.creaetTestJsonFile(filepath: basicInformation.defaultFolderPathURL!)
+        // createTestFileHandler.clearTempJsonFile(FilePath:  basicInformation.defaultFolderPathString)
+        // testFilePathString testFilePathURL
+        
     }
+
+    
     @IBAction func clickButton(_ sender: Any) {
-        let task = Process()
-        task.launchPath = "/usr/sbin/screencapture"
+        
+//        let task = Process()
+//        task.launchPath = "/usr/sbin/screencapture"
+        let launchPathStr = "/usr/sbin/screencapture"
         var arguments = [String]();
         arguments.append("-s")
         
-        let tempScreenshotPath = "/Users/donghanhu/Documents/ScrapbookServer/Public/Data/1.jpg"
+        let tempScreenshotPath = "/Users/donghanhu/Documents/ScrapbookServer/Public/Data/1.jpeg"
         arguments.append(tempScreenshotPath)
-        task.arguments = arguments
-        print(task.launchPath)
-        print(task.arguments)
         
-        let outpipe = Pipe()
-        // let errorOutPipe = Pipe()
+        takeScreenshotFun(launchPath: launchPathStr, args:  arguments)
+        // getPortNumberPID(launchPath: launchPathStr, args:  arguments)
         
-        var finalOutputData : String = ""
+    }
+    func getPortNumberPID(launchPath: String, args : [String]) -> String{
+        var output : [String] = []
+        var res = String()
         
+        let task = Process()
+        task.launchPath = launchPath
+        task.arguments = args
         
-        task.standardOutput = outpipe
-        // task.standardError = outpipe
-
-        //task.launch() // asynchronous call.
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        
         do {
             try task.run()
+            let outdata = pipe.fileHandleForReading.readDataToEndOfFile()
+            if var string = String(data: outdata, encoding: .ascii) {
+            // if var string = String(data: outdata, encoding: .utf8) {
+                print("string: " + string)
+                string = string.trimmingCharacters(in: .newlines)
+                output = string.components(separatedBy: "\n")
+            }
+            let len = output.count
+            print("output len is: ", len)
         } catch {
-            print("something went wrong in task of taking screenshot \(error)")
+            print("something went wrong \(error)")
         }
-        let outputData = outpipe.fileHandleForReading.readDataToEndOfFile()
+        
+        print("ARRAY: ", output)
+        let stringRepresentation = output.joined(separator:"-")
+        task.waitUntilExit()
+        pipe.fileHandleForReading.closeFile()
+        print("get port number process: ", task.isRunning)
+        dialogOK(question: stringRepresentation, text: "Click OK to continue.")
+        return res
+    }
+    
+    func takeScreenshotFun(launchPath: String, args : [String]) -> String{
+        
+        var output : [String] = []
+        var res = String()
+        var finalOutputData : String = ""
+        
+        let task = Process()
+        task.launchPath = launchPath
+        task.arguments = args
+        
+        let outpipe = Pipe()
+        task.standardOutput = outpipe
+        task.standardError = outpipe
+        
+        do{
+            try task.run()
+        } catch{
+            print("\(error)")
+        }
+        let pipeFile = outpipe.fileHandleForReading
+        let data = pipeFile.readDataToEndOfFile()
         task.waitUntilExit()
         
-        let tempResult = String(data: outputData, encoding: .utf8)
-        finalOutputData = tempResult!
-        print("finalOutputData", tempResult!)
         
         
-    }
-    func TakeScreensShots(folderName: String){
         
-        var displayCount: UInt32 = 0;
-        var result = CGGetActiveDisplayList(0, nil, &displayCount)
-        if (result != CGError.success) {
-            print("error: \(result)")
-            return
-        }
-        let allocated = Int(displayCount)
-        let activeDisplays = UnsafeMutablePointer<CGDirectDisplayID>.allocate(capacity: allocated)
-        result = CGGetActiveDisplayList(displayCount, activeDisplays, &displayCount)
-        
-        if (result != CGError.success) {
-            print("error: \(result)")
-            return
-        }
-           
-        for i in 1...displayCount {
-            let unixTimestamp = CreateTimeStamp()
-            let fileUrl = URL(fileURLWithPath: folderName + "\(unixTimestamp)" + "_" + "\(i)" + ".jpg", isDirectory: true)
-            print(fileUrl)
-            let screenShot:CGImage = CGDisplayCreateImage(activeDisplays[Int(i-1)])!
-            let bitmapRep = NSBitmapImageRep(cgImage: screenShot)
-            let jpegData = bitmapRep.representation(using: NSBitmapImageRep.FileType.jpeg, properties: [:])!
+        let tempResult = String(data: data, encoding: .ascii)!
+        let rawResults = tempResult.components(separatedBy:"\"")
             
-            
-            do {
-                try jpegData.write(to: fileUrl, options: .atomic)
-            }
-            catch {print("error: \(error)")}
-        }
-    }
+        print("ARRAY: ", rawResults)
 
-    func CreateTimeStamp() -> Int32
-    {
-        return Int32(Date().timeIntervalSince1970)
+        finalOutputData = tempResult
+        print("finalOutputData", tempResult)
+        
+        dialogOK(question: finalOutputData, text: "Click OK to continue.")
+        
+        do {
+            try writeTempJsonData(targetString: finalOutputData)
+        }
+        catch {print("\(error)")}
+        
+        //
+        do {
+            try writeTempJsonData(targetString: tempResult)
+        }
+        catch {print("\(error)")}
+        
+        return finalOutputData
+        
+    }
+    func writeTempJsonData(targetString: String){
+        let path = basicInformation.testFilePathString
+        print("testPath: " + path)
+        
+        print(type(of: basicInformation.testFilePathURL))
+        print(basicInformation.testFilePathURL)
+        var filePath = "file://\(path)"
+        print(filePath)
+        let fileUrl = URL(string: filePath)
+        do {
+            try targetString.write(to: fileUrl!, atomically: false, encoding: .utf8)
+        }
+        catch {print("\(error)")}
+        
+        
+    }
+    
+    func dialogOK(question: String, text: String) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        return alert.runModal() == .alertFirstButtonReturn
     }
     
     func runApplescript(applescript : String) -> String{

@@ -9,11 +9,11 @@
 import Foundation
 
 class createTestFile : NSObject{
-    func tempJson(filepath: URL) {
+    func creaetTestJsonFile(filepath: URL) {
         
         let documentsDirectoryPath = filepath
         print(filepath)
-        let jsonFilePath = documentsDirectoryPath.appendingPathComponent("tempScreenshotData.json")
+        let jsonFilePath = documentsDirectoryPath.appendingPathComponent("TestFile.txt")
         
         // assign global values
         basicInformation.testFilePathURL = jsonFilePath
@@ -37,5 +37,31 @@ class createTestFile : NSObject{
         }
         
         //return jsonFilePath
+    }
+    
+    func clearTempJsonFile(FilePath : String){
+        print(FilePath)
+        
+        // clear the previous information first
+        let text = ""
+        try! text.write(toFile: FilePath, atomically: false, encoding: String.Encoding.utf8)
+        
+        let initArray = [Any]();
+        
+        let arrayData = try! JSONSerialization.data(withJSONObject: initArray, options: JSONSerialization.WritingOptions.prettyPrinted)
+        
+        // overwrite a new empty new array
+        if FileManager.default.fileExists(atPath: FilePath){
+            if let fileHandle = FileHandle(forWritingAtPath: FilePath){
+            
+                fileHandle.write(arrayData)
+                fileHandle.closeFile()
+            }
+            else {
+                let nsError = NSError()
+                let errorMessage = nsError.localizedDescription
+                print("Can't open fileHandle" + errorMessage)
+            }
+        }
     }
 }

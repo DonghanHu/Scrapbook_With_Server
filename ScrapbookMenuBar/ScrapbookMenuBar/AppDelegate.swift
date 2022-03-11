@@ -24,6 +24,22 @@ struct basicInformation {
     
 }
 
+
+struct fromCropScreenshot {
+    static var timeStamp                        = String()
+    static var imagePath                        = String()
+    static var screenshotFileName               = String()
+    static var widthValue                       = Int()
+    static var heightValue                      = Int()
+    static var leftValue                        = Int()
+    static var topValue                         = Int()
+    static var rightValue                       = Int()
+    static var bottomValue                      = Int()
+}
+
+// temp screenshot path for cropping
+public var tempCropScreenshotPath = ""
+
 struct capturedScreenshotInformation {
     static var capturedScreenshotPathString         =   ""
     static var capturedScreenshotPathURL            =   URL(string: "default_image_path")
@@ -109,7 +125,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.button?.target = self
         statusItem.button?.action = #selector(showSettings)
         
-        
         // create default folder and json file in the Document
         
         let defaultFolderPath = getHomePath() + "/Documents/" + "ScrapbookServer/public/Data/"
@@ -194,6 +209,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let outdata = outpipe.fileHandleForReading.readDataToEndOfFile()
             if var string = String(data: outdata, encoding: .utf8) {
                 string = string.trimmingCharacters(in: .newlines)
+                // print the result from shell command
+                // dialogOK(question: string, text: "Test")
                 output = string.components(separatedBy: "\n")
             }
             let len = output.count
@@ -212,6 +229,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("something went wrong \(error)")
         }
         task.waitUntilExit()
+        outpipe.fileHandleForReading.closeFile()
          print("get port number process: ", task.isRunning)
         dialogOK(question: res, text: "Click OK to continue.")
         return res
@@ -229,6 +247,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let outdata = outpipe.fileHandleForReading.readDataToEndOfFile()
             if var string = String(data: outdata, encoding: .utf8) {
                 string = string.trimmingCharacters(in: .newlines)
+                print("string in kill port:" + string)
                 output = string.components(separatedBy: "\n")
             }
             let len = output.count
@@ -241,7 +260,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } catch {
             print("something went wrong \(error)")
         }
+        
         task.waitUntilExit()
+        outpipe.fileHandleForReading.closeFile()
         // print("kill port number process: ", task.isRunning)
     }
     

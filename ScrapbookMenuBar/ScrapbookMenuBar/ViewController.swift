@@ -49,7 +49,7 @@ class ViewController: NSViewController {
         // Update the view, if already loaded.
         }
     }
-
+    // first button
     @IBAction func selectedAreaCapture(_ sender: Any) {
         do {
             try self.view.window!.close()
@@ -57,7 +57,7 @@ class ViewController: NSViewController {
             print("the menu bar window is not closed successfully.")
         }
         
-        let secondsToDelay = 0.5
+        let secondsToDelay = 0.7
         perform(#selector(takeSelectedScreenshotFunction), with: nil, afterDelay: secondsToDelay)
 
         print("click button: take screenshot for a selected area.")
@@ -65,7 +65,6 @@ class ViewController: NSViewController {
     }
     
     @IBAction func wholeScreenCapture(_ sender: Any) {
-        
         
         do {
            try self.view.window!.close()
@@ -82,6 +81,7 @@ class ViewController: NSViewController {
         print("click button: take screenshot for the whole screen.")
     }
     
+
     @objc func takeSelectedScreenshotFunction(){
         let takeScreenshotHandler = Screencapture()
         takeScreenshotHandler.selectScreenCapture()
@@ -132,20 +132,10 @@ class ViewController: NSViewController {
     
     @IBAction func collectionViewMethodTwoAction(_ sender: Any) {
         
-        // webviewWindow: better method for webview in window
-//        let viewController : NSViewController = collectionViewMethodTwoVC()
-//        let subWindow = NSWindow(contentViewController: viewController)
-//        let subWindowController = NSWindowController(window: subWindow)
-//        subWindowController.showWindow(nil)
-        
-        
         runApplescript(applescript: openSafariScript)
         
         self.view.window?.close()
-        
     }
-    
-    
     
     @IBAction func quitScrapbookFunc(_ sender: Any) {
         var checkPIDArgs = [String]()
@@ -168,9 +158,78 @@ class ViewController: NSViewController {
     
     @IBAction func openTestView(_ sender: Any) {
         
-        // open a safari tab and 
+        do {
+           try self.view.window!.close()
+        } catch  {
+            print("the menu bar window is not closed successfully.")
+            print("Unexpected error in test butoon action: \(error).")
+        }
         
-        let viewController : NSViewController = testView()
+        let secondsToDelay = 1.0
+        perform(#selector(cropScreenshotAction), with: nil, afterDelay: secondsToDelay)
+        
+        print("clicked the test button")
+        
+    }
+    
+    @objc func cropScreenshotAction(){
+        
+
+        let date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY.MM.dd,HH-mm-ss"
+        let dateString = dateFormatter.string(from: date)
+        let screenshotPicName = "Screenshot-" + dateString + ".jpeg"
+        capturedScreenshotInformation.capturedScreenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpeg"
+        print(capturedScreenshotInformation.capturedScreenshotPathString)
+        capturedScreenshotInformation.capturedScreenshotPathURL = URL(string: capturedScreenshotInformation.capturedScreenshotPathString)
+        
+        // comment these code
+//        var simpleWholeInfor = ""
+//        var screenshotStruct = screenshotInformation()
+//        screenshotStruct.metaDataSingleRecordingTemplate["TimeStamp"] = dateString
+//        screenshotStruct.metaDataSingleRecordingTemplate["WholeScreenshotOrNot"] = false
+        let screenshotPathString = basicInformation.defaultFolderPathString + "Screenshot-" + dateString + ".jpeg"
+//        screenshotStruct.metaDataSingleRecordingTemplate["ImagePath"] = screenshotPathString
+//        screenshotStruct.metaDataSingleRecordingTemplate["ScreenshotPictureName"] = screenshotPicName
+//        screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] = [] as! [[String : Any]]
+        
+//        print("screenshotStruct is: ", screenshotStruct)
+        // till here
+        
+        fromCropScreenshot.timeStamp = dateString
+        fromCropScreenshot.imagePath = screenshotPathString
+        fromCropScreenshot.screenshotFileName = screenshotPicName
+        
+        
+        let imagePath = capturedScreenshotInformation.capturedScreenshotPathString
+
+        let task = Process()
+        task.launchPath = "/usr/sbin/screencapture"
+        var arguments = [String]();
+        arguments.append("-x")
+        arguments.append(imagePath)
+        task.arguments = arguments
+        let outpipe = Pipe()
+        task.standardOutput = outpipe
+        task.standardError = outpipe
+        //task.launch() // asynchronous call.
+        do {
+            try task.run()
+        } catch {
+            print("something went wrong")
+        }
+        task.waitUntilExit()
+        // wait until the task is finished
+        let outputData = outpipe.fileHandleForReading.readDataToEndOfFile()
+        let resultInformation = String(data: outputData, encoding: .utf8)
+        print("information from pipe: ", resultInformation)
+        
+        tempCropScreenshotPath = imagePath
+        
+        // after taking a screenshot, get NSimage from the path, and obtain corresponding data 
+        
+        let viewController : NSViewController = croppingImage()
         let subWindow = NSWindow(contentViewController: viewController)
         let subWindowController = NSWindowController(window: subWindow)
         subWindowController.showWindow(nil)

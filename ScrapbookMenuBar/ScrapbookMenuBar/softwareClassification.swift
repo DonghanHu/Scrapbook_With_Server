@@ -560,7 +560,11 @@ class softwareClassify : NSObject {
 //        variables.recordedApplicationNameStack = applicationNameStack
 //        variables.numberofRecordedApplication = applicationNameStack.count
 //        alternativeUserInterfaceVariables.capturedApplicationNumber = applicationNameStack.count
-        
+        for (i,name) in visibleApplicationNameStack.enumerated().reversed() {
+            if(name.contains("pid")){
+                visibleApplicationNameStack.remove(at: i)
+            }
+        }
         return visibleApplicationNameStack
 
         
@@ -592,7 +596,7 @@ class softwareClassify : NSObject {
         
         for singleApplication in softwareInformationList {
             let singleApplicationName = singleApplication["kCGWindowOwnerName"] as! String
-            print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
+            // print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
             let singleApplicationPIDName = String(describing: singleApplication["kCGWindowOwnerPID"])
             if (!allApplicationPIDList.contains(singleApplicationPIDName)){
                 if singleApplicationName != "universalAccessAuthWarn" {
@@ -659,7 +663,6 @@ class softwareClassify : NSObject {
             let kCGWindowAlphaValue = simpleSoftware["kCGWindowAlpha"] as! Float
             
             print("application index and name: ", appIndex, applicationName)
-            
             
             let boundDictionaryFormat = applicationBounds as! NSDictionary
             // print("software name is: ", applicationName)
@@ -816,8 +819,7 @@ class softwareClassify : NSObject {
                 basicMatrix = overlappingMatrixWithSubtractOperation
                 
                 // visibleApplicationNameStack.append(applicationName)
-                
-                
+
             }
             // end of for loop
         }
@@ -825,9 +827,21 @@ class softwareClassify : NSObject {
         
         print("visiable application names with bit masking algorithm")
         print(visibleApplicationNameStack)
-        
-        
-        return visibleApplicationNameStack
+        // remove invalid application name
+        // let appLen = visibleApplicationNameStack.count
+        for (i,name) in visibleApplicationNameStack.enumerated().reversed() {
+            if(name.contains("pid")){
+                print("pid name", name)
+                visibleApplicationNameStack.remove(at: i)
+            }
+        }
+        let finalNameStack = visibleApplicationNameStack
+        print("after checking process, the visibleApplicationNameStack is: ")
+        print(finalNameStack)
+        let StringArray = finalNameStack.joined(separator:"-")
+        print(StringArray)
+        // dialogOK(question: StringArray, text: "text")
+        return finalNameStack
     }
 
     
@@ -975,6 +989,15 @@ class softwareClassify : NSObject {
             }
         }
         return result
+    }
+    
+    func dialogOK(question: String, text: String) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        return alert.runModal() == .alertFirstButtonReturn
     }
     
 }
