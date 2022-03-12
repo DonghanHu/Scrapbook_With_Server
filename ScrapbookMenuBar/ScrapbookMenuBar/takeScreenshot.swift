@@ -503,7 +503,7 @@ class Screencapture : NSObject {
             
             
             var capturedApplicationInformationDic = screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]]
-            
+            print(screenshotStruct.metaDataSingleRecordingTemplate["ApplicationInformation"] as! [[String : Any]])
             // dictiornary for repeating application names
             // e.g., two google chrome
             var dictionaryForRepeatApplicationNames = [String : Int]()
@@ -642,7 +642,16 @@ class Screencapture : NSObject {
             tempScreenshotInformationStruct.dataDictionary = screenshotStruct.metaDataSingleRecordingTemplate
             print(tempScreenshotInformationStruct.dataDictionary)
             
-            print("the type of tempScreenshotInformationStruct is : ");
+            // code here, 3/11
+            print("visiable application name stack is: ")
+            print(visiableApplicationsNameArrayPublic)
+            // tempScreenshotInformationStruct.dataDictionary or screenshotStruct.metaDataSingleRecordingTemplate
+            var originalData = tempScreenshotInformationStruct.dataDictionary
+            originalData["VisiableApplicationNames"] = visiableApplicationsNameArrayPublic
+            // originalData["ApplicationInformation"]
+            
+            
+            // print("the type of tempScreenshotInformationStruct is : ");
             // Dictionary<String, Any>
             // print(type(of: tempScreenshotInformationStruct.dataDictionary))
         

@@ -39,6 +39,8 @@ struct fromCropScreenshot {
 
 // temp screenshot path for cropping
 public var tempCropScreenshotPath = ""
+// does not contains Scrapbook(pid ...)
+public var visiableApplicationsNameArrayPublic            = [String]()
 
 struct capturedScreenshotInformation {
     static var capturedScreenshotPathString         =   ""
@@ -59,7 +61,8 @@ struct screenshotInformation{
         "Index"                     : Int(),
         "TimeStamp"                 : String(),
         "AppInforString"            : String(),
-
+        // visiable application name
+        "VisiableApplicationNames"  : [String](),
         "WholeScreenshotOrNot"      : false,
         "CaptureRegion"             : [String : Int](),
         "ImagePath"                 : String(),
@@ -124,7 +127,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.button?.title = "S"
         statusItem.button?.target = self
         statusItem.button?.action = #selector(showSettings)
-        
         // create default folder and json file in the Document
         
         let defaultFolderPath = getHomePath() + "/Documents/" + "ScrapbookServer/public/Data/"

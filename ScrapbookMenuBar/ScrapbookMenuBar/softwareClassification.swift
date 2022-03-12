@@ -840,6 +840,8 @@ class softwareClassify : NSObject {
         print(finalNameStack)
         let StringArray = finalNameStack.joined(separator:"-")
         print(StringArray)
+        // get visiable applications' names list
+        visiableApplicationsNameArrayPublic = finalNameStack
         // dialogOK(question: StringArray, text: "text")
         return finalNameStack
     }
