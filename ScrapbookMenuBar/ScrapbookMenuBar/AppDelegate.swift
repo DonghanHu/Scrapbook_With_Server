@@ -63,6 +63,7 @@ struct screenshotInformation{
         "AppInforString"            : String(),
         // visiable application name
         "VisiableApplicationNames"  : [String](),
+        "InvisiableApplicationNames": [String](),
         "WholeScreenshotOrNot"      : false,
         "CaptureRegion"             : [String : Int](),
         "ImagePath"                 : String(),
@@ -232,8 +233,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         task.waitUntilExit()
         outpipe.fileHandleForReading.closeFile()
-         print("get port number process: ", task.isRunning)
-        dialogOK(question: res, text: "Click OK to continue.")
+        print("get port number process: ", task.isRunning)
+        // dialogOK(question: res, text: "Click OK to continue.")
         return res
     }
     

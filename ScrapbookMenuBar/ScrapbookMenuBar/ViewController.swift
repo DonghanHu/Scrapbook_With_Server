@@ -35,11 +35,18 @@ class ViewController: NSViewController {
         collectionView.isHidden = true;
         testButton.isHidden = false
 
+        // old button, works for project but not for archived application
         takeSelectedScreenshot.title = "Take Selected Area Screenshot"
+        takeSelectedScreenshot.isHidden = true
+        //
         takeWholeScreenshot.title = "Take Whole Screen Screenshot"
         collectionView.title = "Collection View"
         quitScrapbook.title = "Quit Scrapbook"
         collectionViewMethodTwo.title = "Collection View"
+        
+        // this is the button for taking selcted area screenshot
+        testButton.title = "Take Selected Area Screenshot"
+        
         
         // Do any additional setup after loading the view.
     }

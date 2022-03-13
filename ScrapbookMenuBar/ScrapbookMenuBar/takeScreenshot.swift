@@ -647,8 +647,48 @@ class Screencapture : NSObject {
             print(visiableApplicationsNameArrayPublic)
             // tempScreenshotInformationStruct.dataDictionary or screenshotStruct.metaDataSingleRecordingTemplate
             var originalData = tempScreenshotInformationStruct.dataDictionary
-            originalData["VisiableApplicationNames"] = visiableApplicationsNameArrayPublic
+            var invisiableAppNamesArray = [String]()
+            
+            var originalAppInfor = originalData["ApplicationInformation"] as! [[String : Any]]
+            
             // originalData["ApplicationInformation"]
+            for (index, item) in originalAppInfor.enumerated() {
+                let currentAppName = item["ApplicationName"] as! String
+                // if this appname is not in the visableAppName's list
+                if(!visiableApplicationsNameArrayPublic.contains(currentAppName)){
+                    invisiableAppNamesArray.append(currentAppName)
+                }
+                // print("Found \(item) at position \(index)")
+            }
+            
+            for (index, item) in (visiableApplicationsNameArrayPublic).enumerated().reversed() {
+                if(item.contains("pid")){
+                    visiableApplicationsNameArrayPublic.remove(at: index)
+                }
+            }
+            
+            for (index, item) in (invisiableAppNamesArray).enumerated().reversed() {
+                 if(item.contains("pid")){
+                     invisiableAppNamesArray.remove(at: index)
+                 }
+             }
+            
+            originalData["VisiableApplicationNames"] = visiableApplicationsNameArrayPublic
+            originalData["InvisiableApplicationNames"] = invisiableAppNamesArray
+            
+            for(index, item) in originalAppInfor.enumerated().reversed() {
+                let appNameString = item["ApplicationName"] as! String
+                if (appNameString.contains("pid")){
+                    originalAppInfor.remove(at: index)
+                }
+            }
+            
+            print("previous data stuct is: ")
+            print(tempScreenshotInformationStruct.dataDictionary)
+            
+            print("after revising, the data struct is: ")
+            originalData["ApplicationInformation"] = originalAppInfor
+            print(originalData)
             
             
             // print("the type of tempScreenshotInformationStruct is : ");
@@ -1004,13 +1044,59 @@ class Screencapture : NSObject {
             print(allValuesInString);
             // code here, adding new string value
             screenshotStruct.metaDataSingleRecordingTemplate["AppInforString"] = simpleWholeInfor
-            
-            
-            
             // applescriptHandler.applicationMetaData(applicationNameStack: applicationNameStack)
             print("the process of takeing screenshot is finished, and the images has been saved locally.")
            
             tempScreenshotInformationStruct.dataDictionary = screenshotStruct.metaDataSingleRecordingTemplate
+            
+            // code here, 3/11
+            print("visiable application name stack is: ")
+            print(visiableApplicationsNameArrayPublic)
+            // tempScreenshotInformationStruct.dataDictionary or screenshotStruct.metaDataSingleRecordingTemplate
+            var originalData = tempScreenshotInformationStruct.dataDictionary
+            var invisiableAppNamesArray = [String]()
+            var originalAppInfor = originalData["ApplicationInformation"] as! [[String : Any]]
+            
+            // originalData["ApplicationInformation"]
+            for (index, item) in originalAppInfor.enumerated() {
+                let currentAppName = item["ApplicationName"] as! String
+                // if this appname is not in the visableAppName's list
+                if(!visiableApplicationsNameArrayPublic.contains(currentAppName)){
+                    invisiableAppNamesArray.append(currentAppName)
+                }
+                // print("Found \(item) at position \(index)")
+            }
+            
+            for (index, item) in (visiableApplicationsNameArrayPublic).enumerated().reversed() {
+                if(item.contains("pid")){
+                    visiableApplicationsNameArrayPublic.remove(at: index)
+                }
+            }
+            
+            for (index, item) in (invisiableAppNamesArray).enumerated().reversed() {
+                 if(item.contains("pid")){
+                     invisiableAppNamesArray.remove(at: index)
+                 }
+             }
+            
+            originalData["VisiableApplicationNames"] = visiableApplicationsNameArrayPublic
+            originalData["InvisiableApplicationNames"] = invisiableAppNamesArray
+            
+            for(index, item) in originalAppInfor.enumerated().reversed() {
+                let appNameString = item["ApplicationName"] as! String
+                if (appNameString.contains("pid=")){
+                    originalAppInfor.remove(at: index)
+                }
+            }
+            
+            print("previous data stuct is: ")
+            print(tempScreenshotInformationStruct.dataDictionary)
+            
+            print("after revising, the data struct is: ")
+            originalData["ApplicationInformation"] = originalAppInfor
+            print(originalData)
+            // originalData is the final one
+            
 
             let tempJsonFileHandler = tempJsonFileOperations();
             // clear the temp json file first
@@ -1018,7 +1104,10 @@ class Screencapture : NSObject {
             tempJsonFileHandler.clearTempJsonFile(FilePath: basicInformation.tempScreenshotJsonFilePathString)
             // overwrite new temp json data into the file
             // print(tempScreenshotInformationStruct.dataDictionary)
-            tempJsonFileHandler.writeTempJsonData(screenshotDic: tempScreenshotInformationStruct.dataDictionary)
+            // replace the old one with invisiableStruct
+            //tempJsonFileHandler.writeTempJsonData(screenshotDic: tempScreenshotInformationStruct.dataDictionary)
+            tempJsonFileHandler.writeTempJsonData(screenshotDic: originalData)
+            
             
             if (takeScreenshotSuccess == true){
                 // open the "captured view" Window
