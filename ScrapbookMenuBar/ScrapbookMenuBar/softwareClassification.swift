@@ -22,6 +22,7 @@ class softwareClassify : NSObject {
         return frontMostApplicationName!
     }
     
+    var visibleFlag = true;
     
     // return all running applications
     func openingApplication(){
@@ -149,7 +150,7 @@ class softwareClassify : NSObject {
             let applicationBounds = simpleSoftware["kCGWindowBounds"]
             
             
-            print("application index and name: ", appIndex, applicationName)
+            // print("application index and name: ", appIndex, applicationName)
             applicationNamesWithIndex.updateValue(applicationName, forKey: appIndex)
             
             if (applicationName == "universalAccessAuthWarn"){
@@ -593,10 +594,14 @@ class softwareClassify : NSObject {
         var allApplicationNameList = [String]()
         var allApplicationPIDList = [String]()
         let softwareInformationList = getOpenningSoftwareInformation()
-        
+        // print("softwareInformationList")
+        // print(softwareInformationList)
+        // print(softwareInformationList.count)
         for singleApplication in softwareInformationList {
             let singleApplicationName = singleApplication["kCGWindowOwnerName"] as! String
             // print("PID", singleApplication["kCGWindowOwnerPID"] ?? "PID value is nil")
+//            print(singleApplication)
+//            print(" ")
             let singleApplicationPIDName = String(describing: singleApplication["kCGWindowOwnerPID"])
             if (!allApplicationPIDList.contains(singleApplicationPIDName)){
                 if singleApplicationName != "universalAccessAuthWarn" {
@@ -655,11 +660,20 @@ class softwareClassify : NSObject {
         
         var basicMatrix = initialScreenshotMatrixInWholeScreen(wholeWidth: mainScreenWidth, wholeHeight: mainScreenHeight, startRow: screenshotTop, endRow: screenshotBottom, startCol: screenshotleft, endCol: screenshotRight)
         
-        
+        // opening, on the screen's application l
+        print("softwareNameListTemp")
+        print(softwareNameListTemp)
+        print(softwareNameListTemp.count)
         for (appIndex, simpleSoftware) in softwareNameListTemp.enumerated() {
             let applicationName = simpleSoftware["kCGWindowOwnerName"] as! String
             let applicationBounds = simpleSoftware["kCGWindowBounds"]
             
+            // 3/14 need coding here
+            let kCGWindowName = simpleSoftware["kCGWindowName"] as! String
+            if (kCGWindowName == ""){
+                print("this kCGWindowName is empty, the index is: " + String(appIndex))
+                continue
+            }
             let kCGWindowAlphaValue = simpleSoftware["kCGWindowAlpha"] as! Float
             
             print("application index and name: ", appIndex, applicationName)
@@ -667,15 +681,22 @@ class softwareClassify : NSObject {
             let boundDictionaryFormat = applicationBounds as! NSDictionary
             // print("software name is: ", applicationName)
             
-            
+            // remove "universalAccessAuthWarn"
             if (applicationName == "universalAccessAuthWarn"){
+                print("application name is universalAccessAuthWarn.")
+                continue
+            }
+            
+            else if(applicationName.contains("pid")){
+                print("application name contains pid.")
                 continue
             }
                 
             else if (kCGWindowAlphaValue == Float(0.0)){
                 // kCGWindowAlpha should be greater than 0.0 or equals to 1.0
                 // now, I compare it with 0.0
-                // https://developer.apple.com/documentation/coregraphics/kcgwindowalpha?language=objc
+                //https://developer.apple.com/documentation/coregraphics/kcgwindowalpha?language=objc
+                print("kCGWindowAlphaValue is 0.0.")
                 continue
             }
 
@@ -762,13 +783,24 @@ class softwareClassify : NSObject {
                 
                 // applicaiton matrix in the whole screen
                 let applicationMatrixInWholeScreen = initialApplicationMatrixInWholeScreen(wholeWidth: mainScreenWidth, wholeHeight: mainScreenHeight, startRow: applicationTop, endRow: applicationBottom, startCol: applicationLeft, endCol: applicationRight)
-                
+                // print(applicationMatrixInWholeScreen)
                 // after and operation between screenshot matrix and application matrix in the whole screen
                 let overlappingMatrixWithAndOperation = twoMatricesAndCalculating(screenshotMatrix: basicMatrix, applicationMatrix: applicationMatrixInWholeScreen)
-                
+                // print(overlappingMatrixWithAndOperation)
                 // overlapping area > 0, means overlapped
                 if(overlappingArea(matrix: overlappingMatrixWithAndOperation) > 0){
+                    // means visible
+                    visibleFlag = true
+                    
                     visibleApplicationNameStack.append(applicationName)
+                    print("overlapping & app index: ")
+                    print(appIndex)
+                    print(applicationName)
+                    
+                    visibleApplicationIndexArray.append(appIndex)
+                    
+                }else{
+                    visibleFlag = false;
                 }
                 
                  // x, go right, becomes greater
@@ -795,6 +827,11 @@ class softwareClassify : NSObject {
                  currentApplicationInforStuct.singleApplicationInforTemplate["Right"] = bottomRightXCoordination
                  currentApplicationInforStuct.singleApplicationInforTemplate["Bottom"] = bottomRightYCoordination
                  currentApplicationInforStuct.singleApplicationInforTemplate["ApplicationName"] = applicationName
+                
+                currentApplicationInforStuct.singleApplicationInforTemplate["VisibleOrNot"] = visibleFlag
+                
+                // reset the visibleFlag
+                visibleFlag = true
                  
                  
                  // append this visiable applicaiton inforamtion to the struct

@@ -654,6 +654,7 @@ class Screencapture : NSObject {
             // originalData["ApplicationInformation"]
             for (index, item) in originalAppInfor.enumerated() {
                 let currentAppName = item["ApplicationName"] as! String
+                
                 // if this appname is not in the visableAppName's list
                 if(!visiableApplicationsNameArrayPublic.contains(currentAppName)){
                     invisiableAppNamesArray.append(currentAppName)
@@ -787,8 +788,8 @@ class Screencapture : NSObject {
         let tempStr = String(applescript)
 
         let validString = tempStr.replacingOccurrences(of: "\\n", with: "\n")
-        print("validString")
-        print(validString)
+        // print("validString")
+        // print(validString)
         var error: NSDictionary?
         
         let scriptObject = NSAppleScript(source: validString)
@@ -939,6 +940,9 @@ class Screencapture : NSObject {
             // e.g., two google chrome
             var dictionaryForRepeatApplicationNames = [String : Int]()
             
+            
+            print("capturedApplicationInformationDic")
+            print(capturedApplicationInformationDic)
             // two for loops to search application name and get metdata
             for (appIndex, singleAppInfor) in capturedApplicationInformationDic.enumerated(){
                 
@@ -989,18 +993,31 @@ class Screencapture : NSObject {
                         }
             
                         print("two apple scripts after replacing name and rank values are below: ")
-                        print(appleScriptForMetaDataOne)
-                        print(appleScriptForMetaDataTwo)
+                        // print(appleScriptForMetaDataOne)
+                        // print(appleScriptForMetaDataTwo)
                         
                         let applicationMetadataResultOne = runApplescript(applescript: appleScriptForMetaDataOne)
                         let applicationMetadataResultTwo = runApplescript(applescript: appleScriptForMetaDataTwo)
-                        
+                        print(applicationMetadataResultOne)
+                        print(applicationMetadataResultTwo)
+                        print("appindx is in found", appIndex)
                         var appDictTemp = capturedApplicationInformationDic[appIndex]
                         appDictTemp["Category"] = categoryIndex
                         appDictTemp["FirstMetaData"] = applicationMetadataResultOne
                         appDictTemp["SecondMetaData"] = applicationMetadataResultTwo
                         appDictTemp["Rank"] = rankValue
                         appDictTemp["ApplicationNameWithRank"] = appName + "(" + String(describing: seenCount) + ")"
+                        // if this application is visible
+                        print("visible app index: ")
+                        print(visibleApplicationIndexArray)
+                        print(visiableApplicationsNameArrayPublic)
+//                        if(visibleApplicationIndexArray.contains(appIndex)){
+//                            appDictTemp["VisibleOrNot"] = true
+//                        }
+//                        else{
+//                            appDictTemp["VisibleOrNot"] = false
+//                        }
+                        print("visible or not and app name", appDictTemp["VisibleOrNot"], appName)
                         capturedApplicationInformationDic[appIndex] = appDictTemp
                         
                     // end of if statement (tempApplicationName == appName)
@@ -1016,9 +1033,18 @@ class Screencapture : NSObject {
                     let rankValue = numberToOrdinalDictionary[seenCount ?? 1]
                     var appDictTemp = capturedApplicationInformationDic[appIndex]
                     appDictTemp["Category"] = "None"
+                    print("appindx is in not found", appIndex)
                     appDictTemp["FirstMetaData"] = "Currently, this information is empty!"
                     appDictTemp["SecondMetaData"] = "Currently, this information is empty!"
                     appDictTemp["Rank"] = rankValue
+                    // if this application is visible
+//                    if(visibleApplicationIndexArray.contains(appIndex)){
+//                        appDictTemp["VisibleOrNot"] = true
+//                    }
+//                    else{
+//                        appDictTemp["VisibleOrNot"] = false
+//                    }
+                    print("visible or not and app name", appDictTemp["VisibleOrNot"], appName)
                     capturedApplicationInformationDic[appIndex] = appDictTemp
                 }
                 
@@ -1052,6 +1078,7 @@ class Screencapture : NSObject {
             // code here, 3/11
             print("visiable application name stack is: ")
             print(visiableApplicationsNameArrayPublic)
+            print(visibleApplicationIndexArray)
             // tempScreenshotInformationStruct.dataDictionary or screenshotStruct.metaDataSingleRecordingTemplate
             var originalData = tempScreenshotInformationStruct.dataDictionary
             var invisiableAppNamesArray = [String]()
@@ -1060,10 +1087,21 @@ class Screencapture : NSObject {
             // originalData["ApplicationInformation"]
             for (index, item) in originalAppInfor.enumerated() {
                 let currentAppName = item["ApplicationName"] as! String
+                let currentAppNameWithRank = item["ApplicationNameWithRank"] as! String
+                let currentAppRank = item["Rank"] as? String
+                print("app index and item")
+                print(index, currentAppName)
                 // if this appname is not in the visableAppName's list
                 if(!visiableApplicationsNameArrayPublic.contains(currentAppName)){
                     invisiableAppNamesArray.append(currentAppName)
                 }
+                // if this application is visible
+//                if(visibleApplicationIndexArray.contains(index)){
+//                    item["VisibleOrNot"] = true
+//                }
+//                else{
+//                    item["VisibleOrNot"] = false
+//                }
                 // print("Found \(item) at position \(index)")
             }
             
@@ -1081,6 +1119,8 @@ class Screencapture : NSObject {
             
             originalData["VisiableApplicationNames"] = visiableApplicationsNameArrayPublic
             originalData["InvisiableApplicationNames"] = invisiableAppNamesArray
+            print("invisible application names: ")
+            print(invisiableAppNamesArray)
             
             for(index, item) in originalAppInfor.enumerated().reversed() {
                 let appNameString = item["ApplicationName"] as! String
@@ -1140,6 +1180,12 @@ class Screencapture : NSObject {
         else {
             print("the action of taking a screenshot failed. please repeat your action.")
         }
+        // reset these two string array
+        visiableApplicationsNameArrayPublic = [String]()
+        visibleApplicationIndexArray = [Int]()
+        print("reset two String arrays")
+        print(visiableApplicationsNameArrayPublic)
+        print(visibleApplicationIndexArray)
         // end of the wholeScreeCapture function
     }
     

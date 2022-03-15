@@ -41,6 +41,7 @@ struct fromCropScreenshot {
 public var tempCropScreenshotPath = ""
 // does not contains Scrapbook(pid ...)
 public var visiableApplicationsNameArrayPublic            = [String]()
+public var visibleApplicationIndexArray         = [Int]()
 
 struct capturedScreenshotInformation {
     static var capturedScreenshotPathString         =   ""
@@ -106,7 +107,8 @@ struct applicationInformation{
         "Bottom"                    : Int(),
         "Rank"                      : String(),
         "FirstMetaData"             : String(),
-        "SecondMetaData"            : String()
+        "SecondMetaData"            : String(),
+        "VisibleOrNot"              : Bool()
     ]
 }
 
@@ -184,7 +186,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let command = "/usr/local/bin/node"
             // file path changed, notice
             // code here
+            //
             let arg1String = self.getHomePath() + "/Documents/ScrapbookServerFolder"
+            // let arg1String = self.getHomePath() + "/Documents/ScrapbookServer"
             print(arg1String)
             // let args = ["/Users/donghanhu/Documents/ScrapbookServer", "server.js"]
             let args = [arg1String, "server.js"]

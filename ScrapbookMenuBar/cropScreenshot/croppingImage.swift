@@ -26,6 +26,7 @@ class croppingImage: NSViewController, NSWindowDelegate {
     var takeScreenshotSuccess = true
     var screenshotCaseIndex = 1
     
+    
     var numberToOrdinalDictionary = [
         1 : "first",
         2 : "second",
@@ -191,7 +192,16 @@ class croppingImage: NSViewController, NSWindowDelegate {
             var tempy : CGFloat = self.location.y
             // start point should not be above the top frame line
             // end point should not be above top frame line 20.
-            if(Int(self.initStartY!) > Int(self.windowHeight! - 50) || tempx > self.windowWidth! || tempy > self.windowHeight! - 30){
+            if(Int(self.initStartY!) > Int(self.windowHeight!) || tempx > self.windowWidth! || tempy > self.windowHeight! - 30){
+                if(Int(self.initStartY!) > Int(self.windowHeight! - 50)){
+                    print("1")
+                }
+                if (tempx > self.windowWidth!){
+                    print("2")
+                }
+                if(tempy > self.windowHeight! - 30){
+                    print("3")
+                }
                 print("invalide click")
             }else{
                 // remove mouse event listener
@@ -274,6 +284,10 @@ class croppingImage: NSViewController, NSWindowDelegate {
         // e.g., two google chrome
         var dictionaryForRepeatApplicationNames = [String : Int]()
         
+        print("visiable application name stack is in cropping image funciton: ")
+        print(visiableApplicationsNameArrayPublic)
+        print(visibleApplicationIndexArray)
+        
         // two for loops to search application name and get metdata
         for (appIndex, singleAppInfor) in capturedApplicationInformationDic.enumerated(){
             let appName = singleAppInfor["ApplicationName"] as! String
@@ -325,6 +339,13 @@ class croppingImage: NSViewController, NSWindowDelegate {
                     appDictTemp["SecondMetaData"] = applicationMetadataResultTwo
                     appDictTemp["Rank"] = rankValue
                     appDictTemp["ApplicationNameWithRank"] = appName + "(" + String(describing: seenCount) + ")"
+//                    if(visibleApplicationIndexArray.contains(appIndex)){
+//                        appDictTemp["VisibleOrNot"] = true
+//                    }
+//                    else{
+//                        appDictTemp["VisibleOrNot"] = false
+//                    }
+                    print("visible or not and app name", appDictTemp["VisibleOrNot"], appName)
                     print("appDictTemp:", appDictTemp)
                     capturedApplicationInformationDic[appIndex] = appDictTemp
                 // end of if statement (tempApplicationName == appName)
@@ -340,6 +361,13 @@ class croppingImage: NSViewController, NSWindowDelegate {
                 appDictTemp["FirstMetaData"] = "Sorry, metadata for this software is not available!"
                 appDictTemp["SecondMetaData"] = "Sorry, metadata for this software is not available!"
                 appDictTemp["Rank"] = rankValue
+//                if(visibleApplicationIndexArray.contains(appIndex)){
+//                    appDictTemp["VisibleOrNot"] = true
+//                }
+//                else{
+//                    appDictTemp["VisibleOrNot"] = false
+//                }
+                print("visible or not and app name", appDictTemp["VisibleOrNot"], appName)
                 capturedApplicationInformationDic[appIndex] = appDictTemp
             }
                 
@@ -407,6 +435,13 @@ class croppingImage: NSViewController, NSWindowDelegate {
         originalData["ApplicationInformation"] = originalAppInfor
         print(originalData)
         // originalData is the final one
+        
+        // reset these two string array
+        visiableApplicationsNameArrayPublic = [String]()
+        visibleApplicationIndexArray = [Int]()
+        print("reset two String arrays")
+        print(visiableApplicationsNameArrayPublic)
+        print(visibleApplicationIndexArray)
         
         
         // save this temp screenshot's informatino to the temp json file
@@ -576,7 +611,7 @@ class croppingImage: NSViewController, NSWindowDelegate {
     func runApplescript(applescript : String) -> String{
         let tempStr = String(applescript)
         let validString = tempStr.replacingOccurrences(of: "\\n", with: "\n")
-        print("validString", validString)
+        // print("validString", validString)
         var error: NSDictionary?
         let scriptObject = NSAppleScript(source: validString)
         let output: NSAppleEventDescriptor = scriptObject!.executeAndReturnError(&error)

@@ -18,6 +18,8 @@ class ViewController: NSViewController {
     @IBOutlet weak var collectionViewMethodTwo: NSButton!
     @IBOutlet weak var testButton: NSButton!
     
+    @IBOutlet weak var restartButton: NSButton!
+    
     var openSafariScript =
     """
     tell application "Safari"
@@ -43,6 +45,7 @@ class ViewController: NSViewController {
         collectionView.title = "Collection View"
         quitScrapbook.title = "Quit Scrapbook"
         collectionViewMethodTwo.title = "Collection View"
+        restartButton.title = "Restart Server"
         
         // this is the button for taking selcted area screenshot
         testButton.title = "Take Selected Area Screenshot"
@@ -143,6 +146,29 @@ class ViewController: NSViewController {
         
         self.view.window?.close()
     }
+    @IBAction func restartServerButton(_ sender: Any) {
+        var checkPIDArgs = [String]()
+        //lsof -i tcp:8080, get pid for port number 8080
+        checkPIDArgs.append("-i")
+        checkPIDArgs.append("tcp:8080")
+        let PIDNumber = getPortNumberPID(launchPath: "/usr/sbin/lsof", args: checkPIDArgs)
+        // kill this pid
+        var killPortArgs = [String]()
+        killPortArgs.append("-9")
+        killPortArgs.append(PIDNumber)
+        KillPortNumber(launchPath: "/bin/kill", args: killPortArgs)
+        // restart the server, by running the node server.js
+        DispatchQueue.global(qos: .userInitiated).async {
+            let command = "/usr/local/bin/node"
+
+            let arg1String = self.getHomePath() + "/Documents/ScrapbookServer"
+            print(arg1String)
+            // let args = ["/Users/donghanhu/Documents/ScrapbookServer", "server.js"]
+            let args = [arg1String, "server.js"]
+            self.runCommandLine(launchPath: command, arguments: args)
+        }
+        self.view.window?.close()
+    }
     
     @IBAction func quitScrapbookFunc(_ sender: Any) {
         var checkPIDArgs = [String]()
@@ -177,6 +203,32 @@ class ViewController: NSViewController {
         
         print("clicked the test button")
         
+    }
+    
+    @objc func getHomePath() -> String{
+        let pw = getpwuid(getuid())
+        let home = pw?.pointee.pw_dir
+        let homePath = FileManager.default.string(withFileSystemRepresentation: home!, length: Int(strlen(home!)))
+        return homePath
+    }
+    func runCommandLine(launchPath: String, arguments: [String]){
+        let task = Process()
+        task.launchPath = launchPath
+        task.arguments = arguments
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.launch()
+        
+        print(task.isRunning)
+
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: String.Encoding.utf8)!
+        if(output.count > 0){
+            let lastIdnex = output.index(before: output.endIndex)
+            print(String(output[output.startIndex ..< lastIdnex]))
+        }
+        print("task" + launchPath + "is running? " + String(task.isRunning))
     }
     
     @objc func cropScreenshotAction(){
@@ -315,8 +367,8 @@ class ViewController: NSViewController {
         let tempStr = String(applescript)
 
         let validString = tempStr.replacingOccurrences(of: "\\n", with: "\n")
-        print("validString")
-        print(validString)
+        // print("validString")
+        // print(validString)
         var error: NSDictionary?
         
         let scriptObject = NSAppleScript(source: validString)
